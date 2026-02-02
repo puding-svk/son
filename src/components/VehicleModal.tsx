@@ -181,8 +181,8 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
     const canvas = canvasRef.current;
     const video = videoRef.current;
     
-    // Ensure video has valid dimensions
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
+    // Wait until video has enough data to process
+    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
       requestAnimationFrame(performScan);
       return;
     }
@@ -946,17 +946,9 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: 'environment',
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-          // Request autofocus and other quality improvements
-          focusMode: { ideal: 'continuous' },
-          zoom: { ideal: 1 },
-          brightness: { ideal: 0 },
-          contrast: { ideal: 1 },
-          sharpness: { ideal: 1 },
-          resizeMode: { ideal: 'none' as any },
-          frameRate: { ideal: 30 },
-        } as any,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
       });
       
       // Store stream and trigger camera active
