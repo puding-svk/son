@@ -212,27 +212,33 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
           const totalParts = parseInt(splitMatch[2]);
           const partData = splitMatch[3];
           
-
-          
           // Check if this is a different session (different totalParts)
           if (expectedPartCountRef.current !== null && expectedPartCountRef.current !== totalParts) {
-            // Different Y - reset and start new session, show red message
-
+            // Different session - reset and start new session
             scannedPartsRef.current = new Map();
             expectedPartCountRef.current = totalParts;
             setScannedParts(new Map());
             setExpectedPartCount(totalParts);
             setScannedPartTotal(null);
             setInvalidPartIndex(null);
-            setScanErrorMessage(t('message.newQRSession', { parts: totalParts }) || `New QR code session with ${totalParts} parts. Scanning part 1 of ${totalParts}.`);
-            setScanErrorFading(false);
+            // Show as success message, not error
+            setScanErrorMessage(null);
+            setScanSuccessMessage(t('message.newQRSession', { parts: totalParts }) || `New QR code session with ${totalParts} parts detected.`);
+            setScanSuccessFading(false);
+            // Store and process the first part of new session
+            scannedPartsRef.current.set(partIndex, partData);
+            setScannedParts(new Map(scannedPartsRef.current));
+            setScannedPartTotal(totalParts);
+            // Show message for the first part
+            setTimeout(() => {
+              setScanSuccessMessage(t('message.partScanned', { part: partIndex, total: totalParts }) || `✓ Part ${partIndex} of ${totalParts} scanned successfully!`);
+            }, 500);
             requestAnimationFrame(performScan);
             return;
           }
           
           // Initialize expected part count on first split QR
           if (expectedPartCountRef.current === null) {
-
             expectedPartCountRef.current = totalParts;
             setExpectedPartCount(totalParts);
           }
@@ -246,8 +252,6 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
           
           // Also update state for UI rendering
           setScannedParts(new Map(scannedPartsRef.current));
-          
-          // Show success feedback - update visual indicators only if new part or different content
           setScannedPartTotal(totalParts);
           setInvalidPartIndex(null);
           setScanErrorMessage(null);
