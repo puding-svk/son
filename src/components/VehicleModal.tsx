@@ -144,10 +144,10 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
     }
   };
 
-  // Helper function to calculate if minimum QR size reached (150 chars minimum per part)
+  // Helper function to calculate if minimum QR size reached (100 chars minimum per part)
   const isMinimumQRSizeReached = (): boolean => {
     const compressed = compressVehicleData(vehicleData);
-    const MIN_CHARS_PER_PART = 150;
+    const MIN_CHARS_PER_PART = 100;
     const charsPerPart = compressed.length / qrPartCount;
     return charsPerPart <= MIN_CHARS_PER_PART;
   };
