@@ -205,6 +205,14 @@
   "signature": {
     "driverA": "Vodič A",
     "driverB": "Vodič B",
-    "sign": "Podpíšte sa tu"
+    "sign": "Podpíšte sa tu",
+    "pad": {
+      "titleA": "Podpis vodiča A",
+      "titleB": "Podpis vodiča B",
+      "hint": "Podpíšte sa tu pomocou prsta alebo myši",
+      "clear": "Vymazať",
+      "cancel": "Zrušiť",
+      "save": "Uložiť podpis"
+    }
   }
 }

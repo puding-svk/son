@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import './SignaturePad.css';
 
 interface SignaturePadProps {
@@ -14,6 +15,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   driverName,
   driverLabel,
 }) => {
+  const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
@@ -121,13 +123,13 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     <div className="signature-pad-overlay">
       <div className="signature-pad-modal">
         <div className="signature-pad-header">
-          <h2>Driver {driverLabel} Signature</h2>
+          <h2>{t(`signature.pad.title${driverLabel}`)}</h2>
           <p className="signature-pad-name">{driverName}</p>
           <button
             className="signature-pad-close"
             onClick={onClose}
             type="button"
-            aria-label="Close signature pad"
+            aria-label={t('common.close') || 'Close signature pad'}
           >
             ✕
           </button>
@@ -146,7 +148,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
             onTouchEnd={stopDrawing}
           />
           <div className="signature-pad-hint">
-            {isEmpty && <p>Sign here with your finger or mouse</p>}
+            {isEmpty && <p>{t('signature.pad.hint')}</p>}
           </div>
         </div>
 
@@ -156,14 +158,14 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
             onClick={clearSignature}
             type="button"
           >
-            Clear
+            {t('signature.pad.clear')}
           </button>
           <button
             className="btn-secondary"
             onClick={onClose}
             type="button"
           >
-            Cancel
+            {t('signature.pad.cancel')}
           </button>
           <button
             className={`btn-primary ${isEmpty ? 'disabled' : ''}`}
@@ -171,7 +173,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
             disabled={isEmpty}
             type="button"
           >
-            Save Signature
+            {t('signature.pad.save')}
           </button>
         </div>
       </div>

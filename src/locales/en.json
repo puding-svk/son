@@ -205,6 +205,14 @@
   "signature": {
     "driverA": "Driver A",
     "driverB": "Driver B",
-    "sign": "Sign here"
+    "sign": "Sign here",
+    "pad": {
+      "titleA": "Driver A Signature",
+      "titleB": "Driver B Signature",
+      "hint": "Sign here with your finger or mouse",
+      "clear": "Clear",
+      "cancel": "Cancel",
+      "save": "Save Signature"
+    }
   }
 }
