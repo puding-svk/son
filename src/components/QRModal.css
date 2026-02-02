@@ -1,0 +1,138 @@
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.qr-modal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: transparent;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #000;
+  transform: none;
+}
+
+.qr-modal h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+  text-align: center;
+}
+
+.qr-generate-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.qr-code-wrapper {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+}
+
+.qr-code-wrapper canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.qr-info {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.qr-scan-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qr-video {
+  width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+  border: 2px solid #0066cc;
+  object-fit: cover;
+}
+
+.qr-canvas {
+  display: none;
+}
+
+.qr-canvas.hidden {
+  display: none;
+}
+
+.qr-scan-controls {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.qr-scan-controls button {
+  width: 100%;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border-left: 4px solid #dc3545;
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .qr-modal {
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .qr-modal h2 {
+    font-size: 18px;
+  }
+
+  .qr-video {
+    max-height: 300px;
+  }
+}

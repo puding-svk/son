@@ -1,0 +1,420 @@
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { i18n } from '../i18n/config';
+import VehicleSection from './VehicleSection';
+import QRModal from './QRModal';
+import type { AccidentReport } from '../utils/storage';
+import './AccidentForm.css';
+
+// Utility function to get default circumstances object
+const getDefaultCircumstances = () => ({
+  parked: false,
+  stopped: false,
+  openedDoor: false,
+  parking: false,
+  leavingParkingArea: false,
+  enteringParkingArea: false,
+  enteringRoundabout: false,
+  drivingRoundabout: false,
+  rearEndCollision: false,
+  drivingParallel: false,
+  changingLanes: false,
+  overtaking: false,
+  turningRight: false,
+  turningLeft: false,
+  reversing: false,
+  enteredOppositeLane: false,
+  comingFromRight: false,
+  failedToYield: false,
+});
+
+// Utility function to get default date (current date in YYYY-MM-DD format)
+const getDefaultDate = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// Utility function to get default time (current time rounded down to nearest 15min, minus 15min, in HH:MM format)
+const getDefaultTime = (): string => {
+  const now = new Date();
+  let minutes = now.getMinutes();
+  
+  // Round down to nearest 15 minutes
+  minutes = Math.floor(minutes / 15) * 15;
+  
+  // Subtract 15 minutes
+  minutes -= 15;
+  
+  // Handle negative minutes (go to previous hour)
+  if (minutes < 0) {
+    minutes += 60;
+    now.setHours(now.getHours() - 1);
+  }
+  
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutesStr = String(minutes).padStart(2, '0');
+  return `${hours}:${minutesStr}`;
+};
+
+interface FormState extends AccidentReport {
+  section1: {
+    dateOfAccident: string;
+    timeOfAccident: string;
+    state: string;
+    city: string;
+    location: string;
+  };
+  section2: {
+    injuries: string; // 'yes' | 'no' | ''
+    damageOtherVehicles: string; // 'yes' | 'no' | ''
+    damageOtherItems: string; // 'yes' | 'no' | ''
+    witnesses: string;
+  };
+}
+
+const initialState: FormState = {
+  section1: {
+    dateOfAccident: getDefaultDate(),
+    timeOfAccident: getDefaultTime(),
+    state: '',
+    city: '',
+    location: '',
+  },
+  section2: {
+    injuries: '',
+    damageOtherVehicles: '',
+    damageOtherItems: '',
+    witnesses: '',
+  },
+  vehicleA: {
+    policyholder: {
+      surname: '',
+      firstname: '',
+      address: '',
+      postalCode: '',
+      country: '',
+      phoneEmail: '',
+    },
+    vehicle: {
+      vehicleType: 'vehicle',
+      make: '',
+      model: '',
+      registrationNumber: '',
+      countryOfRegistration: '',
+    },
+    insurance: {
+      insuranceCompanyName: '',
+      policyNumber: '',
+      greenCardNumber: '',
+      greenCardValidFrom: '',
+      greenCardValidTo: '',
+      branch: '',
+      branchAddress: '',
+      branchCountry: '',
+      branchPhone: '',
+      comprehensiveInsurance: '',
+    },
+    driver: {
+      surname: '',
+      firstname: '',
+      dateOfBirth: '',
+      address: '',
+      country: '',
+      phone: '',
+      licenceNumber: '',
+      licenceCategory: '',
+      licenceValidUntil: '',
+    },
+    impactMarkers: [],
+    visibleDamage: '',
+    circumstances: getDefaultCircumstances(),
+    additionalNotes: '',
+  },
+  vehicleB: {
+    policyholder: {
+      surname: '',
+      firstname: '',
+      address: '',
+      postalCode: '',
+      country: '',
+      phoneEmail: '',
+    },
+    vehicle: {
+      vehicleType: 'vehicle',
+      make: '',
+      model: '',
+      registrationNumber: '',
+      countryOfRegistration: '',
+    },
+    insurance: {
+      insuranceCompanyName: '',
+      policyNumber: '',
+      greenCardNumber: '',
+      greenCardValidFrom: '',
+      greenCardValidTo: '',
+      branch: '',
+      branchAddress: '',
+      branchCountry: '',
+      branchPhone: '',
+      comprehensiveInsurance: '',
+    },
+    driver: {
+      surname: '',
+      firstname: '',
+      dateOfBirth: '',
+      address: '',
+      country: '',
+      phone: '',
+      licenceNumber: '',
+      licenceCategory: '',
+      licenceValidUntil: '',
+    },
+    impactMarkers: [],
+    visibleDamage: '',
+    circumstances: getDefaultCircumstances(),
+    additionalNotes: '',
+  },
+  createdAt: '',
+};
+
+const AccidentForm: React.FC = () => {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState<FormState>(initialState);
+  const [qrModal, setQrModal] = useState<{ isOpen: boolean; mode: 'generate' | 'scan' }>({
+    isOpen: false,
+    mode: 'generate',
+  });
+  const [savedMessage, setSavedMessage] = useState('');
+
+  const updateField = (path: string, value: any) => {
+    const keys = path.split('.');
+    const newData = JSON.parse(JSON.stringify(formData));
+    let current = newData;
+    for (let i = 0; i < keys.length - 1; i++) {
+      current = current[keys[i]];
+    }
+    current[keys[keys.length - 1]] = value;
+    setFormData(newData);
+
+    // Auto-save to localStorage
+    localStorage.setItem('accidentFormDraft', JSON.stringify(newData));
+  };
+
+  const handleLoadQR = (report: AccidentReport) => {
+    // Ensure both vehicles have circumstances object
+    const vehicleA = {
+      ...report.vehicleA,
+      circumstances: report.vehicleA.circumstances || getDefaultCircumstances(),
+    };
+    const vehicleB = {
+      ...report.vehicleB,
+      circumstances: report.vehicleB.circumstances || getDefaultCircumstances(),
+    };
+
+    setFormData({
+      ...report,
+      vehicleA,
+      vehicleB,
+      createdAt: new Date().toISOString(),
+    });
+    setSavedMessage(t('form.load') + ' successful!');
+    setTimeout(() => setSavedMessage(''), 3000);
+  };
+
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
+  return (
+    <div className="accident-form-container">
+      <header className="form-header">
+        <h1>{t('app.title')}</h1>
+        <div className="header-controls">
+          <select
+            value={i18n.language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="language-select"
+          >
+            <option value="sk">Slovenčina</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </header>
+
+      {savedMessage && <div className="success-message">{savedMessage}</div>}
+
+      <form className="form-content">
+        {/* Section 1: Accident Date and Location */}
+        <section className="form-section section-blue">
+          <h2>{t('section1.title')}</h2>
+          <div className="form-group">
+            <label>{t('section1.dateOfAccident')}</label>
+            <input
+              type="date"
+              value={formData.section1.dateOfAccident}
+              onChange={(e) => updateField('section1.dateOfAccident', e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t('section1.timeOfAccident')}</label>
+            <input
+              type="time"
+              value={formData.section1.timeOfAccident}
+              onChange={(e) => updateField('section1.timeOfAccident', e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t('section1.state')}</label>
+            <input
+              type="text"
+              value={formData.section1.state}
+              onChange={(e) => updateField('section1.state', e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t('section1.city')}</label>
+            <input
+              type="text"
+              value={formData.section1.city}
+              onChange={(e) => updateField('section1.city', e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>{t('section1.location')}</label>
+            <input
+              type="text"
+              value={formData.section1.location}
+              onChange={(e) => updateField('section1.location', e.target.value)}
+            />
+          </div>
+        </section>
+
+        {/* Section 2: Accident Information */}
+        <section className="form-section section-neutral">
+          <h2>{t('section2.title')}</h2>
+          
+          <div className="form-group">
+            <label className="question-label">{t('section2.injuries')}</label>
+            <div className="radio-group">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="injuries"
+                  value="yes"
+                  checked={formData.section2.injuries === 'yes'}
+                  onChange={(e) => updateField('section2.injuries', e.target.value)}
+                />
+                {t('common.yes')}
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="injuries"
+                  value="no"
+                  checked={formData.section2.injuries === 'no'}
+                  onChange={(e) => updateField('section2.injuries', e.target.value)}
+                />
+                {t('common.no')}
+              </label>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="question-label">{t('section2.damageOtherVehicles')}</label>
+            <div className="radio-group">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="damageOtherVehicles"
+                  value="yes"
+                  checked={formData.section2.damageOtherVehicles === 'yes'}
+                  onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
+                />
+                {t('common.yes')}
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="damageOtherVehicles"
+                  value="no"
+                  checked={formData.section2.damageOtherVehicles === 'no'}
+                  onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
+                />
+                {t('common.no')}
+              </label>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="question-label">{t('section2.damageOtherItems')}</label>
+            <div className="radio-group">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="damageOtherItems"
+                  value="yes"
+                  checked={formData.section2.damageOtherItems === 'yes'}
+                  onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
+                />
+                {t('common.yes')}
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="damageOtherItems"
+                  value="no"
+                  checked={formData.section2.damageOtherItems === 'no'}
+                  onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
+                />
+                {t('common.no')}
+              </label>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>{t('section2.witnesses')}</label>
+            <textarea
+              value={formData.section2.witnesses}
+              onChange={(e) => updateField('section2.witnesses', e.target.value)}
+              rows={3}
+            />
+          </div>
+        </section>
+
+        {/* Vehicle A Section */}
+        <VehicleSection
+          vehicleLabel="vehicleA"
+          data={formData.vehicleA}
+          onChange={(newData) => setFormData({ ...formData, vehicleA: newData })}
+        />
+
+        {/* Vehicle B Section */}
+        <VehicleSection
+          vehicleLabel="vehicleB"
+          data={formData.vehicleB}
+          onChange={(newData) => setFormData({ ...formData, vehicleB: newData })}
+        />
+      </form>
+
+      {/* Form Controls */}
+      <div className="form-controls">
+        <button className="btn-secondary" disabled type="button">
+          {t('common.placeholder') || 'Placeholder'}
+        </button>
+      </div>
+
+      <QRModal
+        isOpen={qrModal.isOpen}
+        mode={qrModal.mode}
+        report={formData}
+        onLoadData={handleLoadQR}
+        onClose={() => setQrModal({ ...qrModal, isOpen: false })}
+      />
+    </div>
+  );
+};
+
+export default AccidentForm;
