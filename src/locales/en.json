@@ -198,5 +198,13 @@
     "done": "Done",
     "next": "Next",
     "previous": "Previous"
+  },
+  "section": {
+    "signatures": "Signatures"
+  },
+  "signature": {
+    "driverA": "Driver A",
+    "driverB": "Driver B",
+    "sign": "Sign here"
   }
 }

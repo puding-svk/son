@@ -397,6 +397,36 @@ const AccidentForm: React.FC = () => {
           data={formData.vehicleB}
           onChange={(newData) => setFormData({ ...formData, vehicleB: newData })}
         />
+
+        {/* Signatures Section */}
+        <section className="form-section section-neutral signatures-section">
+          <h2>{t('section.signatures') || 'Signatures'}</h2>
+          <div className="signatures-container">
+            {/* Driver A Signature */}
+            <div className="signature-block signature-blue">
+              <div className="signature-label">
+                <h3>{t('signature.driverA') || 'Driver A'}</h3>
+                <p className="signature-sublabel">{formData.vehicleA.driver.firstname} {formData.vehicleA.driver.surname}</p>
+              </div>
+              <div className="signature-canvas-wrapper">
+                <div className="signature-placeholder"></div>
+                <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+              </div>
+            </div>
+
+            {/* Driver B Signature */}
+            <div className="signature-block signature-yellow">
+              <div className="signature-label">
+                <h3>{t('signature.driverB') || 'Driver B'}</h3>
+                <p className="signature-sublabel">{formData.vehicleB.driver.firstname} {formData.vehicleB.driver.surname}</p>
+              </div>
+              <div className="signature-canvas-wrapper">
+                <div className="signature-placeholder"></div>
+                <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </form>
 
       {/* Form Controls */}

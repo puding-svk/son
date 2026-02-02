@@ -198,5 +198,13 @@
     "done": "Hotovo",
     "next": "Ďalej",
     "previous": "Predchádzajúce"
+  },
+  "section": {
+    "signatures": "Podpisy"
+  },
+  "signature": {
+    "driverA": "Vodič A",
+    "driverB": "Vodič B",
+    "sign": "Podpíšte sa tu"
   }
 }
