@@ -96,6 +96,10 @@ export interface AccidentReport {
   };
   vehicleA: VehicleData & { createdAt?: string };
   vehicleB: VehicleData & { createdAt?: string };
+  signatures: {
+    driverA: string; // Base64 encoded image data or empty string
+    driverB: string; // Base64 encoded image data or empty string
+  };
   createdAt: string;
 }
 

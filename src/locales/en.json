@@ -198,5 +198,21 @@
     "done": "Done",
     "next": "Next",
     "previous": "Previous"
+  },
+  "section": {
+    "signatures": "Signatures"
+  },
+  "signature": {
+    "driverA": "Driver A",
+    "driverB": "Driver B",
+    "sign": "Sign here",
+    "pad": {
+      "titleA": "Driver A Signature",
+      "titleB": "Driver B Signature",
+      "hint": "Sign here with your finger or mouse",
+      "clear": "Clear",
+      "cancel": "Cancel",
+      "save": "Save Signature"
+    }
   }
 }
