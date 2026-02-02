@@ -1,0 +1,456 @@
+{
+  "formFields": {
+    "section1": {
+      "dateOfAccident": {
+        "path": "section1.dateOfAccident",
+        "pdfFieldName": "section1_dateOfAccident",
+        "type": "text",
+        "format": "YYYY-MM-DD",
+        "label": "Accident Date"
+      },
+      "timeOfAccident": {
+        "path": "section1.timeOfAccident",
+        "pdfFieldName": "section1_timeOfAccident",
+        "type": "text",
+        "format": "HH:MM",
+        "label": "Accident Time"
+      },
+      "location": {
+        "path": "section1.location",
+        "pdfFieldName": "section1_location",
+        "type": "text",
+        "label": "Accident Location"
+      },
+      "city": {
+        "path": "section1.city",
+        "pdfFieldName": "section1_city",
+        "type": "text",
+        "label": "City/Village"
+      },
+      "state": {
+        "path": "section1.state",
+        "pdfFieldName": "section1_state",
+        "type": "text",
+        "label": "Country/State"
+      }
+    },
+    "section2": {
+      "injuries": {
+        "path": "section2.injuries",
+        "pdfFieldName": "section2_injuries",
+        "type": "select",
+        "options": ["yes", "no"],
+        "label": "Are there injuries?"
+      },
+      "damageOtherVehicles": {
+        "path": "section2.damageOtherVehicles",
+        "pdfFieldName": "section2_damageOtherVehicles",
+        "type": "select",
+        "options": ["yes", "no"],
+        "label": "Damage to other vehicles?"
+      },
+      "damageOtherItems": {
+        "path": "section2.damageOtherItems",
+        "pdfFieldName": "section2_damageOtherItems",
+        "type": "select",
+        "options": ["yes", "no"],
+        "label": "Damage to other property?"
+      },
+      "witnesses": {
+        "path": "section2.witnesses",
+        "pdfFieldName": "section2_witnesses",
+        "type": "text",
+        "label": "Witnesses"
+      }
+    },
+    "vehicleA": {
+      "policyholder": {
+        "surname": {
+          "path": "vehicleA.policyholder.surname",
+          "pdfFieldName": "vehicleA_policyholder_surname",
+          "type": "text",
+          "label": "Policyholder Surname"
+        },
+        "firstname": {
+          "path": "vehicleA.policyholder.firstname",
+          "pdfFieldName": "vehicleA_policyholder_firstname",
+          "type": "text",
+          "label": "Policyholder First Name"
+        },
+        "address": {
+          "path": "vehicleA.policyholder.address",
+          "pdfFieldName": "vehicleA_policyholder_address",
+          "type": "text",
+          "label": "Policyholder Address"
+        },
+        "postalCode": {
+          "path": "vehicleA.policyholder.postalCode",
+          "pdfFieldName": "vehicleA_policyholder_postalCode",
+          "type": "text",
+          "label": "Policyholder Postal Code"
+        },
+        "country": {
+          "path": "vehicleA.policyholder.country",
+          "pdfFieldName": "vehicleA_policyholder_country",
+          "type": "text",
+          "label": "Policyholder Country"
+        },
+        "phoneEmail": {
+          "path": "vehicleA.policyholder.phoneEmail",
+          "pdfFieldName": "vehicleA_policyholder_phoneEmail",
+          "type": "text",
+          "label": "Policyholder Phone/Email"
+        }
+      },
+      "vehicle": {
+        "vehicleType": {
+          "path": "vehicleA.vehicle.vehicleType",
+          "pdfFieldName": "vehicleA_vehicle_vehicleType",
+          "type": "select",
+          "options": ["vehicle", "trailer"],
+          "label": "Vehicle Type"
+        },
+        "make": {
+          "path": "vehicleA.vehicle.make",
+          "pdfFieldName": "vehicleA_vehicle_make",
+          "type": "text",
+          "label": "Vehicle Make"
+        },
+        "model": {
+          "path": "vehicleA.vehicle.model",
+          "pdfFieldName": "vehicleA_vehicle_model",
+          "type": "text",
+          "label": "Vehicle Model"
+        },
+        "registrationNumber": {
+          "path": "vehicleA.vehicle.registrationNumber",
+          "pdfFieldName": "vehicleA_vehicle_registrationNumber",
+          "type": "text",
+          "label": "Licence Plate Number"
+        },
+        "countryOfRegistration": {
+          "path": "vehicleA.vehicle.countryOfRegistration",
+          "pdfFieldName": "vehicleA_vehicle_countryOfRegistration",
+          "type": "text",
+          "label": "Country of Registration"
+        }
+      },
+      "insurance": {
+        "insuranceCompanyName": {
+          "path": "vehicleA.insurance.insuranceCompanyName",
+          "pdfFieldName": "vehicleA_insurance_insuranceCompanyName",
+          "type": "text",
+          "label": "Insurance Company Name"
+        },
+        "policyNumber": {
+          "path": "vehicleA.insurance.policyNumber",
+          "pdfFieldName": "vehicleA_insurance_policyNumber",
+          "type": "text",
+          "label": "Policy Number"
+        },
+        "greenCardNumber": {
+          "path": "vehicleA.insurance.greenCardNumber",
+          "pdfFieldName": "vehicleA_insurance_greenCardNumber",
+          "type": "text",
+          "label": "Green Card Number"
+        },
+        "greenCardValidFrom": {
+          "path": "vehicleA.insurance.greenCardValidFrom",
+          "pdfFieldName": "vehicleA_insurance_greenCardValidFrom",
+          "type": "text",
+          "format": "YYYY-MM-DD",
+          "label": "Green Card Valid From"
+        },
+        "greenCardValidTo": {
+          "path": "vehicleA.insurance.greenCardValidTo",
+          "pdfFieldName": "vehicleA_insurance_greenCardValidTo",
+          "type": "text",
+          "format": "YYYY-MM-DD",
+          "label": "Green Card Valid To"
+        },
+        "branch": {
+          "path": "vehicleA.insurance.branch",
+          "pdfFieldName": "vehicleA_insurance_branch",
+          "type": "text",
+          "label": "Branch/Agent"
+        },
+        "branchAddress": {
+          "path": "vehicleA.insurance.branchAddress",
+          "pdfFieldName": "vehicleA_insurance_branchAddress",
+          "type": "text",
+          "label": "Branch Address"
+        },
+        "branchCountry": {
+          "path": "vehicleA.insurance.branchCountry",
+          "pdfFieldName": "vehicleA_insurance_branchCountry",
+          "type": "text",
+          "label": "Branch Country"
+        },
+        "branchPhone": {
+          "path": "vehicleA.insurance.branchPhone",
+          "pdfFieldName": "vehicleA_insurance_branchPhone",
+          "type": "text",
+          "label": "Branch Phone/Email"
+        },
+        "comprehensiveInsurance": {
+          "path": "vehicleA.insurance.comprehensiveInsurance",
+          "pdfFieldName": "vehicleA_insurance_comprehensiveInsurance",
+          "type": "select",
+          "options": ["yes", "no"],
+          "label": "Comprehensive Insurance"
+        }
+      },
+      "driver": {
+        "surname": {
+          "path": "vehicleA.driver.surname",
+          "pdfFieldName": "vehicleA_driver_surname",
+          "type": "text",
+          "label": "Driver Surname"
+        },
+        "firstname": {
+          "path": "vehicleA.driver.firstname",
+          "pdfFieldName": "vehicleA_driver_firstname",
+          "type": "text",
+          "label": "Driver First Name"
+        },
+        "dateOfBirth": {
+          "path": "vehicleA.driver.dateOfBirth",
+          "pdfFieldName": "vehicleA_driver_dateOfBirth",
+          "type": "text",
+          "format": "YYYY-MM-DD",
+          "label": "Driver Date of Birth"
+        },
+        "address": {
+          "path": "vehicleA.driver.address",
+          "pdfFieldName": "vehicleA_driver_address",
+          "type": "text",
+          "label": "Driver Address"
+        },
+        "country": {
+          "path": "vehicleA.driver.country",
+          "pdfFieldName": "vehicleA_driver_country",
+          "type": "text",
+          "label": "Driver Country"
+        },
+        "phone": {
+          "path": "vehicleA.driver.phone",
+          "pdfFieldName": "vehicleA_driver_phone",
+          "type": "text",
+          "label": "Driver Phone"
+        },
+        "licenceNumber": {
+          "path": "vehicleA.driver.licenceNumber",
+          "pdfFieldName": "vehicleA_driver_licenceNumber",
+          "type": "text",
+          "label": "Licence Number"
+        },
+        "licenceCategory": {
+          "path": "vehicleA.driver.licenceCategory",
+          "pdfFieldName": "vehicleA_driver_licenceCategory",
+          "type": "text",
+          "label": "Licence Category"
+        },
+        "licenceValidUntil": {
+          "path": "vehicleA.driver.licenceValidUntil",
+          "pdfFieldName": "vehicleA_driver_licenceValidUntil",
+          "type": "text",
+          "format": "YYYY-MM-DD",
+          "label": "Licence Valid Until"
+        }
+      },
+      "damage": {
+        "visibleDamage": {
+          "path": "vehicleA.visibleDamage",
+          "pdfFieldName": "vehicleA_visibleDamage",
+          "type": "text",
+          "label": "Visible Damage Description"
+        },
+        "additionalNotes": {
+          "path": "vehicleA.additionalNotes",
+          "pdfFieldName": "vehicleA_additionalNotes",
+          "type": "text",
+          "label": "Additional Notes"
+        }
+      },
+      "circumstances": {
+        "parked": {
+          "path": "vehicleA.circumstances.parked",
+          "pdfFieldName": "vehicleA_circumstances_parked",
+          "type": "checkbox",
+          "label": "Parked"
+        },
+        "stopped": {
+          "path": "vehicleA.circumstances.stopped",
+          "pdfFieldName": "vehicleA_circumstances_stopped",
+          "type": "checkbox",
+          "label": "Stopped"
+        },
+        "openedDoor": {
+          "path": "vehicleA.circumstances.openedDoor",
+          "pdfFieldName": "vehicleA_circumstances_openedDoor",
+          "type": "checkbox",
+          "label": "Opened Door"
+        },
+        "parking": {
+          "path": "vehicleA.circumstances.parking",
+          "pdfFieldName": "vehicleA_circumstances_parking",
+          "type": "checkbox",
+          "label": "Parking"
+        },
+        "leavingParkingArea": {
+          "path": "vehicleA.circumstances.leavingParkingArea",
+          "pdfFieldName": "vehicleA_circumstances_leavingParkingArea",
+          "type": "checkbox",
+          "label": "Leaving Parking Area"
+        },
+        "enteringParkingArea": {
+          "path": "vehicleA.circumstances.enteringParkingArea",
+          "pdfFieldName": "vehicleA_circumstances_enteringParkingArea",
+          "type": "checkbox",
+          "label": "Entering Parking Area"
+        },
+        "enteringRoundabout": {
+          "path": "vehicleA.circumstances.enteringRoundabout",
+          "pdfFieldName": "vehicleA_circumstances_enteringRoundabout",
+          "type": "checkbox",
+          "label": "Entering Roundabout"
+        },
+        "drivingRoundabout": {
+          "path": "vehicleA.circumstances.drivingRoundabout",
+          "pdfFieldName": "vehicleA_circumstances_drivingRoundabout",
+          "type": "checkbox",
+          "label": "Driving Roundabout"
+        },
+        "rearEndCollision": {
+          "path": "vehicleA.circumstances.rearEndCollision",
+          "pdfFieldName": "vehicleA_circumstances_rearEndCollision",
+          "type": "checkbox",
+          "label": "Rear End Collision"
+        },
+        "drivingParallel": {
+          "path": "vehicleA.circumstances.drivingParallel",
+          "pdfFieldName": "vehicleA_circumstances_drivingParallel",
+          "type": "checkbox",
+          "label": "Driving Parallel"
+        },
+        "changingLanes": {
+          "path": "vehicleA.circumstances.changingLanes",
+          "pdfFieldName": "vehicleA_circumstances_changingLanes",
+          "type": "checkbox",
+          "label": "Changing Lanes"
+        },
+        "overtaking": {
+          "path": "vehicleA.circumstances.overtaking",
+          "pdfFieldName": "vehicleA_circumstances_overtaking",
+          "type": "checkbox",
+          "label": "Overtaking"
+        },
+        "turningRight": {
+          "path": "vehicleA.circumstances.turningRight",
+          "pdfFieldName": "vehicleA_circumstances_turningRight",
+          "type": "checkbox",
+          "label": "Turning Right"
+        },
+        "turningLeft": {
+          "path": "vehicleA.circumstances.turningLeft",
+          "pdfFieldName": "vehicleA_circumstances_turningLeft",
+          "type": "checkbox",
+          "label": "Turning Left"
+        },
+        "reversing": {
+          "path": "vehicleA.circumstances.reversing",
+          "pdfFieldName": "vehicleA_circumstances_reversing",
+          "type": "checkbox",
+          "label": "Reversing"
+        },
+        "enteredOppositeLane": {
+          "path": "vehicleA.circumstances.enteredOppositeLane",
+          "pdfFieldName": "vehicleA_circumstances_enteredOppositeLane",
+          "type": "checkbox",
+          "label": "Entered Opposite Lane"
+        },
+        "comingFromRight": {
+          "path": "vehicleA.circumstances.comingFromRight",
+          "pdfFieldName": "vehicleA_circumstances_comingFromRight",
+          "type": "checkbox",
+          "label": "Coming From Right"
+        },
+        "failedToYield": {
+          "path": "vehicleA.circumstances.failedToYield",
+          "pdfFieldName": "vehicleA_circumstances_failedToYield",
+          "type": "checkbox",
+          "label": "Failed To Yield"
+        }
+      },
+      "impactMarkers": {
+        "path": "vehicleA.impactMarkers",
+        "type": "array",
+        "itemType": "object",
+        "structure": {
+          "id": "string",
+          "x": "number",
+          "y": "number",
+          "rotation": "number"
+        },
+        "label": "Impact Markers"
+      }
+    },
+    "vehicleB": {
+      "policyholder": {},
+      "vehicle": {},
+      "insurance": {},
+      "driver": {},
+      "damage": {},
+      "circumstances": {},
+      "impactMarkers": {}
+    },
+    "signatures": {
+      "driverA": {
+        "path": "signatures.driverA",
+        "pdfFieldName": "signatures_driverA",
+        "type": "image",
+        "format": "base64-png",
+        "label": "Driver A Signature"
+      },
+      "driverB": {
+        "path": "signatures.driverB",
+        "pdfFieldName": "signatures_driverB",
+        "type": "image",
+        "format": "base64-png",
+        "label": "Driver B Signature"
+      }
+    },
+    "metadata": {
+      "createdAt": {
+        "path": "createdAt",
+        "pdfFieldName": "createdAt",
+        "type": "datetime",
+        "label": "Created At"
+      }
+    }
+  },
+  "fieldCount": {
+    "section1": 5,
+    "section2": 4,
+    "vehicleA": {
+      "policyholder": 6,
+      "vehicle": 5,
+      "insurance": 10,
+      "driver": 9,
+      "damage": 2,
+      "circumstances": 18,
+      "impactMarkers": 1
+    },
+    "vehicleB": {
+      "policyholder": 6,
+      "vehicle": 5,
+      "insurance": 10,
+      "driver": 9,
+      "damage": 2,
+      "circumstances": 18,
+      "impactMarkers": 1
+    },
+    "signatures": 2,
+    "total": 122
+  }
+}

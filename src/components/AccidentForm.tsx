@@ -4,6 +4,7 @@ import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
+import { exportToPDF } from '../utils/pdfExport';
 import type { AccidentReport } from '../utils/storage';
 import './AccidentForm.css';
 
@@ -241,6 +242,18 @@ const AccidentForm: React.FC = () => {
       updateField('signatures.driverB', signatureData);
     }
     setSignaturePadOpen(null);
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      const fileName = `accident_report_${new Date().toISOString().split('T')[0]}.pdf`;
+      await exportToPDF(fileName, formData);
+      setSavedMessage(t('form.exportPDF') + ' successful!');
+      setTimeout(() => setSavedMessage(''), 3000);
+    } catch (error) {
+      setSavedMessage(t('error.exportPDF') || 'Error exporting PDF');
+      setTimeout(() => setSavedMessage(''), 3000);
+    }
   };
 
   return (
@@ -496,8 +509,8 @@ const AccidentForm: React.FC = () => {
 
       {/* Form Controls */}
       <div className="form-controls">
-        <button className="btn-secondary" disabled type="button">
-          {t('common.placeholder') || 'Placeholder'}
+        <button className="btn-primary" type="button" onClick={handleExportPDF}>
+          📄 {t('form.exportPDF') || 'Export to PDF'}
         </button>
       </div>
 

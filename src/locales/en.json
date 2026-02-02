@@ -10,7 +10,8 @@
     "generateQR": "Generate QR Code",
     "scanQR": "Scan QR Code",
     "language": "Language",
-    "loadFromFile": "Load from File"
+    "loadFromFile": "Load from File",
+    "exportPDF": "Export to PDF"
   },
   "section1": {
     "title": "Accident Date and Location",
@@ -171,7 +172,8 @@
     "deletingTemplate": "Error deleting template",
     "qrTooLarge": "QR code data is too large. Please reduce the amount of text in fields like visible damage or additional notes.",
     "qrGeneration": "Error generating QR code",
-    "failedReconstructParts": "Failed to reconstruct data from QR parts. Please scan all parts again."
+    "failedReconstructParts": "Failed to reconstruct data from QR parts. Please scan all parts again.",
+    "exportPDF": "Error exporting PDF"
   },
   "confirm": {
     "deleteTemplate": "Are you sure you want to delete this template?",

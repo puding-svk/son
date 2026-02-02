@@ -10,7 +10,8 @@
     "generateQR": "Vygenerovať QR kód",
     "scanQR": "Skenovať QR kód",
     "language": "Jazyk",
-    "loadFromFile": "Načítať zo súboru"
+    "loadFromFile": "Načítať zo súboru",
+    "exportPDF": "Exportovať do PDF"
   },
   "section1": {
     "title": "Dátum a miesto nehody",
@@ -171,7 +172,8 @@
     "deletingTemplate": "Chyba pri mazaní šablóny",
     "qrTooLarge": "Údaje QR kódu sú príliš veľké. Prosím, znížte množstvo textu v poliach ako viditeľné poškodenie alebo dodatočné poznámky.",
     "qrGeneration": "Chyba pri generovaní QR kódu",
-    "failedReconstructParts": "Chyba pri obnovení údajov z časti QR kódu. Prosím, skenujte všetky časti znova."
+    "failedReconstructParts": "Chyba pri obnovení údajov z časti QR kódu. Prosím, skenujte všetky časti znova.",
+    "exportPDF": "Chyba pri exportovaní PDF"
   },
   "confirm": {
     "deleteTemplate": "Ste si istí, že chcete vymazať túto šablónu?",
