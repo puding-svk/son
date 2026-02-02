@@ -29,6 +29,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   const [rotatingArrowId, setRotatingArrowId] = useState<string | null>(null);
   const [_rotationStart, setRotationStart] = useState({ x: 0, y: 0, initialRotation: 0 });
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const [isEditable, setIsEditable] = useState(false);
 
   // Load background image
   useEffect(() => {
@@ -68,7 +69,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       canvas.removeEventListener('touchmove', touchMoveHandler);
       canvas.removeEventListener('touchend', touchEndHandler);
     };
-  }, [arrows, selectedArrowId, isDragging, rotatingArrowId, dragOffset]);
+  }, [arrows, selectedArrowId, isDragging, rotatingArrowId, dragOffset, isEditable]);
 
   const redrawCanvas = () => {
     const canvas = canvasRef.current;
@@ -173,7 +174,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !isEditable) return;
 
     // Don't create new arrow while rotating
     if (rotatingArrowId) return;
@@ -217,7 +218,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
   const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !isEditable) return;
 
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
@@ -358,6 +359,15 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     setSelectedArrowId(null);
   };
 
+  const handleDone = () => {
+    setSelectedArrowId(null);
+    setIsEditable(false);
+  };
+
+  const handleEdit = () => {
+    setIsEditable(true);
+  };
+
   const handleClearAll = () => {
     onArrowsChange([]);
     setSelectedArrowId(null);
@@ -380,6 +390,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
   const handleCanvasTouchStart = (e: TouchEvent) => {
     e.preventDefault();
+    if (!isEditable) return;
     const coords = getTouchCoordinates(e);
     if (!coords) return;
 
@@ -479,9 +490,11 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
   return (
     <div className="impact-marker-container">
-      <div className="impact-marker-info">
-        <p>{t('vehicle.impactMarkerInfo') || 'Click on the image to add impact markers. Click on a marker to select it.'}</p>
-      </div>
+      {isEditable && (
+        <div className="impact-marker-info">
+          <p>{t('vehicle.impactMarkerInfo') || 'Click on the image to add impact markers. Click on a marker to select it.'}</p>
+        </div>
+      )}
 
       <canvas
         ref={canvasRef}
@@ -496,7 +509,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       />
 
       <div className="impact-marker-controls">
-        {selectedArrowId && (
+        {isEditable && selectedArrowId && (
           <>
             <button
               type="button"
@@ -505,14 +518,6 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
               title={t('vehicle.rotateLeft') || 'Rotate Left'}
             >
               ↶ {t('vehicle.rotateLeft') || 'Rotate Left'}
-            </button>
-            <button
-              type="button"
-              className="btn-small"
-              onClick={() => setSelectedArrowId(null)}
-              title={t('common.done') || 'Done'}
-            >
-              ✓ {t('common.done') || 'Done'}
             </button>
             <button
               type="button"
@@ -532,7 +537,27 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
             </button>
           </>
         )}
-        {arrows.length > 0 && (
+        {!isEditable && (
+          <button
+            type="button"
+            className="btn-small"
+            onClick={handleEdit}
+            title={t('vehicle.editMarkers') || 'Edit Markers'}
+          >
+            {t('vehicle.editMarkers') || 'Edit'}
+          </button>
+        )}
+        {isEditable && (
+          <button
+            type="button"
+            className="btn-small"
+            onClick={handleDone}
+            title={t('common.done') || 'Done'}
+          >
+            ✓ {t('common.done') || 'Done'}
+          </button>
+        )}
+        {isEditable && arrows.length > 0 && (
           <button
             type="button"
             className="btn-small btn-delete"
@@ -544,10 +569,12 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
         )}
       </div>
 
-      <div className="impact-marker-status">
-        {t('vehicle.totalMarkers') || 'Total markers'}: {arrows.length}
-        {selectedArrowId && <span> | {t('vehicle.selected') || 'Selected'}</span>}
-      </div>
+      {isEditable && (
+        <div className="impact-marker-status">
+          {t('vehicle.totalMarkers') || 'Total markers'}: {arrows.length}
+          {selectedArrowId && <span> | {t('vehicle.selected') || 'Selected'}</span>}
+        </div>
+      )}
     </div>
   );
 };
