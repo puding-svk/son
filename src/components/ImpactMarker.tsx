@@ -27,9 +27,13 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null);
   const [rotatingArrowId, setRotatingArrowId] = useState<string | null>(null);
-  const [_rotationStart, setRotationStart] = useState({ x: 0, y: 0, initialRotation: 0 });
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [isEditable, setIsEditable] = useState(false);
+  const touchStartCoordsRef = useRef<{ x: number; y: number } | null>(null);
+  const isTouchScrollingRef = useRef(false);
+  const wasDraggingRef = useRef(false);
+  const selectedArrowIdRef = useRef<string | null>(null);
+  const justHandledTouchRef = useRef(false);
 
   // Load background image
   useEffect(() => {
@@ -37,7 +41,6 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     const basePath = import.meta.env.BASE_URL || '/';
     img.src = basePath + 'impactMarker-background.png?t=' + Date.now();
     img.onload = () => {
-      console.log('Vehicle background loaded');
       imgRef.current = img;
       redrawCanvas();
     };
@@ -45,6 +48,11 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       console.error('Failed to load vehicle background from ' + basePath + 'impactMarker-background.png');
     };
   }, []);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedArrowIdRef.current = selectedArrowId;
+  }, [selectedArrowId]);
 
   // Redraw canvas whenever arrows change or selection changes
   useEffect(() => {
@@ -176,8 +184,23 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     const canvas = canvasRef.current;
     if (!canvas || !isEditable) return;
 
+    // Don't process click if we just handled a touch event
+    if (justHandledTouchRef.current) {
+      justHandledTouchRef.current = false;
+      return;
+    }
+
     // Don't create new arrow while rotating
     if (rotatingArrowId) return;
+    
+    // Don't process click if we just finished dragging
+    if (wasDraggingRef.current) {
+      wasDraggingRef.current = false;
+      return;
+    }
+    
+    // Don't create if the last touch was a scroll
+    if (isTouchScrollingRef.current) return;
 
     const rect = canvas.getBoundingClientRect();
     // Scale coordinates to match canvas internal resolution
@@ -191,18 +214,15 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
     if (clickedArrow) {
       // Just select the arrow, don't start dragging yet
-      console.log('Arrow selected:', clickedArrow.id);
       setSelectedArrowId(clickedArrow.id);
       setIsDragging(false); // Don't start dragging on click
     } else {
       // If an arrow is already selected, deselect it first
       // Don't create a new arrow immediately
-      if (selectedArrowId) {
-        console.log('Deselecting arrow:', selectedArrowId);
+      if (selectedArrowIdRef.current) {
         setSelectedArrowId(null);
       } else {
         // Create new arrow at exact click position (only if nothing was selected)
-        console.log('Creating new arrow at:', x, y);
         const newArrow: ImpactArrow = {
           id: `arrow-${Date.now()}-${Math.random()}`,
           x,
@@ -230,11 +250,6 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     const isOnRotationRegion = getRotationHandleAtPoint(x, y);
     if (isOnRotationRegion && selectedArrowId) {
       setRotatingArrowId(selectedArrowId);
-      setRotationStart({
-        x,
-        y,
-        initialRotation: arrows.find((a) => a.id === selectedArrowId)?.rotation || 0,
-      });
       canvas.style.cursor = 'grabbing';
       return;
     }
@@ -245,12 +260,12 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     // Check if mouse down is on the selected arrow
     const clickedArrow = getArrowAtPoint(x, y);
     if (clickedArrow && clickedArrow.id === selectedArrowId) {
+      wasDraggingRef.current = false; // Reset before starting new drag
       setIsDragging(true);
       setDragOffset({
         x: clickedArrow.x - x,
         y: clickedArrow.y - y,
       });
-      console.log('Started dragging arrow:', selectedArrowId);
     }
   };
 
@@ -304,6 +319,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
 
     // Handle dragging
     if (isDragging && selectedArrowId) {
+      wasDraggingRef.current = true;
       const updatedArrows = arrows.map((arrow) =>
         arrow.id === selectedArrowId
           ? {
@@ -318,6 +334,9 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   };
 
   const handleCanvasMouseUp = () => {
+    if (isDragging) {
+      wasDraggingRef.current = true;
+    }
     setIsDragging(false);
     setRotatingArrowId(null);
     const canvas = canvasRef.current;
@@ -389,28 +408,30 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   };
 
   const handleCanvasTouchStart = (e: TouchEvent) => {
-    e.preventDefault();
-    if (!isEditable) return;
     const coords = getTouchCoordinates(e);
     if (!coords) return;
 
     const { x, y } = coords;
+    
+    // Store initial touch coordinates to detect scrolling
+    touchStartCoordsRef.current = { x, y };
+    isTouchScrollingRef.current = false;
+
+    // If locked, don't process interactions
+    if (!isEditable) return;
 
     // Check if touching rotation region
     const isOnRotationRegion = getRotationHandleAtPoint(x, y);
     if (isOnRotationRegion && selectedArrowId) {
+      e.preventDefault();
       setRotatingArrowId(selectedArrowId);
-      setRotationStart({
-        x,
-        y,
-        initialRotation: arrows.find((a) => a.id === selectedArrowId)?.rotation || 0,
-      });
       return;
     }
 
     // Check if touching existing arrow
     const touchedArrow = getArrowAtPoint(x, y);
     if (touchedArrow) {
+      e.preventDefault();
       // If it's the already selected arrow, prepare to drag
       if (touchedArrow.id === selectedArrowId) {
         setIsDragging(true);
@@ -425,29 +446,35 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       return;
     }
 
-    // Touching empty space
-    if (selectedArrowId) {
-      // Deselect if something was selected
-      setSelectedArrowId(null);
-    } else {
-      // Create new arrow only if nothing was selected
-      const newArrow: ImpactArrow = {
-        id: `arrow-${Date.now()}-${Math.random()}`,
-        x,
-        y,
-        rotation: 0,
-      };
-      onArrowsChange([...arrows, newArrow]);
-      setSelectedArrowId(newArrow.id);
-    }
+    // Touching empty space - defer preventDefault until we know it's not a scroll
   };
 
   const handleCanvasTouchMove = (e: TouchEvent) => {
-    e.preventDefault();
     const coords = getTouchCoordinates(e);
     if (!coords) return;
 
     const { x, y } = coords;
+
+    // Detect if this is a scroll/swipe by checking distance from initial touch point
+    // But NOT if we've already started rotating or dragging
+    if (touchStartCoordsRef.current && !isTouchScrollingRef.current && !rotatingArrowId && !isDragging) {
+      const dx = x - touchStartCoordsRef.current.x;
+      const dy = y - touchStartCoordsRef.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // If movement is greater than 5px, it's a scroll/swipe, not a tap
+      if (distance > 5) {
+        isTouchScrollingRef.current = true;
+        return; // Allow scroll to proceed
+      }
+    }
+
+    // If it's being detected as a scroll, don't prevent default
+    if (isTouchScrollingRef.current) {
+      return;
+    }
+
+    e.preventDefault();
 
     // Handle rotation
     if (rotatingArrowId) {
@@ -484,8 +511,51 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   };
 
   const handleCanvasTouchEnd = () => {
+    // Mark that we handled a touch to prevent click from firing
+    justHandledTouchRef.current = true;
+
+    // Don't process touch end if we were dragging - the arrow should stay selected
+    if (isDragging) {
+      setIsDragging(false);
+      setRotatingArrowId(null);
+      touchStartCoordsRef.current = null;
+      isTouchScrollingRef.current = false;
+      return;
+    }
+
+    // Only create new markers if editable and it wasn't a scroll
+    if (isEditable && !isTouchScrollingRef.current && touchStartCoordsRef.current) {
+      const coords = touchStartCoordsRef.current;
+      const { x, y } = coords;
+
+      // Check if touching empty space (not on an arrow or rotation handle)
+      const touchedArrow = getArrowAtPoint(x, y);
+      const isOnRotationRegion = getRotationHandleAtPoint(x, y);
+
+      // Only create a new marker if in empty space
+      if (!touchedArrow && !isOnRotationRegion) {
+        if (selectedArrowIdRef.current) {
+          // Deselect if something was selected
+          setSelectedArrowId(null);
+        } else {
+          // Create new arrow only if nothing was selected and it's not a scroll
+          const newArrow: ImpactArrow = {
+            id: `arrow-${Date.now()}-${Math.random()}`,
+            x,
+            y,
+            rotation: 0,
+          };
+          onArrowsChange([...arrows, newArrow]);
+          setSelectedArrowId(newArrow.id);
+        }
+      }
+    }
+
+    // Always clean up dragging and rotating state
     setIsDragging(false);
     setRotatingArrowId(null);
+    touchStartCoordsRef.current = null;
+    isTouchScrollingRef.current = false;
   };
 
   return (
