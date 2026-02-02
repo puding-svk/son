@@ -1552,10 +1552,20 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                       </button>
                       {safeQRCode && (
                         <QRCodeErrorBoundary>
-                          <SafeQRCodeSVG 
-                            value={safeQRCode} 
-                            size={Math.min(window.innerWidth, window.innerHeight) - 60}
-                          />
+                          <div 
+                            onClick={() => {
+                              if (qrPartCount > 1) {
+                                // Cycle to next part
+                                setCurrentPartIndex((prev) => (prev + 1) % qrPartCount);
+                              }
+                            }}
+                            style={{ cursor: qrPartCount > 1 ? 'pointer' : 'default' }}
+                          >
+                            <SafeQRCodeSVG 
+                              value={safeQRCode} 
+                              size={Math.min(window.innerWidth, window.innerHeight) - 60}
+                            />
+                          </div>
                         </QRCodeErrorBoundary>
                       )}
                     </div>
