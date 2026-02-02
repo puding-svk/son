@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
+import { SignaturePad } from './SignaturePad';
 import type { AccidentReport } from '../utils/storage';
 import './AccidentForm.css';
 
@@ -177,6 +178,10 @@ const initialState: FormState = {
     circumstances: getDefaultCircumstances(),
     additionalNotes: '',
   },
+  signatures: {
+    driverA: '',
+    driverB: '',
+  },
   createdAt: '',
 };
 
@@ -188,6 +193,7 @@ const AccidentForm: React.FC = () => {
     mode: 'generate',
   });
   const [savedMessage, setSavedMessage] = useState('');
+  const [signaturePadOpen, setSignaturePadOpen] = useState<'A' | 'B' | null>(null);
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
@@ -226,6 +232,15 @@ const AccidentForm: React.FC = () => {
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
+  };
+
+  const handleSignatureSave = (signatureData: string) => {
+    if (signaturePadOpen === 'A') {
+      updateField('signatures.driverA', signatureData);
+    } else if (signaturePadOpen === 'B') {
+      updateField('signatures.driverB', signatureData);
+    }
+    setSignaturePadOpen(null);
   };
 
   return (
@@ -409,8 +424,33 @@ const AccidentForm: React.FC = () => {
                 <p className="signature-sublabel">{formData.vehicleA.driver.firstname} {formData.vehicleA.driver.surname}</p>
               </div>
               <div className="signature-canvas-wrapper">
-                <div className="signature-placeholder"></div>
-                <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+                {formData.signatures.driverA ? (
+                  <div className="signature-display">
+                    <img src={formData.signatures.driverA} alt="Driver A Signature" className="signature-image" />
+                    <button
+                      className="signature-edit-btn"
+                      onClick={() => setSignaturePadOpen('A')}
+                      type="button"
+                    >
+                      ✏️ {t('common.edit') || 'Edit'}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div 
+                      className="signature-placeholder"
+                      onClick={() => setSignaturePadOpen('A')}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setSignaturePadOpen('A');
+                        }
+                      }}
+                    ></div>
+                    <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -421,8 +461,33 @@ const AccidentForm: React.FC = () => {
                 <p className="signature-sublabel">{formData.vehicleB.driver.firstname} {formData.vehicleB.driver.surname}</p>
               </div>
               <div className="signature-canvas-wrapper">
-                <div className="signature-placeholder"></div>
-                <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+                {formData.signatures.driverB ? (
+                  <div className="signature-display">
+                    <img src={formData.signatures.driverB} alt="Driver B Signature" className="signature-image" />
+                    <button
+                      className="signature-edit-btn"
+                      onClick={() => setSignaturePadOpen('B')}
+                      type="button"
+                    >
+                      ✏️ {t('common.edit') || 'Edit'}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div 
+                      className="signature-placeholder"
+                      onClick={() => setSignaturePadOpen('B')}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setSignaturePadOpen('B');
+                        }
+                      }}
+                    ></div>
+                    <p className="signature-instruction">{t('signature.sign') || 'Sign here'}</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -443,6 +508,19 @@ const AccidentForm: React.FC = () => {
         onLoadData={handleLoadQR}
         onClose={() => setQrModal({ ...qrModal, isOpen: false })}
       />
+
+      {signaturePadOpen && (
+        <SignaturePad
+          driverLabel={signaturePadOpen}
+          driverName={
+            signaturePadOpen === 'A'
+              ? `${formData.vehicleA.driver.firstname} ${formData.vehicleA.driver.surname}`
+              : `${formData.vehicleB.driver.firstname} ${formData.vehicleB.driver.surname}`
+          }
+          onClose={() => setSignaturePadOpen(null)}
+          onSave={handleSignatureSave}
+        />
+      )}
     </div>
   );
 };
