@@ -214,5 +214,9 @@
       "cancel": "Zrušiť",
       "save": "Uložiť podpis"
     }
+  },
+  "months": {
+    "short": ["Jan", "Feb", "Mar", "Apr", "Maj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"],
+    "full": ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"]
   }
 }

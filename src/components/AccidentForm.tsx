@@ -4,6 +4,7 @@ import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
+import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
 import type { AccidentReport } from '../utils/storage';
 import './AccidentForm.css';
 
@@ -496,8 +497,20 @@ const AccidentForm: React.FC = () => {
 
       {/* Form Controls */}
       <div className="form-controls">
-        <button className="btn-secondary" disabled type="button">
-          {t('common.placeholder') || 'Placeholder'}
+        <button
+          className="btn-primary"
+          type="button"
+          onClick={async () => {
+            try {
+              const fileName = `accident_report_${new Date().toISOString().split('T')[0]}.pdf`;
+              await exportToPDFWithTemplate(fileName, formData, i18n.language);
+            } catch (error) {
+              console.error('PDF export failed:', error);
+              alert(t('message.exportError') || 'Failed to export PDF');
+            }
+          }}
+        >
+          {t('common.placeholder') || 'Export to PDF'}
         </button>
       </div>
 
