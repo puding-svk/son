@@ -303,7 +303,7 @@ const AccidentForm: React.FC = () => {
             <label>{t('section1.location')}</label>
             <input
               type="text"
-              maxLength={140}
+              maxLength={100}
               value={formData.section1.location}
               onChange={(e) => updateField('section1.location', e.target.value)}
             />
