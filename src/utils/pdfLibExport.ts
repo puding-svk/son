@@ -1,7 +1,6 @@
 import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
-import { getAdaptiveFontSize } from './pdfFontSizer';
 
 // Map locales for easy access
 const locales = {
@@ -29,9 +28,13 @@ export const exportToPDFWithTemplate = async (
 
     const templateBuffer = await templateResponse.arrayBuffer();
     
-    // Load the PDF document
     const pdfDoc = await PDFDocument.load(templateBuffer);
     const form = pdfDoc.getForm();
+    
+    // Disable appearance updates to avoid WinAnsi encoding errors with special characters
+    form.updateFieldAppearances = () => {
+      // No-op: skip appearance updates
+    };
 
     // Get form data from localStorage if not provided
     if (!formData) {
@@ -115,13 +118,6 @@ export const exportToPDFWithTemplate = async (
       const locationValue = formData.section1?.location || '';
       
       if (locationValue && locationField instanceof PDFTextField) {
-        const fontSize = getAdaptiveFontSize(
-          locationValue,
-          { fontSize: 9.6, maxLength: 20 },
-          { fontSize: 6, maxLength: 64 },
-          { fontSize: 4, maxLength: 144 }
-        );
-        locationField.setFontSize(fontSize);
         locationField.setText(locationValue);
       }
     } catch (error) {
@@ -134,14 +130,6 @@ export const exportToPDFWithTemplate = async (
       const cityValue = formData.section1?.city || '';
       
       if (cityValue && cityField instanceof PDFTextField) {
-        const fontSize = getAdaptiveFontSize(
-          cityValue,
-          { fontSize: 9.6, maxLength: 7 },
-          { fontSize: 6, maxLength: 11 },
-          { fontSize: 4, maxLength: 17 },
-          { fontSize: 3, maxLength: 30 }
-        );
-        cityField.setFontSize(fontSize);
         cityField.setText(cityValue);
       }
     } catch (error) {
@@ -212,8 +200,8 @@ export const exportToPDFWithTemplate = async (
       console.warn('Field section2_witnesses not found in PDF template:', error);
     }
 
-    // Flatten the form so fields become immutable in the final PDF
-    form.flatten();
+    // Note: Form flattening is disabled for now due to encoding issues with special characters
+    // The PDF fields will remain interactive but editable text with proper Unicode support
 
     // Save the PDF
     const pdfBytes = await pdfDoc.save();
