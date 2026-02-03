@@ -1,6 +1,7 @@
 import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
+import { getAdaptiveFontSize } from './pdfFontSizer';
 
 // Map locales for easy access
 const locales = {
@@ -114,7 +115,17 @@ export const exportToPDFWithTemplate = async (
       const locationValue = formData.section1?.location || '';
       
       if (locationValue && locationField instanceof PDFTextField) {
-        locationField.setFontSize(9.6);
+        // Use adaptive font sizing based on text length
+        // Normal: up to 25 chars at 9.6pt
+        // Medium: up to 50 chars at 8pt
+        // Small: 51+ chars at 6.5pt
+        const fontSize = getAdaptiveFontSize(
+          locationValue,
+          { fontSize: 9.6, maxLength: 20 },
+          { fontSize: 6, maxLength: 32 },
+          { fontSize: 4, maxLength: 80 }
+        );
+        locationField.setFontSize(fontSize);
         locationField.setText(locationValue);
       }
     } catch (error) {
