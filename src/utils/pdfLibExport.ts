@@ -1,6 +1,7 @@
 import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
+import { getImpactMarkerImage } from './storage';
 
 // Map locales for easy access
 const locales = {
@@ -846,6 +847,93 @@ export const exportToPDFWithTemplate = async (
       }
     } catch (error) {
       console.warn('Field vehicleB_driver_licenceValidUntil not found:', error);
+    }
+
+    // ===== IMPACT MARKERS (Vehicle A and B) =====
+    
+    // Helper function to embed impact marker image
+    const embedImpactMarkerImage = async (vehicleLabel: string, imageData: string | undefined, fieldName: string) => {
+      if (!imageData) {
+        return; // No image data to embed
+      }
+
+      try {
+        // Extract base64 data from data URL if necessary
+        let base64Data = imageData;
+        if (base64Data.startsWith('data:image/png;base64,')) {
+          base64Data = base64Data.replace('data:image/png;base64,', '');
+        }
+
+        // Embed the PNG image
+        const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+        const embeddedImage = await pdfDoc.embedPng(imageBytes);
+
+        // Find the form field to embed image into
+        const field = form.getField(fieldName);
+        if (!field) {
+          console.warn(`Field ${fieldName} not found in PDF form`);
+          return;
+        }
+
+        // Get image dimensions (maintain aspect ratio)
+        const originalWidth = embeddedImage.width;
+        const originalHeight = embeddedImage.height;
+        const maxWidth = 180; // Max width for the image
+        const maxHeight = 180; // Max height for the image
+
+        // Calculate scaled dimensions
+        let width = originalWidth;
+        let height = originalHeight;
+        const aspectRatio = originalWidth / originalHeight;
+
+        if (width > maxWidth) {
+          width = maxWidth;
+          height = width / aspectRatio;
+        }
+        if (height > maxHeight) {
+          height = maxHeight;
+          width = height * aspectRatio;
+        }
+
+        // Get the first page to reference for image placement
+        const pages = pdfDoc.getPages();
+        if (pages.length === 0) {
+          console.warn('No pages in PDF to embed impact marker');
+          return;
+        }
+
+        const firstPage = pages[0];
+        const pageHeight = firstPage.getHeight();
+        const pageWidth = firstPage.getWidth();
+
+        // Position the image on the right side of the page
+        const xPosition = pageWidth - width - 20; // Right side with 20pt margin
+        const yPosition = pageHeight - height - 20; // Top area with 20pt margin
+
+        // Draw the image on the page
+        firstPage.drawImage(embeddedImage, {
+          x: xPosition,
+          y: yPosition,
+          width: width,
+          height: height,
+        });
+
+        console.log(`Embedded impact marker image for ${vehicleLabel}`);
+      } catch (error) {
+        console.warn(`Failed to embed impact marker image for ${vehicleLabel}:`, error);
+      }
+    };
+
+    // Embed impact marker images for both vehicles
+    // Retrieve images from IndexedDB storage instead of form data
+    const vehicleAImage = await getImpactMarkerImage('vehicleA');
+    if (vehicleAImage) {
+      await embedImpactMarkerImage('vehicleA', vehicleAImage, 'vehicleA_impactMarkers');
+    }
+
+    const vehicleBImage = await getImpactMarkerImage('vehicleB');
+    if (vehicleBImage) {
+      await embedImpactMarkerImage('vehicleB', vehicleBImage, 'vehicleB_impactMarkers');
     }
 
     // Note: Form flattening is disabled for now due to encoding issues with special characters

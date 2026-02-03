@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VehicleModal } from './VehicleModal';
 import { ImpactMarker, type ImpactArrow } from './ImpactMarker';
+import { saveImpactMarkerImage } from '../utils/storage';
 import './VehicleSection.css';
 
 interface VehicleData {
@@ -499,9 +500,15 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         <legend>{t('vehicle.section10')}</legend>
         <ImpactMarker
           arrows={impactMarkers}
-          onArrowsChange={(newArrows) => {
+          onArrowsChange={(newArrows, imageData) => {
             setImpactMarkers(newArrows);
             updateField('impactMarkers', newArrows);
+            // Save impact marker image to IndexedDB instead of form data
+            if (imageData) {
+              saveImpactMarkerImage(vehicleLabel, imageData).catch(error => 
+                console.error('Failed to save impact marker image:', error)
+              );
+            }
           }}
         />
       </fieldset>
