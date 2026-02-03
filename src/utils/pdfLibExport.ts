@@ -19,7 +19,7 @@ export const exportToPDFWithTemplate = async (
 ) => {
   try {
     // Fetch the PDF template
-    const templatePath = import.meta.env.BASE_URL + '_misc_files/sprava_o_nehode_temp4.pdf';
+    const templatePath = import.meta.env.BASE_URL + '_misc_files/sprava_o_nehode_temp5.pdf';
     const templateResponse = await fetch(templatePath);
     
     if (!templateResponse.ok) {
@@ -106,6 +106,96 @@ export const exportToPDFWithTemplate = async (
       }
     } catch (error) {
       console.warn('Section2 injuries checkboxes not found in PDF template:', error);
+    }
+
+    // Fill the section1_location field
+    try {
+      const locationField = form.getField('section1_location') as PDFTextField;
+      const locationValue = formData.section1?.location || '';
+      
+      if (locationValue && locationField instanceof PDFTextField) {
+        locationField.setFontSize(9.6);
+        locationField.setText(locationValue);
+      }
+    } catch (error) {
+      console.warn('Field section1_location not found in PDF template:', error);
+    }
+
+    // Fill the section1_city field
+    try {
+      const cityField = form.getField('section1_city') as PDFTextField;
+      const cityValue = formData.section1?.city || '';
+      
+      if (cityValue && cityField instanceof PDFTextField) {
+        cityField.setFontSize(9.6);
+        cityField.setText(cityValue);
+      }
+    } catch (error) {
+      console.warn('Field section1_city not found in PDF template:', error);
+    }
+
+    // Fill the section1_state field
+    try {
+      const stateField = form.getField('section1_state') as PDFTextField;
+      const stateValue = formData.section1?.state || '';
+      
+      if (stateValue && stateField instanceof PDFTextField) {
+        stateField.setFontSize(9.6);
+        stateField.setText(stateValue);
+      }
+    } catch (error) {
+      console.warn('Field section1_state not found in PDF template:', error);
+    }
+
+    // Fill the section2_damageOtherVehicles checkboxes
+    try {
+      const damageOtherVehiclesValue = formData.section2?.damageOtherVehicles || '';
+      
+      if (damageOtherVehiclesValue === 'yes') {
+        const damageYesField = form.getField('section2_damageOtherVehicles_yes');
+        if (damageYesField instanceof PDFCheckBox) {
+          damageYesField.check();
+        }
+      } else if (damageOtherVehiclesValue === 'no') {
+        const damageNoField = form.getField('section2_damageOtherVehicles_no');
+        if (damageNoField instanceof PDFCheckBox) {
+          damageNoField.check();
+        }
+      }
+    } catch (error) {
+      console.warn('Section2 damageOtherVehicles checkboxes not found in PDF template:', error);
+    }
+
+    // Fill the section2_damageOtherItems checkboxes
+    try {
+      const damageOtherItemsValue = formData.section2?.damageOtherItems || '';
+      
+      if (damageOtherItemsValue === 'yes') {
+        const damageItemsYesField = form.getField('section2_damageOtherItems_yes');
+        if (damageItemsYesField instanceof PDFCheckBox) {
+          damageItemsYesField.check();
+        }
+      } else if (damageOtherItemsValue === 'no') {
+        const damageItemsNoField = form.getField('section2_damageOtherItems_no');
+        if (damageItemsNoField instanceof PDFCheckBox) {
+          damageItemsNoField.check();
+        }
+      }
+    } catch (error) {
+      console.warn('Section2 damageOtherItems checkboxes not found in PDF template:', error);
+    }
+
+    // Fill the section2_witnesses field
+    try {
+      const witnessesField = form.getField('section2_witnesses') as PDFTextField;
+      const witnessesValue = formData.section2?.witnesses || '';
+      
+      if (witnessesValue && witnessesField instanceof PDFTextField) {
+        witnessesField.setFontSize(9.6);
+        witnessesField.setText(witnessesValue);
+      }
+    } catch (error) {
+      console.warn('Field section2_witnesses not found in PDF template:', error);
     }
 
     // Flatten the form so fields become immutable in the final PDF
