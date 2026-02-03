@@ -852,7 +852,7 @@ export const exportToPDFWithTemplate = async (
     // ===== IMPACT MARKERS (Vehicle A and B) =====
     
     // Helper function to embed impact marker image
-    const embedImpactMarkerImage = async (vehicleLabel: string, imageData: string | undefined, fieldName: string) => {
+    const embedImpactMarkerImage = async (vehicleLabel: string, imageData: string | undefined) => {
       if (!imageData) {
         return; // No image data to embed
       }
@@ -868,34 +868,6 @@ export const exportToPDFWithTemplate = async (
         const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
         const embeddedImage = await pdfDoc.embedPng(imageBytes);
 
-        // Find the form field to embed image into
-        const field = form.getField(fieldName);
-        if (!field) {
-          console.warn(`Field ${fieldName} not found in PDF form`);
-          return;
-        }
-
-        // Get image dimensions (maintain aspect ratio)
-        const originalWidth = embeddedImage.width;
-        const originalHeight = embeddedImage.height;
-        const maxWidth = 180; // Max width for the image
-        const maxHeight = 180; // Max height for the image
-
-        // Calculate scaled dimensions
-        let width = originalWidth;
-        let height = originalHeight;
-        const aspectRatio = originalWidth / originalHeight;
-
-        if (width > maxWidth) {
-          width = maxWidth;
-          height = width / aspectRatio;
-        }
-        if (height > maxHeight) {
-          height = maxHeight;
-          width = height * aspectRatio;
-        }
-
-        // Get the first page to reference for image placement
         const pages = pdfDoc.getPages();
         if (pages.length === 0) {
           console.warn('No pages in PDF to embed impact marker');
@@ -903,22 +875,35 @@ export const exportToPDFWithTemplate = async (
         }
 
         const firstPage = pages[0];
-        const pageHeight = firstPage.getHeight();
-        const pageWidth = firstPage.getWidth();
 
-        // Position the image on the right side of the page
-        const xPosition = pageWidth - width - 20; // Right side with 20pt margin
-        const yPosition = pageHeight - height - 20; // Top area with 20pt margin
+        // Image dimensions (you can adjust these values)
+        const imageWidth = 93;
+        const imageHeight = 70;
+
+        // Position coordinates (x, y) - adjust these to match your PDF layout
+        // IMPORTANT: In PDF coordinates, y=0 is at the BOTTOM, not the top
+        let xPosition: number;
+        let yPosition: number;
+
+        if (vehicleLabel === 'vehicleA') {
+          // vehicleA position - adjust these coordinates
+          xPosition = 30;    // Distance from left edge
+          yPosition = 140;   // Distance from bottom edge
+        } else {
+          // vehicleB position - adjust these coordinates
+          xPosition = 472;   // Distance from left edge
+          yPosition = 140;   // Distance from bottom edge
+        }
 
         // Draw the image on the page
         firstPage.drawImage(embeddedImage, {
           x: xPosition,
           y: yPosition,
-          width: width,
-          height: height,
+          width: imageWidth,
+          height: imageHeight,
         });
 
-        console.log(`Embedded impact marker image for ${vehicleLabel}`);
+        console.log(`Embedded impact marker image for ${vehicleLabel} at position (${xPosition}, ${yPosition})`);
       } catch (error) {
         console.warn(`Failed to embed impact marker image for ${vehicleLabel}:`, error);
       }
@@ -928,12 +913,12 @@ export const exportToPDFWithTemplate = async (
     // Retrieve images from IndexedDB storage instead of form data
     const vehicleAImage = await getImpactMarkerImage('vehicleA');
     if (vehicleAImage) {
-      await embedImpactMarkerImage('vehicleA', vehicleAImage, 'vehicleA_impactMarkers');
+      await embedImpactMarkerImage('vehicleA', vehicleAImage);
     }
 
     const vehicleBImage = await getImpactMarkerImage('vehicleB');
     if (vehicleBImage) {
-      await embedImpactMarkerImage('vehicleB', vehicleBImage, 'vehicleB_impactMarkers');
+      await embedImpactMarkerImage('vehicleB', vehicleBImage);
     }
 
     // Note: Form flattening is disabled for now due to encoding issues with special characters
