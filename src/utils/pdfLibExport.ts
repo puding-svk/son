@@ -20,7 +20,7 @@ export const exportToPDFWithTemplate = async (
 ) => {
   try {
     // Fetch the PDF template
-    const templatePath = import.meta.env.BASE_URL + '_misc_files/sprava_o_nehode_temp5.pdf';
+    const templatePath = import.meta.env.BASE_URL + '_misc_files/sprava_o_nehode_temp7.pdf';
     const templateResponse = await fetch(templatePath);
     
     if (!templateResponse.ok) {
@@ -115,15 +115,11 @@ export const exportToPDFWithTemplate = async (
       const locationValue = formData.section1?.location || '';
       
       if (locationValue && locationField instanceof PDFTextField) {
-        // Use adaptive font sizing based on text length
-        // Normal: up to 25 chars at 9.6pt
-        // Medium: up to 50 chars at 8pt
-        // Small: 51+ chars at 6.5pt
         const fontSize = getAdaptiveFontSize(
           locationValue,
           { fontSize: 9.6, maxLength: 20 },
-          { fontSize: 6, maxLength: 32 },
-          { fontSize: 4, maxLength: 80 }
+          { fontSize: 6, maxLength: 64 },
+          { fontSize: 4, maxLength: 144 }
         );
         locationField.setFontSize(fontSize);
         locationField.setText(locationValue);
@@ -138,7 +134,14 @@ export const exportToPDFWithTemplate = async (
       const cityValue = formData.section1?.city || '';
       
       if (cityValue && cityField instanceof PDFTextField) {
-        cityField.setFontSize(9.6);
+        const fontSize = getAdaptiveFontSize(
+          cityValue,
+          { fontSize: 9.6, maxLength: 7 },
+          { fontSize: 6, maxLength: 11 },
+          { fontSize: 4, maxLength: 17 },
+          { fontSize: 3, maxLength: 30 }
+        );
+        cityField.setFontSize(fontSize);
         cityField.setText(cityValue);
       }
     } catch (error) {
