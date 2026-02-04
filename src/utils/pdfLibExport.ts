@@ -1025,22 +1025,60 @@ export const exportToPDFWithTemplate = async (
       console.warn('Field vehicleB_circumstances_numOfSelected not found:', error);
     }
 
-    // ===== PARKED STRIKE THROUGH =====
-    // Fill with 8 dashes if neither vehicle has parked selected
-    const vehicleAParked = formData.vehicleA?.circumstances?.parked || formData.vehicleA?.circumstances?.stopped;
-    const vehicleBParked = formData.vehicleB?.circumstances?.parked || formData.vehicleB?.circumstances?.stopped;
+    // ===== STRIKE THROUGH FIELDS FOR PARKED AND STOPPED =====
+
+    const vehicleAParked = formData.vehicleA?.circumstances?.parked;
+    const vehicleAStopped = formData.vehicleA?.circumstances?.stopped;
+    const vehicleBParked = formData.vehicleB?.circumstances?.parked;
+    const vehicleBStopped = formData.vehicleB?.circumstances?.stopped;
+
+    // Check if any vehicle has parked or stopped selected
+    const anyParked = vehicleAParked || vehicleBParked;
+    const anyStopped = vehicleAStopped || vehicleBStopped;
+    const anyParkedOrStopped = anyParked || anyStopped;
 
     try {
       const parkedStrikeThroughField = form.getField('parked_strikeThrough') as PDFTextField;
       if (parkedStrikeThroughField instanceof PDFTextField) {
-        if (!vehicleAParked && !vehicleBParked) {
-          parkedStrikeThroughField.setText('--------');
-        } else {
-          parkedStrikeThroughField.setText('');
+        // Default to dashes
+        let parkedText = '--------';
+        
+        // If any parked is selected clear parked
+        if (anyParked) {
+          parkedText = '';
         }
+        // If no parked or stopped selected at all, clear parked
+        else if (!anyParkedOrStopped) {
+          parkedText = '';
+        }
+        // Otherwise keep the dashes (only parked selected, or parked selected but not all have stopped)
+        
+        parkedStrikeThroughField.setText(parkedText);
       }
     } catch (error) {
       console.warn('Field parked_strikeThrough not found:', error);
+    }
+
+    try {
+      const stoppedStrikeThroughField = form.getField('stopped_strikeThrough') as PDFTextField;
+      if (stoppedStrikeThroughField instanceof PDFTextField) {
+        // Default to dashes
+        let stoppedText = '--------';
+        
+        // If any stopped is selected clear stopped
+        if (anyStopped) {
+          stoppedText = '';
+        }
+        // If no parked or stopped selected at all, clear stopped
+        else if (!anyParkedOrStopped) {
+          stoppedText = '';
+        }
+        // Otherwise keep the dashes (only stopped selected, or stopped selected but not all have parked)
+        
+        stoppedStrikeThroughField.setText(stoppedText);
+      }
+    } catch (error) {
+      console.warn('Field stopped_strikeThrough not found:', error);
     }
 
     // ===== IMPACT MARKERS (Vehicle A and B) =====
