@@ -107,7 +107,8 @@ export interface AccidentReport {
 const DB_NAME = 'AccidentReportDB';
 const TEMPLATE_STORE_NAME = 'vehicleTemplates';
 const IMPACT_MARKER_STORE_NAME = 'impactMarkerImages';
-const DB_VERSION = 12;
+const SIGNATURES_STORE_NAME = 'signatures';
+const DB_VERSION = 13;
 
 export const initializeDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -131,6 +132,10 @@ export const initializeDB = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(IMPACT_MARKER_STORE_NAME)) {
         console.log('Creating IMPACT_MARKER_STORE_NAME');
         db.createObjectStore(IMPACT_MARKER_STORE_NAME);
+      }
+      if (!db.objectStoreNames.contains(SIGNATURES_STORE_NAME)) {
+        console.log('Creating SIGNATURES_STORE_NAME');
+        db.createObjectStore(SIGNATURES_STORE_NAME);
       }
     };
   });
@@ -625,6 +630,102 @@ export const clearAllImpactMarkerImages = async (): Promise<void> => {
     });
   } catch (error) {
     console.error('Failed to clear impact marker images:', error);
+    throw error;
+  }
+};
+
+/**
+ * Save signature image to IndexedDB
+ * @param signatureLabel 'driverA' or 'driverB'
+ * @param imageData base64 PNG data URL
+ */
+export const saveSignatureImage = async (signatureLabel: 'driverA' | 'driverB', imageData: string): Promise<void> => {
+  try {
+    const db = await initializeDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
+      
+      const data = {
+        signatureLabel,
+        imageData,
+        savedAt: new Date().toISOString(),
+      };
+      
+      // Use signatureLabel as key to replace any existing signature
+      const request = store.put(data, signatureLabel);
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to save signature image:', error);
+    throw error;
+  }
+};
+
+/**
+ * Retrieve signature image from IndexedDB
+ * @param signatureLabel 'driverA' or 'driverB'
+ * @returns base64 PNG data URL or null if not found
+ */
+export const getSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<string | null> => {
+  try {
+    const db = await initializeDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readonly');
+      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
+      const request = store.get(signatureLabel);
+      
+      request.onsuccess = () => {
+        const result = request.result;
+        resolve(result ? result.imageData : null);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to retrieve signature image:', error);
+    return null;
+  }
+};
+
+/**
+ * Delete signature image from IndexedDB
+ * @param signatureLabel 'driverA' or 'driverB'
+ */
+export const deleteSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<void> => {
+  try {
+    const db = await initializeDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
+      const request = store.delete(signatureLabel);
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to delete signature image:', error);
+    throw error;
+  }
+};
+
+/**
+ * Clear all signature images from IndexedDB
+ */
+export const clearAllSignatureImages = async (): Promise<void> => {
+  try {
+    const db = await initializeDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
+      const request = store.clear();
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to clear signature images:', error);
     throw error;
   }
 };

@@ -2,7 +2,7 @@ import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
-import { getImpactMarkerImage } from './storage';
+import { getImpactMarkerImage, getSignatureImage } from './storage';
 
 // Map locales for easy access
 const locales = {
@@ -912,6 +912,14 @@ export const exportToPDFWithTemplate = async (
 
     // ===== IMPACT MARKERS (Vehicle A and B) =====
     
+    // Get the first page for embedding images
+    const pages = pdfDoc.getPages();
+    if (pages.length === 0) {
+      console.warn('No pages in PDF to embed images');
+      throw new Error('PDF has no pages');
+    }
+    const firstPage = pages[0];
+    
     // Helper function to embed impact marker image
     const embedImpactMarkerImage = async (vehicleLabel: string, imageData: string | undefined) => {
       if (!imageData) {
@@ -928,14 +936,6 @@ export const exportToPDFWithTemplate = async (
         // Embed the PNG image
         const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
         const embeddedImage = await pdfDoc.embedPng(imageBytes);
-
-        const pages = pdfDoc.getPages();
-        if (pages.length === 0) {
-          console.warn('No pages in PDF to embed impact marker');
-          return;
-        }
-
-        const firstPage = pages[0];
 
         // Image dimensions (you can adjust these values)
         const imageWidth = 93;
@@ -980,6 +980,70 @@ export const exportToPDFWithTemplate = async (
     const vehicleBImage = await getImpactMarkerImage('vehicleB');
     if (vehicleBImage) {
       await embedImpactMarkerImage('vehicleB', vehicleBImage);
+    }
+
+    // Helper function to embed signature image
+    const embedSignatureImage = async (signatureLabel: 'driverA' | 'driverB', imageData: string | undefined) => {
+      if (!imageData) {
+        return; // No image data to embed
+      }
+
+      try {
+        // Extract base64 data from data URL if necessary
+        let base64Data = imageData;
+        if (base64Data.startsWith('data:image/png;base64,')) {
+          base64Data = base64Data.substring('data:image/png;base64,'.length);
+        }
+        
+        // Convert base64 to Uint8Array
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // Embed the image in the PDF
+        const embeddedImage = await pdfDoc.embedPng(bytes);
+        
+        // Signature dimensions and positions
+        const signatureWidth = 150;
+        const signatureHeight = 80;
+        
+        let xPosition: number;
+        let yPosition: number;
+        
+        // Signature positions (customize as needed)
+        if (signatureLabel === 'driverA') {
+          xPosition = 100;
+          yPosition = 80;
+        } else {
+          xPosition = 350;
+          yPosition = 80;
+        }
+        
+        firstPage.drawImage(embeddedImage, {
+          x: xPosition,
+          y: yPosition,
+          width: signatureWidth,
+          height: signatureHeight,
+        });
+
+        console.log(`Embedded signature image for ${signatureLabel} at position (${xPosition}, ${yPosition})`);
+      } catch (error) {
+        console.warn(`Failed to embed signature image for ${signatureLabel}:`, error);
+      }
+    };
+
+    // Embed signature images for both drivers
+    // Retrieve images from IndexedDB storage instead of form data
+    const driverASignature = await getSignatureImage('driverA');
+    if (driverASignature) {
+      await embedSignatureImage('driverA', driverASignature);
+    }
+
+    const driverBSignature = await getSignatureImage('driverB');
+    if (driverBSignature) {
+      await embedSignatureImage('driverB', driverBSignature);
     }
 
     // Update field appearances with custom font (if loaded) to properly render Slovak characters

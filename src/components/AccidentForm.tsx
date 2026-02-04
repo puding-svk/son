@@ -5,6 +5,7 @@ import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
 import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
+import { saveSignatureImage } from '../utils/storage';
 import type { AccidentReport } from '../utils/storage';
 import './AccidentForm.css';
 
@@ -235,11 +236,17 @@ const AccidentForm: React.FC = () => {
     i18n.changeLanguage(lang);
   };
 
-  const handleSignatureSave = (signatureData: string) => {
+  const handleSignatureSave = async (signatureData: string) => {
     if (signaturePadOpen === 'A') {
+      // Update form state so signature is visible in the preview
       updateField('signatures.driverA', signatureData);
+      // Also save signature to IndexedDB for PDF export
+      await saveSignatureImage('driverA', signatureData);
     } else if (signaturePadOpen === 'B') {
+      // Update form state so signature is visible in the preview
       updateField('signatures.driverB', signatureData);
+      // Also save signature to IndexedDB for PDF export
+      await saveSignatureImage('driverB', signatureData);
     }
     setSignaturePadOpen(null);
   };
