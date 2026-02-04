@@ -1007,7 +1007,7 @@ export const exportToPDFWithTemplate = async (
         
         // Signature dimensions and positions
         const signatureWidth = 80;
-        const signatureHeight = 40;
+        const signatureHeight = 35;
         
         let xPosition: number;
         let yPosition: number;
@@ -1015,10 +1015,10 @@ export const exportToPDFWithTemplate = async (
         // Signature positions (customize as needed)
         if (signatureLabel === 'driverA') {
           xPosition = 215;
-          yPosition = 18;
+          yPosition = 23;
         } else {
           xPosition = 298;
-          yPosition = 18;
+          yPosition = 23;
         }
         
         firstPage.drawImage(embeddedImage, {

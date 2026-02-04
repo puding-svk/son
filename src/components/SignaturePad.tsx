@@ -156,10 +156,33 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
     // Add small padding around signature
     const padding = 5;
-    const cropX = Math.max(0, minX - padding);
-    const cropY = Math.max(0, minY - padding);
-    const cropWidth = Math.min(canvas.width - cropX, maxX - minX + padding * 2);
-    const cropHeight = Math.min(canvas.height - cropY, maxY - minY + padding * 2);
+    const sigBoundX = minX - padding;
+    const sigBoundY = minY - padding;
+    const sigBoundWidth = maxX - minX + padding * 2;
+    const sigBoundHeight = maxY - minY + padding * 2;
+
+    // Maintain aspect ratio by scaling to 2:1 (width:height) for signatures
+    const aspectRatio = 2;
+    let cropWidth = sigBoundWidth;
+    let cropHeight = sigBoundHeight;
+
+    if (cropWidth / cropHeight > aspectRatio) {
+      // Too wide - increase height
+      cropHeight = cropWidth / aspectRatio;
+    } else {
+      // Too tall - increase width
+      cropWidth = cropHeight * aspectRatio;
+    }
+
+    // Center the signature in the cropped area
+    const cropX = Math.max(0, Math.min(
+      sigBoundX - (cropWidth - sigBoundWidth) / 2,
+      canvas.width - cropWidth
+    ));
+    const cropY = Math.max(0, Math.min(
+      sigBoundY - (cropHeight - sigBoundHeight) / 2,
+      canvas.height - cropHeight
+    ));
 
     // Create a new canvas with the cropped area
     const croppedCanvas = document.createElement('canvas');
