@@ -145,25 +145,17 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       ctx.stroke();
     }
 
-    // Draw arrow (pointing up)
+    // Draw arrow head (pointing up) - enlarged to fill previous shaft space
     ctx.fillStyle = '#ff0000';
     ctx.strokeStyle = '#cc0000';
     ctx.lineWidth = 1;
 
-    // Arrow head
     ctx.beginPath();
-    ctx.moveTo(0, -ARROW_SIZE);
-    ctx.lineTo(-ARROW_SIZE * 0.5, ARROW_SIZE * 0.5);
-    ctx.lineTo(0, ARROW_SIZE * 0.3);
-    ctx.lineTo(ARROW_SIZE * 0.5, ARROW_SIZE * 0.5);
+    ctx.moveTo(0, -ARROW_SIZE * 1.5);
+    ctx.lineTo(-ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
+    ctx.lineTo(ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
-
-    // Arrow shaft
-    ctx.beginPath();
-    ctx.moveTo(0, ARROW_SIZE * 0.3);
-    ctx.lineTo(0, ARROW_SIZE);
     ctx.stroke();
 
     ctx.restore();
