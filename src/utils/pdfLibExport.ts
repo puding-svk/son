@@ -545,9 +545,66 @@ export const exportToPDFWithTemplate = async (
       const vehicleAAdditionalNotes = form.getField('vehicleA_additionalNotes') as PDFTextField;
       if (vehicleAAdditionalNotes instanceof PDFTextField && formData.vehicleA?.additionalNotes) {
         vehicleAAdditionalNotes.setText(formData.vehicleA.additionalNotes);
+      } else {
+        // Field is empty, clear any default appearance
+        if (vehicleAAdditionalNotes instanceof PDFTextField) {
+          vehicleAAdditionalNotes.setText('');
+        }
       }
     } catch (error) {
       console.warn('Field vehicleA_additionalNotes not found:', error);
+    }
+
+    // Vehicle A - Circumstances checkboxes
+    const vehicleACircumstancesCheckboxes = [
+      'parked',
+      'stopped',
+      'openedDoor',
+      'parking',
+      'leavingParkingArea',
+      'enteringParkingArea',
+      'enteringRoundabout',
+      'drivingRoundabout',
+      'rearEndCollision',
+      'drivingParallel',
+      'changingLanes',
+      'overtaking',
+      'turningRight',
+      'turningLeft',
+      'reversing',
+      'enteredOppositeLane',
+      'comingFromRight',
+      'failedToYield',
+    ];
+
+    let vehicleACheckedCircumstances = {} as { [key: string]: boolean };
+
+    for (let checkbox of vehicleACircumstancesCheckboxes) {
+      try {
+        const formDataFieldState = formData.vehicleA?.circumstances?.[checkbox as keyof typeof formData.vehicleA.circumstances];
+        if (checkbox === 'parked') checkbox = 'stopped'; // "parked" is updating the same target
+        const fieldName = `vehicleA_circumstances_${checkbox}`;
+        const field = form.getField(fieldName);
+        if (field instanceof PDFCheckBox) {
+          if (formDataFieldState) {
+            field.check();
+            vehicleACheckedCircumstances[checkbox] = true;
+          }
+        }
+      } catch (error) {
+        console.warn(`Field vehicleA_circumstances_${checkbox} not found:`, error);
+      }
+    }
+
+    // Set the number of selected circumstances
+    try {
+      const vehicleACircumstancesNum = form.getField('vehicleA_circumstances_numOfSelected') as PDFTextField;
+      if (vehicleACircumstancesNum instanceof PDFTextField) {
+        vehicleACircumstancesNum.setAlignment(1); // 1 = center alignment
+        vehicleACircumstancesNum.setText(Object.keys(vehicleACheckedCircumstances).length.toString());
+      }
+    } catch (error) {
+      console.warn('Field vehicleA_circumstances_numOfSelected not found:', error);
     }
 
     // ===== VEHICLE B FIELDS =====
@@ -905,9 +962,85 @@ export const exportToPDFWithTemplate = async (
       const vehicleBAdditionalNotes = form.getField('vehicleB_additionalNotes') as PDFTextField;
       if (vehicleBAdditionalNotes instanceof PDFTextField && formData.vehicleB?.additionalNotes) {
         vehicleBAdditionalNotes.setText(formData.vehicleB.additionalNotes);
+      } else {
+        // Field is empty, clear any default appearance
+        if (vehicleBAdditionalNotes instanceof PDFTextField) {
+          vehicleBAdditionalNotes.setText('');
+        }
       }
     } catch (error) {
       console.warn('Field vehicleB_additionalNotes not found:', error);
+    }
+
+    // Vehicle B - Circumstances checkboxes
+    const vehicleBCircumstancesCheckboxes = [
+      'parked',
+      'stopped',
+      'openedDoor',
+      'parking',
+      'leavingParkingArea',
+      'enteringParkingArea',
+      'enteringRoundabout',
+      'drivingRoundabout',
+      'rearEndCollision',
+      'drivingParallel',
+      'changingLanes',
+      'overtaking',
+      'turningRight',
+      'turningLeft',
+      'reversing',
+      'enteredOppositeLane',
+      'comingFromRight',
+      'failedToYield',
+    ];
+
+    let vehicleBCheckedCircumstances = {} as Record<string, boolean>;
+
+    for (let checkbox of vehicleBCircumstancesCheckboxes) {
+      try {
+        const formDataFieldState = formData.vehicleB?.circumstances?.[checkbox as keyof typeof formData.vehicleB.circumstances];
+        if (checkbox === 'parked') checkbox = 'stopped';
+        const fieldName = `vehicleB_circumstances_${checkbox}`;
+        const field = form.getField(fieldName);
+        if (field instanceof PDFCheckBox) {
+          if (formDataFieldState) {      
+            field.check();
+            vehicleBCheckedCircumstances[checkbox] = true;
+          }
+        }
+      } catch (error) {
+        console.warn(`Field vehicleB_circumstances_${checkbox} not found:`, error);
+      }
+      
+    }
+
+    // Set the number of selected circumstances
+    try {
+      const vehicleBCircumstancesNum = form.getField('vehicleB_circumstances_numOfSelected') as PDFTextField;
+      if (vehicleBCircumstancesNum instanceof PDFTextField) {
+        vehicleBCircumstancesNum.setAlignment(1); // 1 = center alignment
+        vehicleBCircumstancesNum.setText(Object.keys(vehicleBCheckedCircumstances).length.toString());
+      }
+    } catch (error) {
+      console.warn('Field vehicleB_circumstances_numOfSelected not found:', error);
+    }
+
+    // ===== PARKED STRIKE THROUGH =====
+    // Fill with 8 dashes if neither vehicle has parked selected
+    const vehicleAParked = formData.vehicleA?.circumstances?.parked || formData.vehicleA?.circumstances?.stopped;
+    const vehicleBParked = formData.vehicleB?.circumstances?.parked || formData.vehicleB?.circumstances?.stopped;
+
+    try {
+      const parkedStrikeThroughField = form.getField('parked_strikeThrough') as PDFTextField;
+      if (parkedStrikeThroughField instanceof PDFTextField) {
+        if (!vehicleAParked && !vehicleBParked) {
+          parkedStrikeThroughField.setText('--------');
+        } else {
+          parkedStrikeThroughField.setText('');
+        }
+      }
+    } catch (error) {
+      console.warn('Field parked_strikeThrough not found:', error);
     }
 
     // ===== IMPACT MARKERS (Vehicle A and B) =====
