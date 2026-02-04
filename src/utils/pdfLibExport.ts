@@ -1,4 +1,5 @@
 import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
 import { getImpactMarkerImage } from './storage';
@@ -30,12 +31,32 @@ export const exportToPDFWithTemplate = async (
     const templateBuffer = await templateResponse.arrayBuffer();
     
     const pdfDoc = await PDFDocument.load(templateBuffer);
+    
+    // Register fontkit to enable custom font support for Unicode characters
+    pdfDoc.registerFontkit(fontkit);
+    
+    // Load a Unicode font that supports Slovak characters (č, š, ž, etc.)
+    // Font file should be placed in public/fonts/DejaVuSans.ttf
+    // You can use other fonts like NotoSans-Regular.ttf or Roboto-Regular.ttf
+    let customFont;
+    try {
+      const basePath = import.meta.env.BASE_URL || '/';
+      const fontResponse = await fetch(basePath + 'fonts/DejaVuSans.ttf');
+      if (fontResponse.ok) {
+        const fontBytes = await fontResponse.arrayBuffer();
+        customFont = await pdfDoc.embedFont(fontBytes);
+        console.log('Custom font loaded successfully');
+      } else {
+        console.warn('Custom font not found, using default font');
+      }
+    } catch (error) {
+      console.warn('Failed to load custom font:', error);
+    }
+    
     const form = pdfDoc.getForm();
     
-    // Disable appearance updates to avoid WinAnsi encoding errors with special characters
-    form.updateFieldAppearances = () => {
-      // No-op: skip appearance updates
-    };
+    // Store custom font for later use in updateFieldAppearances
+    const fontForAppearances = customFont;
 
     // Get form data from localStorage if not provided
     if (!formData) {
@@ -921,8 +942,14 @@ export const exportToPDFWithTemplate = async (
       await embedImpactMarkerImage('vehicleB', vehicleBImage);
     }
 
-    // Note: Form flattening is disabled for now due to encoding issues with special characters
-    // The PDF fields will remain interactive but editable text with proper Unicode support
+    // Update field appearances with custom font (if loaded) to properly render Slovak characters
+    if (fontForAppearances) {
+      form.updateFieldAppearances(fontForAppearances);
+    }
+
+    // Flatten the form so that filled fields become part of the document content
+    // This makes the PDF read-only and embeds all form data into the page
+    form.flatten();
 
     // Save the PDF
     const pdfBytes = await pdfDoc.save();
