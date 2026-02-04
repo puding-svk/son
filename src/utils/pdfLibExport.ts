@@ -36,12 +36,11 @@ export const exportToPDFWithTemplate = async (
     pdfDoc.registerFontkit(fontkit);
     
     // Load a Unicode font that supports Slovak characters (č, š, ž, etc.)
-    // Font file should be placed in public/fonts/DejaVuSans.ttf
-    // You can use other fonts like NotoSans-Regular.ttf or Roboto-Regular.ttf
+    // Font file should be placed in public/fonts/NimbusSanL-Bol.otf
     let customFont;
     try {
       const basePath = import.meta.env.BASE_URL || '/';
-      const fontResponse = await fetch(basePath + 'fonts/DejaVuSans.ttf');
+      const fontResponse = await fetch(basePath + 'fonts/NimbusSanL-Bol.otf');
       if (fontResponse.ok) {
         const fontBytes = await fontResponse.arrayBuffer();
         customFont = await pdfDoc.embedFont(fontBytes);
@@ -53,6 +52,7 @@ export const exportToPDFWithTemplate = async (
       console.warn('Failed to load custom font:', error);
     }
     
+
     const form = pdfDoc.getForm();
     
     // Store custom font for later use in updateFieldAppearances
@@ -530,6 +530,26 @@ export const exportToPDFWithTemplate = async (
       console.warn('Field vehicleA_driver_licenceValidUntil not found:', error);
     }
 
+    // Vehicle A - Visible Damage
+    try {
+      const vehicleAVisibleDamage = form.getField('vehicleA_visibleDamage') as PDFTextField;
+      if (vehicleAVisibleDamage instanceof PDFTextField && formData.vehicleA?.visibleDamage) {
+        vehicleAVisibleDamage.setText(formData.vehicleA.visibleDamage);
+      }
+    } catch (error) {
+      console.warn('Field vehicleA_visibleDamage not found:', error);
+    }
+
+    // Vehicle A - Additional Notes
+    try {
+      const vehicleAAdditionalNotes = form.getField('vehicleA_additionalNotes') as PDFTextField;
+      if (vehicleAAdditionalNotes instanceof PDFTextField && formData.vehicleA?.additionalNotes) {
+        vehicleAAdditionalNotes.setText(formData.vehicleA.additionalNotes);
+      }
+    } catch (error) {
+      console.warn('Field vehicleA_additionalNotes not found:', error);
+    }
+
     // ===== VEHICLE B FIELDS =====
     
     // Vehicle B - Policyholder
@@ -868,6 +888,26 @@ export const exportToPDFWithTemplate = async (
       }
     } catch (error) {
       console.warn('Field vehicleB_driver_licenceValidUntil not found:', error);
+    }
+
+    // Vehicle B - Visible Damage
+    try {
+      const vehicleBVisibleDamage = form.getField('vehicleB_visibleDamage') as PDFTextField;
+      if (vehicleBVisibleDamage instanceof PDFTextField && formData.vehicleB?.visibleDamage) {
+        vehicleBVisibleDamage.setText(formData.vehicleB.visibleDamage);
+      }
+    } catch (error) {
+      console.warn('Field vehicleB_visibleDamage not found:', error);
+    }
+
+    // Vehicle B - Additional Notes
+    try {
+      const vehicleBAdditionalNotes = form.getField('vehicleB_additionalNotes') as PDFTextField;
+      if (vehicleBAdditionalNotes instanceof PDFTextField && formData.vehicleB?.additionalNotes) {
+        vehicleBAdditionalNotes.setText(formData.vehicleB.additionalNotes);
+      }
+    } catch (error) {
+      console.warn('Field vehicleB_additionalNotes not found:', error);
     }
 
     // ===== IMPACT MARKERS (Vehicle A and B) =====
