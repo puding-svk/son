@@ -17,12 +17,40 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [controlsPosition, setControlsPosition] = useState<ControlsPosition>('bottom');
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 640, height: 300 });
 
-  // Drawing canvas dimensions: 32:15 ratio (landscape)
-  const CANVAS_WIDTH = 640;
-  const CANVAS_HEIGHT = 300; // 640 * 15 / 32 = 300
+  // Canvas aspect ratio: 32:15
+  const ASPECT_RATIO = 32 / 15;
+
+  // Calculate canvas size to fit available space while maintaining aspect ratio
+  const calculateCanvasSize = () => {
+    if (!canvasWrapperRef.current) return;
+
+    const wrapperRect = canvasWrapperRef.current.getBoundingClientRect();
+
+    // Available space for canvas (subtract padding: 3px * 2 for each side)
+    const padding = 3;
+    const availableWidth = wrapperRect.width - padding * 2;
+    const availableHeight = wrapperRect.height - padding * 2;
+
+    let newWidth = availableWidth;
+    let newHeight = availableWidth / ASPECT_RATIO;
+
+    // If height exceeds available, constrain by height
+    if (newHeight > availableHeight) {
+      newHeight = availableHeight;
+      newWidth = availableHeight * ASPECT_RATIO;
+    }
+
+    // Ensure minimum size
+    newWidth = Math.max(newWidth, 320);
+    newHeight = Math.max(newHeight, 150);
+
+    setCanvasDimensions({ width: newWidth, height: newHeight });
+  };
 
   // Initialize canvas
   useEffect(() => {
@@ -32,18 +60,18 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+    // Set canvas size based on calculated dimensions
+    canvas.width = canvasDimensions.width;
+    canvas.height = canvasDimensions.height;
 
     // Fill with white background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, canvasDimensions.width, canvasDimensions.height);
 
     // Draw border
     ctx.strokeStyle = '#cccccc';
     ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.strokeRect(0, 0, canvasDimensions.width, canvasDimensions.height);
 
     // If there's an initial image, load it
     if (initialImage) {
@@ -53,11 +81,13 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       };
       img.src = initialImage;
     }
-  }, []);
+  }, [canvasDimensions, initialImage]);
 
   // Determine controls position based on screen size
   useEffect(() => {
     const handleResize = () => {
+      calculateCanvasSize();
+
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
@@ -75,7 +105,20 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    // Use ResizeObserver to detect when the canvas wrapper changes size
+    const resizeObserver = new ResizeObserver(() => {
+      calculateCanvasSize();
+    });
+
+    if (canvasWrapperRef.current) {
+      resizeObserver.observe(canvasWrapperRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   const handleSave = () => {
@@ -95,12 +138,12 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     // Fill with white background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, canvasDimensions.width, canvasDimensions.height);
 
     // Draw border
     ctx.strokeStyle = '#cccccc';
     ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.strokeRect(0, 0, canvasDimensions.width, canvasDimensions.height);
   };
 
   return (
@@ -110,13 +153,13 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         className={`situation-draw-modal situation-draw-modal-${controlsPosition}`}
       >
         <div className="situation-draw-modal-content">
-          <div className="situation-draw-canvas-wrapper">
+          <div className="situation-draw-canvas-wrapper" ref={canvasWrapperRef}>
             <canvas
               ref={canvasRef}
               className="situation-draw-canvas"
               style={{
-                width: `${CANVAS_WIDTH}px`,
-                height: `${CANVAS_HEIGHT}px`,
+                width: `${canvasDimensions.width}px`,
+                height: `${canvasDimensions.height}px`,
               }}
             />
           </div>

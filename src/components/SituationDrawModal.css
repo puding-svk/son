@@ -17,7 +17,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   max-height: 95vh;
-  max-width: 95vw;
+  max-width: 1200px;
   height: 95vh;
   width: 95vw;
   display: flex;
@@ -25,17 +25,17 @@
   animation: slideUp 0.3s ease-out;
 }
 
-/* Cap the modal size on larger screens */
-@media (min-height: 1200px) {
+/* Cap height at 500px on larger screens */
+@media (min-height: 600px) {
   .situation-draw-modal {
-    max-height: 1100px;
     height: auto;
+    max-height: 500px;
   }
 }
 
+/* Cap the modal size on larger screens */
 @media (min-width: 2400px) {
   .situation-draw-modal {
-    max-width: 2200px;
     width: auto;
   }
 }
@@ -70,6 +70,7 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
+  overflow: auto;
 }
 
 .situation-draw-modal-left .situation-draw-controls-panel {
@@ -92,6 +93,7 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
+  overflow: auto;
 }
 
 .situation-draw-modal-right .situation-draw-controls-panel {
@@ -108,19 +110,24 @@
 }
 
 .situation-draw-modal-bottom .situation-draw-canvas-wrapper {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
+  overflow: auto;
 }
 
 .situation-draw-modal-bottom .situation-draw-controls-panel {
   width: 100%;
+  min-height: 150px;
+  flex-shrink: 0;
 }
 
 .situation-draw-canvas-wrapper {
   background-color: #f9f9f9;
   border-radius: 0;
-  padding: 0;
+  padding: 3px;
 }
 
 .situation-draw-canvas {
