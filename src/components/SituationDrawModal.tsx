@@ -52,6 +52,16 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     setCanvasDimensions({ width: newWidth, height: newHeight });
   };
 
+  // Initialize and trigger layout calculation on mount
+  useEffect(() => {
+    // Give DOM time to render, then trigger resize calculation
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
