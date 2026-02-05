@@ -115,8 +115,96 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     const canvas = canvasRef.current;
     if (!canvas || isEmpty) return;
 
-    const signatureData = canvas.toDataURL('image/png');
+    // Get the cropped signature (only the area with actual signature)
+    const croppedCanvas = cropSignature(canvas);
+    const signatureData = croppedCanvas.toDataURL('image/png');
     onSave(signatureData);
+  };
+
+  const cropSignature = (canvas: HTMLCanvasElement): HTMLCanvasElement => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return canvas;
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // Find bounding box of non-white pixels
+    let minX = canvas.width;
+    let maxX = 0;
+    let minY = canvas.height;
+    let maxY = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const a = data[i + 3];
+
+      // Check if pixel is not white (or transparent)
+      // We consider it part of the signature if it's dark (not white)
+      if (a > 128 && (r < 240 || g < 240 || b < 240)) {
+        const pixelIndex = i / 4;
+        const x = pixelIndex % canvas.width;
+        const y = Math.floor(pixelIndex / canvas.width);
+
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    }
+
+    // Add small padding around signature
+    const padding = 5;
+    const sigBoundX = minX - padding;
+    const sigBoundY = minY - padding;
+    const sigBoundWidth = maxX - minX + padding * 2;
+    const sigBoundHeight = maxY - minY + padding * 2;
+
+    // Maintain aspect ratio by scaling to 2:1 (width:height) for signatures
+    const aspectRatio = 2;
+    let cropWidth = sigBoundWidth;
+    let cropHeight = sigBoundHeight;
+
+    if (cropWidth / cropHeight > aspectRatio) {
+      // Too wide - increase height
+      cropHeight = cropWidth / aspectRatio;
+    } else {
+      // Too tall - increase width
+      cropWidth = cropHeight * aspectRatio;
+    }
+
+    // Center the signature in the cropped area
+    const cropX = Math.max(0, Math.min(
+      sigBoundX - (cropWidth - sigBoundWidth) / 2,
+      canvas.width - cropWidth
+    ));
+    const cropY = Math.max(0, Math.min(
+      sigBoundY - (cropHeight - sigBoundHeight) / 2,
+      canvas.height - cropHeight
+    ));
+
+    // Create a new canvas with the cropped area
+    const croppedCanvas = document.createElement('canvas');
+    croppedCanvas.width = cropWidth;
+    croppedCanvas.height = cropHeight;
+
+    const croppedCtx = croppedCanvas.getContext('2d');
+    if (croppedCtx) {
+      croppedCtx.drawImage(
+        canvas,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
+      );
+    }
+
+    return croppedCanvas;
   };
 
   return (

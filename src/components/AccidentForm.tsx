@@ -4,6 +4,8 @@ import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
+import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
+import { saveSignatureImage } from '../utils/storage';
 import type { AccidentReport } from '../utils/storage';
 import './AccidentForm.css';
 
@@ -234,11 +236,17 @@ const AccidentForm: React.FC = () => {
     i18n.changeLanguage(lang);
   };
 
-  const handleSignatureSave = (signatureData: string) => {
+  const handleSignatureSave = async (signatureData: string) => {
     if (signaturePadOpen === 'A') {
+      // Update form state so signature is visible in the preview
       updateField('signatures.driverA', signatureData);
+      // Also save signature to IndexedDB for PDF export
+      await saveSignatureImage('driverA', signatureData);
     } else if (signaturePadOpen === 'B') {
+      // Update form state so signature is visible in the preview
       updateField('signatures.driverB', signatureData);
+      // Also save signature to IndexedDB for PDF export
+      await saveSignatureImage('driverB', signatureData);
     }
     setSignaturePadOpen(null);
   };
@@ -293,6 +301,7 @@ const AccidentForm: React.FC = () => {
             <label>{t('section1.city')}</label>
             <input
               type="text"
+              maxLength={40}
               value={formData.section1.city}
               onChange={(e) => updateField('section1.city', e.target.value)}
             />
@@ -301,6 +310,7 @@ const AccidentForm: React.FC = () => {
             <label>{t('section1.location')}</label>
             <input
               type="text"
+              maxLength={100}
               value={formData.section1.location}
               onChange={(e) => updateField('section1.location', e.target.value)}
             />
@@ -496,8 +506,20 @@ const AccidentForm: React.FC = () => {
 
       {/* Form Controls */}
       <div className="form-controls">
-        <button className="btn-secondary" disabled type="button">
-          {t('common.placeholder') || 'Placeholder'}
+        <button
+          className="btn-primary"
+          type="button"
+          onClick={async () => {
+            try {
+              const fileName = `accident_report_${new Date().toISOString().split('T')[0]}.pdf`;
+              await exportToPDFWithTemplate(fileName, formData, i18n.language);
+            } catch (error) {
+              console.error('PDF export failed:', error);
+              alert(t('message.exportError') || 'Failed to export PDF');
+            }
+          }}
+        >
+          {t('common.placeholder') || 'Export to PDF'}
         </button>
       </div>
 

@@ -9,9 +9,14 @@ export interface ImpactArrow {
   rotation: number; // in degrees
 }
 
+export interface ImpactMarkersData {
+  arrows: ImpactArrow[];
+  imageData?: string; // base64 PNG data URL of the rendered canvas
+}
+
 interface ImpactMarkerProps {
   arrows: ImpactArrow[];
-  onArrowsChange: (arrows: ImpactArrow[]) => void;
+  onArrowsChange: (arrows: ImpactArrow[], imageData?: string) => void;
 }
 
 const ARROW_SIZE = 20; // Increased from 10 (2x original size)
@@ -58,6 +63,21 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   useEffect(() => {
     redrawCanvas();
   }, [arrows, selectedArrowId]);
+
+  // Auto-capture and emit image when arrows change (for loaded data)
+  // This handles the case when arrows are loaded from imported/saved data
+  useEffect(() => {
+    // Only auto-capture when not in edit mode (user finished editing or data was loaded)
+    // AND when there are arrows to capture
+    if (!isEditable && arrows.length > 0) {
+      const imageData = captureCanvasAsImage();
+      if (imageData) {
+        // Emit the image along with arrows
+        // This will be caught by parent and saved to storage
+        onArrowsChange(arrows, imageData);
+      }
+    }
+  }, [arrows.length, isEditable]); // Only depend on length and editMode, not the full arrows array
 
   // Attach touch event listeners with passive: false to allow preventDefault
   useEffect(() => {
@@ -125,25 +145,17 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
       ctx.stroke();
     }
 
-    // Draw arrow (pointing up)
+    // Draw arrow head (pointing up) - enlarged to fill previous shaft space
     ctx.fillStyle = '#ff0000';
     ctx.strokeStyle = '#cc0000';
     ctx.lineWidth = 1;
 
-    // Arrow head
     ctx.beginPath();
-    ctx.moveTo(0, -ARROW_SIZE);
-    ctx.lineTo(-ARROW_SIZE * 0.5, ARROW_SIZE * 0.5);
-    ctx.lineTo(0, ARROW_SIZE * 0.3);
-    ctx.lineTo(ARROW_SIZE * 0.5, ARROW_SIZE * 0.5);
+    ctx.moveTo(0, -ARROW_SIZE * 1.5);
+    ctx.lineTo(-ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
+    ctx.lineTo(ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
-
-    // Arrow shaft
-    ctx.beginPath();
-    ctx.moveTo(0, ARROW_SIZE * 0.3);
-    ctx.lineTo(0, ARROW_SIZE);
     ctx.stroke();
 
     ctx.restore();
@@ -378,7 +390,26 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
     setSelectedArrowId(null);
   };
 
+  /**
+   * Capture the canvas as a base64 PNG image
+   * Returns the data URL or null if capture fails
+   */
+  const captureCanvasAsImage = (): string | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    try {
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Failed to capture canvas as image:', error);
+      return null;
+    }
+  };
+
   const handleDone = () => {
+    // Capture the canvas image and send it with the arrows
+    const imageData = captureCanvasAsImage();
+    onArrowsChange(arrows, imageData || undefined);
+    
     setSelectedArrowId(null);
     setIsEditable(false);
   };
@@ -571,7 +602,15 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
         width={600}
         height={450}
         className="impact-marker-canvas"
-        onClick={handleCanvasClick}
+        onClick={(e) => {
+          // If not in edit mode, enable edit mode on canvas click
+          if (!isEditable) {
+            handleEdit();
+          } else {
+            // If already in edit mode, handle normal canvas click
+            handleCanvasClick(e);
+          }
+        }}
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}

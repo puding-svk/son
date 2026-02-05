@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VehicleModal } from './VehicleModal';
 import { ImpactMarker, type ImpactArrow } from './ImpactMarker';
+import { saveImpactMarkerImage } from '../utils/storage';
 import './VehicleSection.css';
 
 interface VehicleData {
@@ -499,9 +500,15 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         <legend>{t('vehicle.section10')}</legend>
         <ImpactMarker
           arrows={impactMarkers}
-          onArrowsChange={(newArrows) => {
+          onArrowsChange={(newArrows, imageData) => {
             setImpactMarkers(newArrows);
             updateField('impactMarkers', newArrows);
+            // Save impact marker image to IndexedDB instead of form data
+            if (imageData) {
+              saveImpactMarkerImage(vehicleLabel, imageData).catch(error => 
+                console.error('Failed to save impact marker image:', error)
+              );
+            }
           }}
         />
       </fieldset>
@@ -534,7 +541,18 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
             <input
               type="checkbox"
               checked={data.circumstances.parked}
-              onChange={(e) => updateField('circumstances.parked', e.target.checked)}
+              onChange={(e) => {
+                const newData = JSON.parse(JSON.stringify(data));
+                if (e.target.checked) {
+                  // If checking parked, uncheck stopped
+                  newData.circumstances.parked = true;
+                  newData.circumstances.stopped = false;
+                } else {
+                  // If unchecking parked, just uncheck it
+                  newData.circumstances.parked = false;
+                }
+                onChange(newData);
+              }}
             />
             {t('vehicle.parked')}
           </label>
@@ -543,7 +561,18 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
             <input
               type="checkbox"
               checked={data.circumstances.stopped}
-              onChange={(e) => updateField('circumstances.stopped', e.target.checked)}
+              onChange={(e) => {
+                const newData = JSON.parse(JSON.stringify(data));
+                if (e.target.checked) {
+                  // If checking stopped, uncheck parked
+                  newData.circumstances.stopped = true;
+                  newData.circumstances.parked = false;
+                } else {
+                  // If unchecking stopped, just uncheck it
+                  newData.circumstances.stopped = false;
+                }
+                onChange(newData);
+              }}
             />
             {t('vehicle.stopped')}
           </label>
