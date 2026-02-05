@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="220" height="460" viewBox="0 0 220 460" xmlns="http://www.w3.org/2000/svg">
+  <rect x="93.014" y="10" width="33.972" height="106.021" rx="22" fill="currentColor" style=""/>
+  <ellipse cx="110" cy="108" rx="22" ry="10" style="stroke-dashoffset: -1px; stroke-width: 5px; stroke: currentColor; fill: rgb(255, 255, 255);"/>
+  <path d="M20 140 Q110 95 200 140" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M 70 206.215 C 96.667 159.819 123.333 159.819 150 206.215 C 160 260.345 146.667 302.875 110 333.806 C 73.333 302.875 60 260.345 70 206.215" style="stroke: currentColor; fill: rgb(255, 255, 255); stroke-width: 5; transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(-1, 0, 0, -1, -0.000009, -0.000022)"/>
+  <rect x="103" y="125" width="14" height="55" rx="7" fill="currentColor"/>
+  <path d="M 70 148.554 C 96.667 112.663 123.333 112.663 150 148.554 C 160 190.427 146.667 223.327 110 247.254 C 73.333 223.327 60 190.427 70 148.554" style="stroke: currentColor; fill: rgb(255, 255, 255); stroke-width: 5px;"/>
+  <rect x="97.409" y="235" width="26.15" height="55" rx="6" fill="currentColor" style=""/>
+  <rect x="87.358" y="357.947" width="45.283" height="92.053" rx="22" fill="currentColor" style=""/>
+  <path d="M110 320 Q80 350 90 385" stroke="currentColor" stroke-width="8" fill="none"/>
+  <path d="M110 320 Q140 350 130 385" stroke="currentColor" stroke-width="8" fill="none"/>
+  <ellipse cx="110" cy="311.303" rx="32" ry="74.223" style="fill: rgb(255, 255, 255); stroke: currentColor; stroke-width: 5px;"/>
+</svg>

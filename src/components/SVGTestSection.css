@@ -1,0 +1,161 @@
+.svg-test-section {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+.section-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.color-selector {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.color-selector label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.color-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.color-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+  border-color: #999;
+}
+
+.color-btn.active {
+  border-color: #333;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.color-input {
+  width: 60px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.svg-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.svg-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.svg-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #999;
+}
+
+.svg-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  min-height: 140px;
+  width: 100%;
+}
+
+.svg-preview svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.svg-label {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  text-align: center;
+}
+
+.test-info {
+  background-color: #e8f4f8;
+  border: 1px solid #b3d9e6;
+  border-radius: 4px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.test-info p {
+  margin: 0.5rem 0;
+}
+
+.test-info code {
+  background-color: #ffffff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 2px;
+  font-family: monospace;
+  color: #d40000;
+}
+
+@media (max-width: 768px) {
+  .svg-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .color-buttons {
+    gap: 0.5rem;
+  }
+
+  .color-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
