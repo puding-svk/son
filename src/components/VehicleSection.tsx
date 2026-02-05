@@ -541,7 +541,18 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
             <input
               type="checkbox"
               checked={data.circumstances.parked}
-              onChange={(e) => updateField('circumstances.parked', e.target.checked)}
+              onChange={(e) => {
+                const newData = JSON.parse(JSON.stringify(data));
+                if (e.target.checked) {
+                  // If checking parked, uncheck stopped
+                  newData.circumstances.parked = true;
+                  newData.circumstances.stopped = false;
+                } else {
+                  // If unchecking parked, just uncheck it
+                  newData.circumstances.parked = false;
+                }
+                onChange(newData);
+              }}
             />
             {t('vehicle.parked')}
           </label>
@@ -550,7 +561,18 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
             <input
               type="checkbox"
               checked={data.circumstances.stopped}
-              onChange={(e) => updateField('circumstances.stopped', e.target.checked)}
+              onChange={(e) => {
+                const newData = JSON.parse(JSON.stringify(data));
+                if (e.target.checked) {
+                  // If checking stopped, uncheck parked
+                  newData.circumstances.stopped = true;
+                  newData.circumstances.parked = false;
+                } else {
+                  // If unchecking stopped, just uncheck it
+                  newData.circumstances.stopped = false;
+                }
+                onChange(newData);
+              }}
             />
             {t('vehicle.stopped')}
           </label>
