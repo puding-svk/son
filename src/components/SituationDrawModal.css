@@ -1,0 +1,250 @@
+.situation-draw-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.situation-draw-modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-height: 95vh;
+  max-width: 95vw;
+  height: 95vh;
+  width: 95vw;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Cap the modal size on larger screens */
+@media (min-height: 1200px) {
+  .situation-draw-modal {
+    max-height: 1100px;
+    height: auto;
+  }
+}
+
+@media (min-width: 2400px) {
+  .situation-draw-modal {
+    max-width: 2200px;
+    width: auto;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.situation-draw-modal-content {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  padding: 0;
+  gap: 0;
+}
+
+/* Layout: controls on the left (horizontal) */
+.situation-draw-modal-left .situation-draw-modal-content {
+  flex-direction: row;
+}
+
+.situation-draw-modal-left .situation-draw-canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.situation-draw-modal-left .situation-draw-controls-panel {
+  width: 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  order: -1;
+}
+
+/* Layout: controls on the right (horizontal) */
+.situation-draw-modal-right .situation-draw-modal-content {
+  flex-direction: row;
+}
+
+.situation-draw-modal-right .situation-draw-canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.situation-draw-modal-right .situation-draw-controls-panel {
+  width: 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Layout: controls on the bottom (vertical) */
+.situation-draw-modal-bottom .situation-draw-modal-content {
+  flex-direction: column;
+}
+
+.situation-draw-modal-bottom .situation-draw-canvas-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.situation-draw-modal-bottom .situation-draw-controls-panel {
+  width: 100%;
+}
+
+.situation-draw-canvas-wrapper {
+  background-color: #f9f9f9;
+  border-radius: 0;
+  padding: 0;
+}
+
+.situation-draw-canvas {
+  border: none;
+  cursor: crosshair;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.situation-draw-controls-panel {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 0;
+  overflow-y: auto;
+}
+
+.situation-draw-controls-panel h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.controls-placeholder {
+  background-color: #ffffff;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.controls-placeholder p {
+  margin: 0;
+}
+
+.controls-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #357abd;
+}
+
+.btn-primary:active {
+  background-color: #2563b8;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-secondary:active {
+  background-color: #d0d0d0;
+}
+
+/* Mobile responsive: always vertical on small screens */
+@media (max-width: 768px) {
+  .situation-draw-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .situation-draw-modal-content {
+    flex-direction: column !important;
+    padding: 1rem;
+  }
+
+  .situation-draw-controls-panel {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .situation-draw-canvas-wrapper {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .controls-buttons {
+    flex-direction: row;
+  }
+
+  .controls-buttons button {
+    flex: 1;
+  }
+}
+
+/* Print styles */
+@media print {
+  .situation-draw-modal-overlay {
+    display: none;
+  }
+}

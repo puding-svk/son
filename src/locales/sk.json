@@ -202,6 +202,14 @@
   "section": {
     "signatures": "Podpisy"
   },
+  "situation": {
+    "title": "Situácia nehody (pohľad zhora)",
+    "edit": "Upraviť situáciu",
+    "noImage": "Zatiaľ žiadny nákres",
+    "controls": "Nástroje",
+    "controlsPlaceholder": "Nástroje na kreslenie sa zobrazia tu",
+    "clear": "Vymazať"
+  },
   "signature": {
     "driverA": "Vodič A",
     "driverB": "Vodič B",

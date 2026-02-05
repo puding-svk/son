@@ -202,6 +202,14 @@
   "section": {
     "signatures": "Signatures"
   },
+  "situation": {
+    "title": "Accident Situation (Bird's Eye View)",
+    "edit": "Edit Situation",
+    "noImage": "No situation diagram yet",
+    "controls": "Tools",
+    "controlsPlaceholder": "Drawing tools will appear here",
+    "clear": "Clear"
+  },
   "signature": {
     "driverA": "Driver A",
     "driverB": "Driver B",
