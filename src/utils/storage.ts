@@ -231,7 +231,13 @@ export const getAllVehicleTemplates = async (): Promise<VehicleTemplate[]> => {
         console.log('getAllVehicleTemplates success:', request.result);
         if (!resolved) {
           resolved = true;
-          resolve(request.result);
+          // Sort by creation date descending (newest first)
+          const sortedTemplates = request.result.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA; // Descending order (newest first)
+          });
+          resolve(sortedTemplates);
         }
       };
       
