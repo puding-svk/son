@@ -91,12 +91,15 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
-      const availableWidth = window.innerWidth - rect.left - 60; // 60px buffer
-      const availableHeight = window.innerHeight - rect.top - 80; // 80px buffer for padding/buttons
+      
+      // Get modal's actual dimensions
+      const modalWidth = rect.width;
+      const modalHeight = rect.height;
 
-      // If there's more horizontal space than vertical, place controls on the left
+      // If modal width is significantly larger than height, place controls on the left
       // Otherwise, place them below
-      if (availableWidth > availableHeight && availableWidth > 400) {
+      // We require at least 3:2 width-to-height ratio to place on left
+      if (modalWidth / modalHeight > 1.5) {
         setControlsPosition('left');
       } else {
         setControlsPosition('bottom');
@@ -109,6 +112,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     // Use ResizeObserver to detect when the canvas wrapper changes size
     const resizeObserver = new ResizeObserver(() => {
       calculateCanvasSize();
+      handleResize();
     });
 
     if (canvasWrapperRef.current) {
@@ -165,8 +169,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
           </div>
 
           <div className="situation-draw-controls-panel">
-            <h3>{t('situation.controls') || 'Controls'}</h3>
-
             {/* Placeholder for future controls */}
             <div className="controls-placeholder">
               <p>{t('situation.controlsPlaceholder') || 'Drawing tools will appear here'}</p>
@@ -174,25 +176,31 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
             <div className="controls-buttons">
               <button
-                className="btn-secondary"
+                className="btn-icon btn-clear"
                 onClick={handleClear}
                 type="button"
+                title={t('situation.clear') || 'Clear'}
+                aria-label="Clear canvas"
               >
-                {t('situation.clear') || 'Clear'}
+                🗑️
               </button>
               <button
-                className="btn-secondary"
+                className="btn-icon btn-cancel"
                 onClick={onClose}
                 type="button"
+                title={t('common.cancel') || 'Cancel'}
+                aria-label="Cancel"
               >
-                {t('common.cancel') || 'Cancel'}
+                ✕
               </button>
               <button
-                className="btn-primary"
+                className="btn-icon btn-save"
                 onClick={handleSave}
                 type="button"
+                title={t('common.save') || 'Save'}
+                aria-label="Save"
               >
-                {t('common.save') || 'Save'}
+                ✓
               </button>
             </div>
           </div>
