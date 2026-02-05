@@ -602,7 +602,15 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
         width={600}
         height={450}
         className="impact-marker-canvas"
-        onClick={handleCanvasClick}
+        onClick={(e) => {
+          // If not in edit mode, enable edit mode on canvas click
+          if (!isEditable) {
+            handleEdit();
+          } else {
+            // If already in edit mode, handle normal canvas click
+            handleCanvasClick(e);
+          }
+        }}
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
