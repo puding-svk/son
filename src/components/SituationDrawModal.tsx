@@ -12,8 +12,8 @@ type ControlsPosition = 'left' | 'bottom';
 
 interface Sticker {
   id: string;
-  type: 'vehicleA' | 'vehicleB';
-  vehicleCategory: 'car' | 'truck' | 'motorcycle';
+  type: 'vehicleA' | 'vehicleB' | 'text';
+  vehicleCategory?: 'car' | 'truck' | 'motorcycle';
   x: number;
   y: number;
   rotation: number;
@@ -22,6 +22,10 @@ interface Sticker {
   maxScale: number;
   color: string;
   color2: string;
+  isText?: boolean;
+  text?: string;
+  fontSize?: number;
+  selectionRadius?: number;
 }
 
 export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
@@ -37,10 +41,12 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 640, height: 300 });
   const [isCanvasSizeLocked, setIsCanvasSizeLocked] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingTool, setDrawingTool] = useState<'pen' | null>(null);
-  const [selectedTool, setSelectedTool] = useState<'pen' | null>(null);
+  const [drawingTool, setDrawingTool] = useState<'pen' | 'text' | null>(null);
+  const [selectedTool, setSelectedTool] = useState<'pen' | 'text' | null>(null);
   const [penWidth, setPenWidth] = useState(2);
   const [penColor, setPenColor] = useState('#000000');
+  const [textSize, setTextSize] = useState(10);
+  const [textColor, setTextColor] = useState('#000000');
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
   const drawingLayerRef = useRef<HTMLCanvasElement | null>(null);
@@ -162,14 +168,23 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       ctx.save();
       ctx.translate(sticker.x, sticker.y);
       ctx.rotate((sticker.rotation * Math.PI) / 180);
-      
-      // Draw car SVG using canvas paths
-      // This is the car from SVGTestSection converted to canvas drawing
 
-      // Scale the car to fit the size
-      let scaleFactor = size / 47.032;
-      ctx.scale(scaleFactor, scaleFactor);
-      ctx.translate(-23.516, -23.516); 
+      // Handle text stickers
+      if (sticker.isText && sticker.text) {
+        ctx.fillStyle = sticker.color;
+        const scaledFontSize = (sticker.fontSize || 20) * sticker.scale;
+        ctx.font = `${scaledFontSize}px Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(sticker.text, 0, 0);
+      } else {
+        // Draw car SVG using canvas paths
+        // This is the car from SVGTestSection converted to canvas drawing
+
+        // Scale the car to fit the size
+        let scaleFactor = size / 47.032;
+        ctx.scale(scaleFactor, scaleFactor);
+        ctx.translate(-23.516, -23.516); 
 
       // Draw rect element (windows) - only for car
       if (sticker.vehicleCategory === 'car') {
@@ -345,16 +360,19 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.fillText(letter, 110, 325); // Position at top of bike
         ctx.restore();
       }
+      }
       
       ctx.restore();
       
       // Draw selection circle if selected
       if (selectedSticker === sticker.id) {
+        const circleRadius = getStickerSelectionRadius(sticker);
+        
         ctx.strokeStyle = '#FF6B6B';
         ctx.lineWidth = 3;
         ctx.setLineDash([5, 5]);
         ctx.beginPath();
-        ctx.arc(sticker.x, sticker.y, size / 2 + 10, 0, Math.PI * 2);
+        ctx.arc(sticker.x, sticker.y, circleRadius, 0, Math.PI * 2);
         ctx.stroke();
         ctx.setLineDash([]);
       }
@@ -454,6 +472,10 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
   // Get the selection circle radius for a sticker (dynamic based on scale)
   const getStickerSelectionRadius = (sticker: Sticker): number => {
+    // Use fixed radius if it's already set (for text stickers)
+    if (sticker.selectionRadius !== undefined) {
+      return sticker.selectionRadius;
+    }
     const stickerSize = 40 * sticker.scale;
     return stickerSize / 2 + 10; // Selection circle is 10px outside the sticker
   };
@@ -711,6 +733,44 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     setStickers([...stickers, newSticker]);
     setSelectedSticker(newSticker.id);
+    setDrawingTool(null);
+    setSelectedTool(null);
+  };
+
+  const addTextSticker = (text: string, x: number, y: number) => {
+    // Lock canvas size when first content is added
+    if (stickers.length === 0) {
+      setIsCanvasSizeLocked(true);
+    }
+
+    // Calculate scale constraints based on current canvas size
+    const minCanvasScale = Math.min(canvasDimensions.width, canvasDimensions.height) / 100;
+    const minScale = Math.max(1, Math.floor(minCanvasScale * 0.55));
+    const maxScale = Math.ceil(minCanvasScale * 2.2);
+    const initialScale = Math.ceil(minCanvasScale * 1.1);
+
+    // Set fixed selection radius for text
+    const fixedRadius = 40;
+
+    const newTextSticker: Sticker = {
+      id: `text-${Date.now()}`,
+      type: 'text',
+      x,
+      y,
+      rotation: 0,
+      scale: initialScale,
+      minScale,
+      maxScale,
+      color: textColor,
+      color2: textColor,
+      isText: true,
+      text,
+      fontSize: textSize,
+      selectionRadius: fixedRadius,
+    };
+
+    setStickers([...stickers, newTextSticker]);
+    setSelectedSticker(newTextSticker.id);
     setDrawingTool(null);
     setSelectedTool(null);
   };
@@ -1068,7 +1128,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
               style={{
                 width: `${canvasDimensions.width}px`,
                 height: `${canvasDimensions.height}px`,
-                cursor: drawingTool === 'pen' ? 'crosshair' : (selectedSticker ? 'grab' : 'default'),
+                cursor: drawingTool === 'pen' ? 'crosshair' : (selectedTool === 'text' ? 'text' : (selectedSticker ? 'grab' : 'default')),
                 touchAction: 'none',
               }}
             />
@@ -1117,13 +1177,19 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   B
                 </button>
                 <button
-                  className="btn-tool btn-placeholder"
+                  className="btn-tool"
+                  onClick={() => {
+                    const userText = prompt('Enter text:');
+                    if (userText && userText.trim()) {
+                      addTextSticker(userText, canvasDimensions.width / 2, canvasDimensions.height / 2);
+                    }
+                    setDrawingTool(null);
+                  }}
                   type="button"
-                  title="Tool C"
-                  aria-label="Tool C"
-                  disabled
+                  title="Text - Add custom text"
+                  aria-label="Text tool"
                 >
-                  C
+                  T
                 </button>
                 <button
                   className="btn-tool btn-placeholder"
@@ -1161,7 +1227,9 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                     <span className="tool-controls-title">
                       {selectedTool === 'pen' && '✏️ Pen'}
                       {selectedSticker && (
-                        stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? '🚗 Vehicle A' : '🚗 Vehicle B'
+                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? 'T Custom Text' : (
+                          stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? '🚗 Vehicle A' : '🚗 Vehicle B'
+                        )
                       )}
                     </span>
                     <button
@@ -1264,18 +1332,22 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                             const sticker = stickers.find(s => s.id === selectedSticker);
                             if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
                           }} type="button" title="Move left">←</button>
-                          <button onClick={() => {
-                            if (selectedSticker) toggleVehicleType(selectedSticker);
-                          }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">
-                            <div className="vehicle-toggle-content">
-                              <div className="vehicle-icon">
-                                {selectedSticker && stickers.find(s => s.id === selectedSticker) 
-                                  ? getNextVehicleEmoji(stickers.find(s => s.id === selectedSticker)!.vehicleCategory)
-                                  : '🚗'}
+                          {selectedSticker && (stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' || stickers.find(s => s.id === selectedSticker)?.type === 'vehicleB') ? (
+                            <button onClick={() => {
+                              if (selectedSticker) toggleVehicleType(selectedSticker);
+                            }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">
+                              <div className="vehicle-toggle-content">
+                                <div className="vehicle-icon">
+                                  {selectedSticker && stickers.find(s => s.id === selectedSticker) 
+                                    ? getNextVehicleEmoji(stickers.find(s => s.id === selectedSticker)!.vehicleCategory as 'car' | 'truck' | 'motorcycle')
+                                    : '🚗'}
+                                </div>
+                                <div className="rotate-arrow">⟳</div>
                               </div>
-                              <div className="rotate-arrow">⟳</div>
-                            </div>
-                          </button>
+                            </button>
+                          ) : (
+                            <div style={{ visibility: 'hidden' }}></div>
+                          )}
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
                             if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
