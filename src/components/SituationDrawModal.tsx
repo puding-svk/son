@@ -17,6 +17,8 @@ interface Sticker {
   y: number;
   rotation: number;
   scale: number;
+  minScale: number;
+  maxScale: number;
   color: string;
 }
 
@@ -520,13 +522,22 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       setIsCanvasSizeLocked(true);
     }
 
+    // Calculate scale constraints based on current canvas size
+    // Scale is proportional to canvas dimensions
+    const minCanvasScale = Math.min(canvasDimensions.width, canvasDimensions.height) / 100;
+    const minScale = Math.max(1, Math.floor(minCanvasScale * 0.55));
+    const maxScale = Math.ceil(minCanvasScale * 2.2);
+    const initialScale = Math.ceil(minCanvasScale * 1.1);
+
     const newSticker: Sticker = {
       id: `${type}-${Date.now()}`,
       type,
       x: canvasDimensions.width / 2,
       y: canvasDimensions.height / 2,
       rotation: 0,
-      scale: 6,
+      scale: initialScale,
+      minScale,
+      maxScale,
       color,
     };
 
@@ -1027,7 +1038,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                           {/* Row 3: Scale Down | Move Down | Scale Up */}
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { scale: Math.max(3, sticker.scale - 0.2) });
+                            if (sticker) updateSticker(selectedSticker, { scale: Math.max(sticker.minScale, sticker.scale - 0.2) });
                           }} type="button" title="Scale down">−</button>
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
@@ -1035,7 +1046,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                           }} type="button" title="Move down">↓</button>
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { scale: Math.min(12, sticker.scale + 0.2) });
+                            if (sticker) updateSticker(selectedSticker, { scale: Math.min(sticker.maxScale, sticker.scale + 0.2) });
                           }} type="button" title="Scale up">+</button>
                         </div>
 
