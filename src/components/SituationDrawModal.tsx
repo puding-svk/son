@@ -46,6 +46,9 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const [isRotatingSticker, setIsRotatingSticker] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [rotationOffset, setRotationOffset] = useState(0); // Offset between grab angle and sticker rotation
+  const [isPinchScaling, setIsPinchScaling] = useState(false);
+  const [initialPinchDistance, setInitialPinchDistance] = useState(0);
+  const [pinchStartScale, setPinchStartScale] = useState(0);
 
   // Canvas aspect ratio: 32:15
   const ASPECT_RATIO = 32 / 15;
@@ -669,6 +672,22 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
   // Touch handlers for stickers
   const handleStickerTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    // Handle pinch gesture with 2 touches
+    if (e.touches.length === 2 && selectedSticker) {
+      e.preventDefault();
+      const touch1 = getTouchCanvasCoordinates(e.touches[0]);
+      const touch2 = getTouchCanvasCoordinates(e.touches[1]);
+      const distance = Math.hypot(touch2.x - touch1.x, touch2.y - touch1.y);
+      
+      const sticker = stickers.find(s => s.id === selectedSticker);
+      if (sticker) {
+        setIsPinchScaling(true);
+        setInitialPinchDistance(distance);
+        setPinchStartScale(sticker.scale);
+      }
+      return;
+    }
+
     if (e.touches.length !== 1) return;
     
     const touch = e.touches[0];
@@ -723,6 +742,23 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   };
 
   const handleStickerTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    // Handle pinch scaling with 2 touches
+    if (e.touches.length === 2 && isPinchScaling && selectedSticker) {
+      e.preventDefault();
+      const touch1 = getTouchCanvasCoordinates(e.touches[0]);
+      const touch2 = getTouchCanvasCoordinates(e.touches[1]);
+      const distance = Math.hypot(touch2.x - touch1.x, touch2.y - touch1.y);
+      
+      const sticker = stickers.find(s => s.id === selectedSticker);
+      if (sticker && initialPinchDistance > 0) {
+        const scaleFactor = distance / initialPinchDistance;
+        const newScale = pinchStartScale * scaleFactor;
+        const clampedScale = Math.max(sticker.minScale, Math.min(sticker.maxScale, newScale));
+        updateSticker(selectedSticker, { scale: clampedScale });
+      }
+      return;
+    }
+
     if (e.touches.length !== 1) return;
     
     const touch = e.touches[0];
@@ -756,6 +792,9 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const handleStickerTouchEnd = () => {
     setIsDraggingSticker(false);
     setIsRotatingSticker(false);
+    setIsPinchScaling(false);
+    setInitialPinchDistance(0);
+    setPinchStartScale(0);
   };
 
   return (
