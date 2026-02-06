@@ -163,17 +163,35 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     };
   };
 
+  // Clamp coordinates to stay within the drawable area (inside the border)
+  const clampCoords = (x: number, y: number, halfWidth: number = penWidth / 2) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x, y };
+    
+    const borderWidth = 2;
+    const minX = borderWidth + halfWidth;
+    const minY = borderWidth + halfWidth;
+    const maxX = canvas.width - borderWidth - halfWidth;
+    const maxY = canvas.height - borderWidth - halfWidth;
+    
+    return {
+      x: Math.max(minX, Math.min(x, maxX)),
+      y: Math.max(minY, Math.min(y, maxY)),
+    };
+  };
+
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (drawingTool !== 'pen') return;
 
     setIsDrawing(true);
     const coords = getCanvasCoordinates(e);
+    const clamped = clampCoords(coords.x, coords.y);
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
 
     if (ctx && canvas) {
       ctx.beginPath();
-      ctx.moveTo(coords.x, coords.y);
+      ctx.moveTo(clamped.x, clamped.y);
     }
   };
 
@@ -181,6 +199,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (!isDrawing || drawingTool !== 'pen') return;
 
     const coords = getCanvasCoordinates(e);
+    const clamped = clampCoords(coords.x, coords.y);
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
 
@@ -189,7 +208,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = penColor;
-      ctx.lineTo(coords.x, coords.y);
+      ctx.lineTo(clamped.x, clamped.y);
       ctx.stroke();
     }
   };
@@ -229,11 +248,12 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     const x = (touch.clientX - rect.left) * scaleX;
     const y = (touch.clientY - rect.top) * scaleY;
+    const clamped = clampCoords(x, y);
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.beginPath();
-      ctx.moveTo(x, y);
+      ctx.moveTo(clamped.x, clamped.y);
     }
   };
 
@@ -252,6 +272,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     const x = (touch.clientX - rect.left) * scaleX;
     const y = (touch.clientY - rect.top) * scaleY;
+    const clamped = clampCoords(x, y);
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
@@ -259,7 +280,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = penColor;
-      ctx.lineTo(x, y);
+      ctx.lineTo(clamped.x, clamped.y);
       ctx.stroke();
     }
   };
