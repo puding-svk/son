@@ -979,7 +979,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                       title={t('common.close') || 'Close'}
                       aria-label="Close tool controls"
                     >
-                      ✕
+                      ✓
                     </button>
                   </div>
 
@@ -1133,7 +1133,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 title={t('common.save') || 'Save'}
                 aria-label="Save"
               >
-                ✓
+                💾
               </button>
             </div>
           </div>

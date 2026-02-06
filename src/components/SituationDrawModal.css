@@ -428,6 +428,7 @@
   justify-content: center;
   transition: all 0.2s;
   flex-shrink: 0;
+  color: #4CAF50;
 }
 
 .situation-draw-modal-bottom .btn-close-tool-controls {
