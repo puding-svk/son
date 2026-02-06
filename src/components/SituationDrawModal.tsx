@@ -49,6 +49,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const [textColor, setTextColor] = useState('#000000');
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
   const drawingLayerRef = useRef<HTMLCanvasElement | null>(null);
   const [isDraggingSticker, setIsDraggingSticker] = useState(false);
   const [isRotatingSticker, setIsRotatingSticker] = useState(false);
@@ -1312,72 +1313,108 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
                     {selectedSticker && (
                       <div className="sticker-controls">
-                        <div className="sticker-grid-controls">
-                          {/* Row 1: Rotate Left | Move Up | Rotate Right */}
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation - 15 });
-                          }} type="button" title="Rotate left">↺</button>
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { y: Math.max(0, sticker.y - 5) });
-                          }} type="button" title="Move up">↑</button>
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation + 15 });
-                          }} type="button" title="Rotate right">↻</button>
-                          
-                          {/* Row 2: Move Left | Toggle Vehicle | Move Right */}
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
-                          }} type="button" title="Move left">←</button>
-                          {selectedSticker && (stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' || stickers.find(s => s.id === selectedSticker)?.type === 'vehicleB') ? (
-                            <button onClick={() => {
-                              if (selectedSticker) toggleVehicleType(selectedSticker);
-                            }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">
-                              <div className="vehicle-toggle-content">
-                                <div className="vehicle-icon">
-                                  {selectedSticker && stickers.find(s => s.id === selectedSticker) 
-                                    ? getNextVehicleEmoji(stickers.find(s => s.id === selectedSticker)!.vehicleCategory as 'car' | 'truck' | 'motorcycle')
-                                    : '🚗'}
-                                </div>
-                                <div className="rotate-arrow">⟳</div>
-                              </div>
-                            </button>
-                          ) : (
-                            <div style={{ visibility: 'hidden' }}></div>
-                          )}
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
-                          }} type="button" title="Move right">→</button>
-                          
-                          {/* Row 3: Scale Down | Move Down | Scale Up */}
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { scale: Math.max(sticker.minScale, sticker.scale - 0.2) });
-                          }} type="button" title="Scale down">−</button>
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { y: Math.min(canvasDimensions.height, sticker.y + 5) });
-                          }} type="button" title="Move down">↓</button>
-                          <button onClick={() => {
-                            const sticker = stickers.find(s => s.id === selectedSticker);
-                            if (sticker) updateSticker(selectedSticker, { scale: Math.min(sticker.maxScale, sticker.scale + 0.2) });
-                          }} type="button" title="Scale up">+</button>
-                        </div>
+                        {showTextColorPicker && selectedSticker && stickers.find(s => s.id === selectedSticker)?.type === 'text' ? (
+                          <div className="text-color-picker-panel">
+                            <div className="color-swatches">
+                              {[
+                                '#000000', '#ffffff', '#FF0000', '#00AA00', '#0066CC',
+                                '#FFAA00', '#FF5500', '#AA00FF', '#00AAAA', '#AA0055',
+                                '#555555', '#AAAAAA', '#FF6666', '#66FF66', '#6666FF',
+                                '#FFFF66', '#FF66FF', '#66FFFF', '#FFB366', '#9966FF',
+                                '#66FF99', '#FF9999', '#9966CC', '#99CCFF', '#FFCC99',
+                                '#CC99FF', '#99FFCC', '#FF99CC',
+                              ].map((color) => (
+                                <button
+                                  key={color}
+                                  className={`color-swatch ${stickers.find(s => s.id === selectedSticker)?.color === color ? 'active' : ''}`}
+                                  style={{ backgroundColor: color }}
+                                  onClick={() => {
+                                    updateSticker(selectedSticker, { color });
+                                    setShowTextColorPicker(false);
+                                  }}
+                                  title={color}
+                                  type="button"
+                                  aria-label={`Color ${color}`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="sticker-grid-controls">
+                              {/* Row 1: Rotate Left | Move Up | Rotate Right */}
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation - 15 });
+                              }} type="button" title="Rotate left">↺</button>
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { y: Math.max(0, sticker.y - 5) });
+                              }} type="button" title="Move up">↑</button>
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation + 15 });
+                              }} type="button" title="Rotate right">↻</button>
+                              
+                              {/* Row 2: Move Left | Toggle Vehicle | Move Right */}
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
+                              }} type="button" title="Move left">←</button>
+                              {selectedSticker && (stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' || stickers.find(s => s.id === selectedSticker)?.type === 'vehicleB') ? (
+                                <button onClick={() => {
+                                  if (selectedSticker) toggleVehicleType(selectedSticker);
+                                }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">
+                                  <div className="vehicle-toggle-content">
+                                    <div className="vehicle-icon">
+                                      {selectedSticker && stickers.find(s => s.id === selectedSticker) 
+                                        ? getNextVehicleEmoji(stickers.find(s => s.id === selectedSticker)!.vehicleCategory as 'car' | 'truck' | 'motorcycle')
+                                        : '🚗'}
+                                    </div>
+                                    <div className="rotate-arrow">⟳</div>
+                                  </div>
+                                </button>
+                              ) : selectedSticker && stickers.find(s => s.id === selectedSticker)?.type === 'text' ? (
+                                <button onClick={() => {
+                                  setShowTextColorPicker(!showTextColorPicker);
+                                }} type="button" title="Change text color" className="btn-color-picker">
+                                  🎨
+                                </button>
+                              ) : (
+                                <div style={{ visibility: 'hidden' }}></div>
+                              )}
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
+                              }} type="button" title="Move right">→</button>
+                              
+                              {/* Row 3: Scale Down | Move Down | Scale Up */}
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { scale: Math.max(sticker.minScale, sticker.scale - 0.2) });
+                              }} type="button" title="Scale down">−</button>
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { y: Math.min(canvasDimensions.height, sticker.y + 5) });
+                              }} type="button" title="Move down">↓</button>
+                              <button onClick={() => {
+                                const sticker = stickers.find(s => s.id === selectedSticker);
+                                if (sticker) updateSticker(selectedSticker, { scale: Math.min(sticker.maxScale, sticker.scale + 0.2) });
+                              }} type="button" title="Scale up">+</button>
+                            </div>
 
-                        <div className="control-group">
-                          <button 
-                            onClick={() => deleteSticker(selectedSticker)} 
-                            type="button" 
-                            className="btn-delete"
-                            title="Delete sticker"
-                          >
-                            🗑️ Delete
-                          </button>
-                        </div>
+                            <div className="control-group">
+                              <button 
+                                onClick={() => deleteSticker(selectedSticker)} 
+                                type="button" 
+                                className="btn-delete"
+                                title="Delete sticker"
+                              >
+                                🗑️ Delete
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

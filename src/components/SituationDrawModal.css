@@ -786,6 +786,52 @@
   border-color: #ff0000 !important;
 }
 
+/* Text color picker button */
+.btn-color-picker {
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.btn-color-picker:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+/* Text color picker panel */
+.text-color-picker-panel {
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.text-color-picker-panel .color-swatches {
+  display: contents;
+}
+
+.text-color-picker-panel .color-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 20px;
+  min-height: 20px;
+}
+
 /* Print styles */
 @media print {
   .situation-draw-modal-overlay {
