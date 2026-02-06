@@ -270,10 +270,11 @@
 }
 
 .situation-draw-modal-left .drawing-tools {
-  flex-direction: column;
+  flex-direction: row;
   padding: 0.5rem;
   gap: 0.5rem;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 .situation-draw-modal-bottom .drawing-tools {
