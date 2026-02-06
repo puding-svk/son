@@ -21,6 +21,7 @@ interface Sticker {
   minScale: number;
   maxScale: number;
   color: string;
+  color2: string;
 }
 
 export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
@@ -186,6 +187,17 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         const carPath = new Path2D('M29.395,0H17.636c-3.117,0-5.643,3.467-5.643,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759 c3.116,0,5.644-2.527,5.644-5.644V6.584C35.037,3.467,32.511,0,29.395,0z M34.05,14.188v11.665l-2.729,0.351v-4.806L34.05,14.188z M32.618,10.773c-1.016,3.9-2.219,8.51-2.219,8.51H16.631l-2.222-8.51C14.41,10.773,23.293,7.755,32.618,10.773z M15.741,21.713 v4.492l-2.73-0.349V14.502L15.741,21.713z M13.011,37.938V27.579l2.73,0.343v8.196L13.011,37.938z M14.568,40.882l2.218-3.336 h13.771l2.219,3.336H14.568z M31.321,35.805v-7.872l2.729-0.355v10.048L31.321,35.805z');
         ctx.fill(carPath);
         ctx.stroke(carPath);
+
+        // Add letter A or B at the top of the car
+        ctx.save();
+        ctx.fillStyle = sticker.color2;
+        ctx.globalAlpha = 0.8;
+        ctx.font = '15px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const letter = sticker.type === 'vehicleA' ? 'A' : 'B';
+        ctx.fillText(letter, 23.469, 30); // Position at top of car
+        ctx.restore();
       } else if (sticker.vehicleCategory === 'truck') {
         // Truck SVG (side view) - viewBox 220x100
         ctx.restore(); // Restore first to reset transforms
@@ -233,6 +245,18 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.roundRect(52.354, 20, 97.646, 60, 2);
         ctx.fill();
         ctx.stroke();
+
+        // Add letter A or B at the top of the truck
+        ctx.save();
+        ctx.rotate((-270 * Math.PI) / 180); // Counter-rotate to make text readable
+        ctx.fillStyle = sticker.color2;
+        ctx.globalAlpha = 0.8;
+        ctx.font = '45px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const letter = sticker.type === 'vehicleA' ? 'A' : 'B';
+        ctx.fillText(letter, 50, -100); // Position at top of truck
+        ctx.restore();
       } else if (sticker.vehicleCategory === 'motorcycle') {
         // Motorcycle SVG (side view) - viewBox 220x460
         ctx.restore(); // Restore first to reset transforms
@@ -309,6 +333,17 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.ellipse(110, 311.303, 32, 74.223, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+
+        // Add letter A or B at the top of the bike
+        ctx.save();
+        ctx.fillStyle = sticker.color2;
+        ctx.globalAlpha = 0.8; // Slightly transparent for better visibility on bike details
+        ctx.font = '170px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const letter = sticker.type === 'vehicleA' ? 'A' : 'B';
+        ctx.fillText(letter, 110, 325); // Position at top of bike
+        ctx.restore();
       }
       
       ctx.restore();
@@ -642,7 +677,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   };
 
   // Sticker handlers
-  const addSticker = (type: 'vehicleA' | 'vehicleB', color: string) => {
+  const addSticker = (type: 'vehicleA' | 'vehicleB', color: string, color2: string) => {
     // Check if sticker of this type already exists
     if (stickers.some(s => s.type === type)) {
       return;
@@ -671,6 +706,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       minScale,
       maxScale,
       color,
+      color2,
     };
 
     setStickers([...stickers, newSticker]);
@@ -1062,7 +1098,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 </button>
                 <button
                   className="btn-tool btn-sticker-a"
-                  onClick={() => addSticker('vehicleA', '#ADD8E6')}
+                  onClick={() => addSticker('vehicleA', '#ADD8E6', '#0066cc')}
                   type="button"
                   title="Vehicle A - Light Blue"
                   aria-label="Vehicle A sticker"
@@ -1072,7 +1108,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 </button>
                 <button
                   className="btn-tool btn-sticker-b"
-                  onClick={() => addSticker('vehicleB', '#FFFFE0')}
+                  onClick={() => addSticker('vehicleB', '#FFFFE0', '#cc8800')}
                   type="button"
                   title="Vehicle B - Light Yellow"
                   aria-label="Vehicle B sticker"
