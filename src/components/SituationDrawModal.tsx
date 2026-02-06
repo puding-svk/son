@@ -45,8 +45,8 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const [selectedTool, setSelectedTool] = useState<'pen' | 'text' | null>(null);
   const [penWidth, setPenWidth] = useState(2);
   const [penColor, setPenColor] = useState('#000000');
-  const [textSize, setTextSize] = useState(10);
-  const [textColor, setTextColor] = useState('#000000');
+  const [textSize] = useState(10);
+  const [textColor] = useState('#000000');
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
@@ -788,7 +788,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (!sticker) return;
 
     const vehicleTypes: ('car' | 'truck' | 'motorcycle')[] = ['car', 'truck', 'motorcycle'];
-    const currentIndex = vehicleTypes.indexOf(sticker.vehicleCategory);
+    const currentIndex = vehicleTypes.indexOf(sticker.vehicleCategory || 'car');
     const nextIndex = (currentIndex + 1) % vehicleTypes.length;
     
     updateSticker(id, { vehicleCategory: vehicleTypes[nextIndex] });
