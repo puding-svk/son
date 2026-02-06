@@ -13,6 +13,7 @@ type ControlsPosition = 'left' | 'bottom';
 interface Sticker {
   id: string;
   type: 'vehicleA' | 'vehicleB';
+  vehicleCategory: 'car' | 'truck' | 'motorcycle';
   x: number;
   y: number;
   rotation: number;
@@ -165,23 +166,74 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       // This is the car from SVGTestSection converted to canvas drawing
 
       // Scale the car to fit the size
-      const scale = size / 47.032;
-      ctx.scale(scale, scale);
+      let scaleFactor = size / 47.032;
+      ctx.scale(scaleFactor, scaleFactor);
       ctx.translate(-23.516, -23.516); 
 
-      // Draw rect element (windows)
-      ctx.fillStyle = 'rgb(229, 229, 229)';
-      ctx.fillRect(12.922, 8.772, 21.132, 32.401);
+      // Draw rect element (windows) - only for car
+      if (sticker.vehicleCategory === 'car') {
+        ctx.fillStyle = 'rgb(229, 229, 229)';
+        ctx.fillRect(12.922, 8.772, 21.132, 32.401);
+      }
 
       ctx.fillStyle = sticker.color;
       ctx.strokeStyle = '#333';
-      ctx.lineWidth = 1.5;      
-           
-      // Car SVG path (front view)
-      const carPath = new Path2D('M29.395,0H17.636c-3.117,0-5.643,3.467-5.643,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759 c3.116,0,5.644-2.527,5.644-5.644V6.584C35.037,3.467,32.511,0,29.395,0z M34.05,14.188v11.665l-2.729,0.351v-4.806L34.05,14.188z M32.618,10.773c-1.016,3.9-2.219,8.51-2.219,8.51H16.631l-2.222-8.51C14.41,10.773,23.293,7.755,32.618,10.773z M15.741,21.713 v4.492l-2.73-0.349V14.502L15.741,21.713z M13.011,37.938V27.579l2.73,0.343v8.196L13.011,37.938z M14.568,40.882l2.218-3.336 h13.771l2.219,3.336H14.568z M31.321,35.805v-7.872l2.729-0.355v10.048L31.321,35.805z');
-      
-      ctx.fill(carPath);
-      ctx.stroke(carPath);
+      ctx.lineWidth = 1.5;
+
+      // Draw vehicle based on category
+      if (sticker.vehicleCategory === 'car') {
+        // Car SVG path (front view)
+        const carPath = new Path2D('M29.395,0H17.636c-3.117,0-5.643,3.467-5.643,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759 c3.116,0,5.644-2.527,5.644-5.644V6.584C35.037,3.467,32.511,0,29.395,0z M34.05,14.188v11.665l-2.729,0.351v-4.806L34.05,14.188z M32.618,10.773c-1.016,3.9-2.219,8.51-2.219,8.51H16.631l-2.222-8.51C14.41,10.773,23.293,7.755,32.618,10.773z M15.741,21.713 v4.492l-2.73-0.349V14.502L15.741,21.713z M13.011,37.938V27.579l2.73,0.343v8.196L13.011,37.938z M14.568,40.882l2.218-3.336 h13.771l2.219,3.336H14.568z M31.321,35.805v-7.872l2.729-0.355v10.048L31.321,35.805z');
+        ctx.fill(carPath);
+        ctx.stroke(carPath);
+      } else if (sticker.vehicleCategory === 'truck') {
+        // Truck SVG (side view) - viewBox 220x100
+        ctx.restore(); // Restore first to reset transforms
+        ctx.save();
+        ctx.translate(sticker.x, sticker.y);
+        ctx.rotate((sticker.rotation * Math.PI) / 180);
+        ctx.rotate((270 * Math.PI) / 180); // Add 270-degree offset to match car rotation
+        
+        const truckScale = (size / 100) * 0.73; // Scale to fit height, then scale down to 73%
+        ctx.scale(truckScale, truckScale);
+        ctx.translate(-116.6, -50); // Center the truck, shifted 3% toward back
+        
+        // Draw truck parts (matching SVGTestSection)
+        
+        // Side detail line
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(170.713, 15.644);
+        ctx.bezierCurveTo(180.713, 38.421, 180.713, 61.199, 170.713, 83.977);
+        ctx.stroke();
+
+        // Cabin (rounded rectangle)
+        ctx.fillStyle = sticker.color;
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(142.173, 24.183, 41.827, 52.137, 10);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Window detail
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(150, 25);
+        ctx.quadraticCurveTo(165, 50, 150, 75);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Cargo bed (rectangle)
+        ctx.fillStyle = sticker.color;
+        ctx.beginPath();
+        ctx.roundRect(52.354, 20, 97.646, 60, 2);
+        ctx.fill();
+        ctx.stroke();
+      }
       
       ctx.restore();
       
@@ -535,6 +587,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     const newSticker: Sticker = {
       id: `${type}-${Date.now()}`,
       type,
+      vehicleCategory: 'car',
       x: canvasDimensions.width / 2,
       y: canvasDimensions.height / 2,
       rotation: 0,
@@ -555,6 +608,17 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (selectedSticker === id) {
       setSelectedSticker(null);
     }
+  };
+
+  const toggleVehicleType = (id: string) => {
+    const sticker = stickers.find(s => s.id === id);
+    if (!sticker) return;
+
+    const vehicleTypes: ('car' | 'truck' | 'motorcycle')[] = ['car', 'truck', 'motorcycle'];
+    const currentIndex = vehicleTypes.indexOf(sticker.vehicleCategory);
+    const nextIndex = (currentIndex + 1) % vehicleTypes.length;
+    
+    updateSticker(id, { vehicleCategory: vehicleTypes[nextIndex] });
   };
 
   const updateSticker = (id: string, updates: Partial<Sticker>) => {
@@ -1063,12 +1127,14 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                             if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation + 15 });
                           }} type="button" title="Rotate right">↻</button>
                           
-                          {/* Row 2: Move Left | Empty | Move Right */}
+                          {/* Row 2: Move Left | Toggle Vehicle | Move Right */}
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
                             if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
                           }} type="button" title="Move left">←</button>
-                          <div className="grid-spacer"></div>
+                          <button onClick={() => {
+                            if (selectedSticker) toggleVehicleType(selectedSticker);
+                          }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">🔄</button>
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
                             if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
