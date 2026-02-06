@@ -233,6 +233,82 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.roundRect(52.354, 20, 97.646, 60, 2);
         ctx.fill();
         ctx.stroke();
+      } else if (sticker.vehicleCategory === 'motorcycle') {
+        // Motorcycle SVG (side view) - viewBox 220x460
+        ctx.restore(); // Restore first to reset transforms
+        ctx.save();
+        ctx.translate(sticker.x, sticker.y);
+        ctx.rotate((sticker.rotation * Math.PI) / 180);
+        ctx.rotate((270 * Math.PI) / 180); // Add 270-degree offset to match car rotation
+        ctx.rotate((90 * Math.PI) / 180); // Add 90-degree offset for motorcycle orientation
+
+        const motorcycleScale = (size / 460) * 1.5 * 0.6; // Scale to fit height, adjusted to 0.75
+        ctx.scale(motorcycleScale, motorcycleScale);
+        ctx.translate(-110, -230); // Center the motorcycle
+        
+        // front wheel
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.beginPath();
+        ctx.roundRect(93.014, 10, 33.972, 106.021, 22);
+        ctx.fill();
+
+        // headlight
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 3;
+        ctx.fillStyle = sticker.color;
+        ctx.beginPath();
+        ctx.ellipse(110, 108, 22, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // handlebar
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 15;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(20, 140);
+        ctx.quadraticCurveTo(110, 95, 200, 140);
+        ctx.stroke();
+
+        // gas tank
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 8;
+        ctx.fillStyle = sticker.color;
+        ctx.beginPath();
+        ctx.moveTo(70, 148.554);
+        ctx.bezierCurveTo(96.667, 112.663, 123.333, 112.663, 150, 148.554);
+        ctx.bezierCurveTo(160, 190.427, 146.667, 223.327, 110, 247.254);
+        ctx.bezierCurveTo(73.333, 223.327, 60, 190.427, 70, 148.554);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        //rear wheel
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.beginPath();
+        ctx.roundRect(87.358, 357.947, 45.283, 92.053, 22);
+        ctx.fill();
+
+        // rear wheel cover
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(110, 320);
+        ctx.quadraticCurveTo(80, 350, 90, 385);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(110, 320);
+        ctx.quadraticCurveTo(140, 350, 130, 385);
+        ctx.stroke();
+
+        // seat
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 8;
+        ctx.fillStyle = sticker.color;
+        ctx.beginPath();
+        ctx.ellipse(110, 311.303, 32, 74.223, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
       }
       
       ctx.restore();
