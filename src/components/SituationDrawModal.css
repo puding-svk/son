@@ -685,6 +685,61 @@
   }
 }
 
+/* Sticker controls */
+.sticker-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sticker-move-arrows,
+.sticker-rotate-arrows,
+.sticker-scale-buttons {
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.sticker-move-arrows {
+  grid-template-areas:
+    "up up"
+    "left right"
+    "down down";
+}
+
+.sticker-move-arrows button:nth-child(1) { grid-area: up; }
+.sticker-move-arrows button:nth-child(2) { grid-area: down; }
+.sticker-move-arrows button:nth-child(3) { grid-area: left; }
+.sticker-move-arrows button:nth-child(4) { grid-area: right; }
+
+.sticker-controls button {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.sticker-controls button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.btn-delete {
+  width: 100%;
+  background-color: #ffcccc !important;
+  border-color: #ff6666 !important;
+  color: #cc0000;
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background-color: #ff9999 !important;
+  border-color: #ff0000 !important;
+}
+
 /* Print styles */
 @media print {
   .situation-draw-modal-overlay {
