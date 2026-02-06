@@ -235,8 +235,14 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const imageData = canvas.toDataURL('image/png');
-    onSave(imageData);
+    // Unselect any selected sticker to hide selection circle before saving
+    setSelectedSticker(null);
+    
+    // Defer image capture to next frame to ensure render with no selection
+    setTimeout(() => {
+      const imageData = canvas.toDataURL('image/png');
+      onSave(imageData);
+    }, 0);
   };
 
   // Drawing functions
@@ -474,6 +480,10 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, canvasDimensions.width, canvasDimensions.height);
     
+    // Clear stickers
+    setStickers([]);
+    setSelectedSticker(null);
+    
     // Trigger redraw
     renderCanvas();
   };
@@ -524,6 +534,9 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     
     if (clickedSticker) {
       setSelectedSticker(clickedSticker.id);
+      // Close any active tool when selecting a sticker
+      setDrawingTool(null);
+      setSelectedTool(null);
     } else {
       setSelectedSticker(null);
     }
