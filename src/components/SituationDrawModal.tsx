@@ -21,6 +21,11 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [controlsPosition, setControlsPosition] = useState<ControlsPosition>('bottom');
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 640, height: 300 });
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawingTool, setDrawingTool] = useState<'pen' | null>(null);
+  const [selectedTool, setSelectedTool] = useState<'pen' | null>(null);
+  const [penWidth, setPenWidth] = useState(2);
+  const [penColor, setPenColor] = useState('#000000');
 
   // Canvas aspect ratio: 32:15
   const ASPECT_RATIO = 32 / 15;
@@ -143,6 +148,131 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     onSave(imageData);
   };
 
+  // Drawing functions
+  const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (drawingTool !== 'pen') return;
+
+    setIsDrawing(true);
+    const coords = getCanvasCoordinates(e);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+
+    if (ctx && canvas) {
+      ctx.beginPath();
+      ctx.moveTo(coords.x, coords.y);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || drawingTool !== 'pen') return;
+
+    const coords = getCanvasCoordinates(e);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+
+    if (ctx) {
+      ctx.lineWidth = penWidth;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = penColor;
+      ctx.lineTo(coords.x, coords.y);
+      ctx.stroke();
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (ctx) {
+      ctx.closePath();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (ctx) {
+      ctx.closePath();
+    }
+  };
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (drawingTool !== 'pen') return;
+
+    e.preventDefault();
+    setIsDrawing(true);
+
+    const touch = e.touches[0];
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || drawingTool !== 'pen') return;
+
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.lineWidth = penWidth;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = penColor;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (ctx) {
+      ctx.closePath();
+    }
+  };
+
   const handleClear = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -171,19 +301,189 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
             <canvas
               ref={canvasRef}
               className="situation-draw-canvas"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
               style={{
                 width: `${canvasDimensions.width}px`,
                 height: `${canvasDimensions.height}px`,
+                cursor: drawingTool === 'pen' ? 'crosshair' : 'default',
+                touchAction: 'none',
               }}
             />
           </div>
 
           <div className="situation-draw-controls-panel">
-            {/* Placeholder for future controls */}
-            <div className="controls-placeholder">
-              <p>{t('situation.controlsPlaceholder') || 'Drawing tools will appear here'}</p>
+            {/* Scrollable section for tools and controls */}
+            <div className="controls-scrollable-area">
+              {/* Drawing tools */}
+              <div className="drawing-tools">
+                <button
+                  className={`btn-tool btn-pen ${drawingTool === 'pen' ? 'active' : ''}`}
+                  onClick={() => {
+                    if (drawingTool === 'pen') {
+                      setDrawingTool(null);
+                      setSelectedTool(null);
+                    } else {
+                      setDrawingTool('pen');
+                      setSelectedTool('pen');
+                    }
+                  }}
+                  type="button"
+                  title={t('situation.pen') || 'Pen - Draw freehand'}
+                  aria-label="Pen tool"
+                >
+                  ✏️
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool A"
+                  aria-label="Tool A"
+                  disabled
+                >
+                  A
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool B"
+                  aria-label="Tool B"
+                  disabled
+                >
+                  B
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool C"
+                  aria-label="Tool C"
+                  disabled
+                >
+                  C
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool D"
+                  aria-label="Tool D"
+                  disabled
+                >
+                  D
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool E"
+                  aria-label="Tool E"
+                  disabled
+                >
+                  E
+                </button>
+                <button
+                  className="btn-tool btn-placeholder"
+                  type="button"
+                  title="Tool F"
+                  aria-label="Tool F"
+                  disabled
+                >
+                  F
+                </button>
+              </div>
+
+              {/* Tool controls panel */}
+              {selectedTool && (
+                <div className="tool-controls-panel">
+                  <div className="tool-controls-header">
+                    <span className="tool-controls-title">
+                      {selectedTool === 'pen' ? '✏️ Pen' : 'Tool'}
+                    </span>
+                    <button
+                      className="btn-close-tool-controls"
+                      onClick={() => {
+                        setDrawingTool(null);
+                        setSelectedTool(null);
+                      }}
+                      type="button"
+                      title={t('common.close') || 'Close'}
+                      aria-label="Close tool controls"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Placeholder for tool-specific controls */}
+                  <div 
+                    className="tool-controls-content"
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                  >
+                    {selectedTool === 'pen' && (
+                      <div className="pen-controls">
+                        {/* Line Width Control */}
+                        <div className="control-group">
+                          <label htmlFor="pen-width">Width: {penWidth}px</label>
+                          <input
+                            id="pen-width"
+                            type="range"
+                            min="1"
+                            max="20"
+                            value={penWidth}
+                            onChange={(e) => setPenWidth(parseInt(e.target.value))}
+                            className="width-slider"
+                          />
+                          <div className="width-preview" style={{ 
+                            height: `${penWidth + 1}px`, 
+                            width: '80px',
+                            backgroundColor: penColor 
+                          }} />
+                        </div>
+
+                        {/* Color Picker */}
+                        <div className="control-group">
+                          <label>Color</label>
+                          <div className="color-picker-group">
+                            <div className="color-swatches">
+                              {[
+                                '#000000', '#ffffff', '#FF0000', '#00AA00', '#0066CC',
+                                '#FFAA00', '#FF5500', '#AA00FF', '#00AAAA', '#AA0055',
+                                '#555555', '#AAAAAA', '#FF6666', '#66FF66', '#6666FF',
+                                '#FFFF66', '#FF66FF', '#66FFFF', '#FFB366', '#9966FF',
+                                '#66FF99', '#FF9999', '#9966CC', '#99CCFF', '#FFCC99',
+                                '#CC99FF', '#99FFCC', '#FF99CC', '#CCFF99', '#99FFFF',
+                              ].map((color) => (
+                                <button
+                                  key={color}
+                                  className={`color-swatch ${penColor === color ? 'active' : ''}`}
+                                  style={{ backgroundColor: color }}
+                                  onClick={() => setPenColor(color)}
+                                  title={color}
+                                  type="button"
+                                  aria-label={`Color ${color}`}
+                                />
+                              ))}
+                            </div>
+                            <input
+                              type="color"
+                              value={penColor}
+                              onChange={(e) => setPenColor(e.target.value)}
+                              className="custom-color-input"
+                              title="Custom color"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
+            {/* Fixed buttons section at the bottom */}
             <div className="controls-buttons">
               <button
                 className="btn-icon btn-clear"
