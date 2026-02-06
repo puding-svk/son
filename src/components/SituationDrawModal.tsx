@@ -697,6 +697,26 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     updateSticker(id, { vehicleCategory: vehicleTypes[nextIndex] });
   };
 
+  const getVehicleEmoji = (vehicleType: 'car' | 'truck' | 'motorcycle'): string => {
+    switch (vehicleType) {
+      case 'car':
+        return '🚗';
+      case 'truck':
+        return '🚚';
+      case 'motorcycle':
+        return '🏍️';
+      default:
+        return '🔄';
+    }
+  };
+
+  const getNextVehicleEmoji = (currentVehicle: 'car' | 'truck' | 'motorcycle'): string => {
+    const vehicleTypes: ('car' | 'truck' | 'motorcycle')[] = ['car', 'truck', 'motorcycle'];
+    const currentIndex = vehicleTypes.indexOf(currentVehicle);
+    const nextIndex = (currentIndex + 1) % vehicleTypes.length;
+    return getVehicleEmoji(vehicleTypes[nextIndex]);
+  };
+
   const updateSticker = (id: string, updates: Partial<Sticker>) => {
     setStickers(stickers.map(s => s.id === id ? { ...s, ...updates } : s));
   };
@@ -1210,7 +1230,16 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                           }} type="button" title="Move left">←</button>
                           <button onClick={() => {
                             if (selectedSticker) toggleVehicleType(selectedSticker);
-                          }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">🔄</button>
+                          }} type="button" title="Toggle vehicle type" className="btn-toggle-vehicle">
+                            <div className="vehicle-toggle-content">
+                              <div className="vehicle-icon">
+                                {selectedSticker && stickers.find(s => s.id === selectedSticker) 
+                                  ? getNextVehicleEmoji(stickers.find(s => s.id === selectedSticker)!.vehicleCategory)
+                                  : '🚗'}
+                              </div>
+                              <div className="rotate-arrow">⟳</div>
+                            </div>
+                          </button>
                           <button onClick={() => {
                             const sticker = stickers.find(s => s.id === selectedSticker);
                             if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
