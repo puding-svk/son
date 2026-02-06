@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" xmlns:bx="https://boxy-svg.com">
   <defs>
-    <bx:grid x="0" y="0" width="30" height="30"/>
+    <bx:grid x="0" y="0" width="20" height="20"/>
   </defs>
-  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 2px; fill: rgb(255, 0, 0);" cx="240" cy="180" rx="150" ry="150"/>
-  <rect x="120" y="150" width="240" height="60" style="fill: rgb(255, 255, 255);"/>
+  <rect x="20" y="20" width="200" height="200" style="fill: rgb(3, 0, 255); stroke: rgb(0, 0, 0); stroke-width: 2px;"/>
+  <path d="M -194.286 -207.35 H -82.286 L -84.572 -224.75 L -34.286 -188.5 L -84.572 -152.25 L -82.286 -169.65 H -194.286 V -207.35 Z" bx:shape="arrow -194.286 -224.75 160 72.5 37.7 50.286 2.286 1@1be46fbc" style="fill: rgb(216, 216, 216); transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(0, -1, 1, 0, 234.285988, 308.5)"/>
 </svg>

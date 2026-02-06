@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com">
-  <path d="M 210 30 L 360 180 L 210 330 L 60 180 Z" bx:shape="n-gon 210 180 150 150 4 0 1@24233c6f" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); stroke-width: 2px;"/>
-  <defs>
-    <bx:grid x="0" y="0" width="30" height="30"/>
-  </defs>
-  <path d="M 210.001 90 L 300.002 180 L 210.001 270 L 120 180 Z" bx:shape="n-gon 210.001 180 90.001 90 4 0 1@44b70ca7" style="stroke-width: 2px; stroke: rgb(0, 0, 0); fill: rgb(255, 231, 0);"/>
-</svg>

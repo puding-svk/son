@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import './SVGTestSection.css';
+import signDpvj from '../../_misc_files/sign_dpvj.svg';
+import signHlavna from '../../_misc_files/sign_hlavna.svg';
+import signJednosmerka from '../../_misc_files/sign_jednosmerka.svg';
+import signZakvjazdu from '../../_misc_files/sign_zakvjazdu.svg';
+import signZakvjazduvsmere from '../../_misc_files/sign_zakvjazduvsmere.svg';
 
 export const SVGTestSection: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState('#1a1a1a');
@@ -107,6 +112,53 @@ export const SVGTestSection: React.FC = () => {
             </svg>
           </div>
           <p className="svg-label">Truck (Side View)</p>
+        </div>
+      </div>
+
+      <div className="section-divider">
+        <h4>Traffic Signs</h4>
+        <p>Traffic signs display their original colors</p>
+      </div>
+
+      <div className="traffic-signs-gallery">
+        {/* Sign DPVJ */}
+        <div className="sign-item">
+          <div className="sign-preview">
+            <img src={signDpvj} alt="DPVJ Sign" width="80" height="80" />
+          </div>
+          <p className="sign-label">DPVJ</p>
+        </div>
+
+        {/* Sign Hlavná */}
+        <div className="sign-item">
+          <div className="sign-preview">
+            <img src={signHlavna} alt="Hlavná Sign" width="80" height="80" />
+          </div>
+          <p className="sign-label">Hlavná</p>
+        </div>
+
+        {/* Sign Jednosmerka */}
+        <div className="sign-item">
+          <div className="sign-preview">
+            <img src={signJednosmerka} alt="Jednosmerka Sign" width="80" height="80" />
+          </div>
+          <p className="sign-label">Jednosmerka</p>
+        </div>
+
+        {/* Sign Zakvjazdu */}
+        <div className="sign-item">
+          <div className="sign-preview">
+            <img src={signZakvjazdu} alt="Zakvjazdu Sign" width="80" height="80" />
+          </div>
+          <p className="sign-label">Zakvjazdu</p>
+        </div>
+
+        {/* Sign Zakvjazduvsmere */}
+        <div className="sign-item">
+          <div className="sign-preview">
+            <img src={signZakvjazduvsmere} alt="Zakvjazduvsmere Sign" width="80" height="80" />
+          </div>
+          <p className="sign-label">Zakvjazduvsmere</p>
         </div>
       </div>
 
