@@ -960,54 +960,45 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
                     {selectedSticker && (
                       <div className="sticker-controls">
-                        <div className="control-group">
-                          <label>Move</label>
-                          <div className="sticker-move-arrows">
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { y: Math.max(0, sticker.y - 5) });
-                            }} type="button" title="Move up">↑</button>
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { y: Math.min(canvasDimensions.height, sticker.y + 5) });
-                            }} type="button" title="Move down">↓</button>
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
-                            }} type="button" title="Move left">←</button>
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
-                            }} type="button" title="Move right">→</button>
-                          </div>
-                        </div>
-
-                        <div className="control-group">
-                          <label>Rotate</label>
-                          <div className="sticker-rotate-arrows">
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation - 15 });
-                            }} type="button" title="Rotate left">↺</button>
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation + 15 });
-                            }} type="button" title="Rotate right">↻</button>
-                          </div>
-                        </div>
-
-                        <div className="control-group">
-                          <label>Scale</label>
-                          <div className="sticker-scale-buttons">
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { scale: Math.max(3, sticker.scale - 0.2) });
-                            }} type="button" title="Scale down">−</button>
-                            <button onClick={() => {
-                              const sticker = stickers.find(s => s.id === selectedSticker);
-                              if (sticker) updateSticker(selectedSticker, { scale: Math.min(12, sticker.scale + 0.2) });
-                            }} type="button" title="Scale up">+</button>
-                          </div>
+                        <div className="sticker-grid-controls">
+                          {/* Row 1: Rotate Left | Move Up | Rotate Right */}
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation - 15 });
+                          }} type="button" title="Rotate left">↺</button>
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { y: Math.max(0, sticker.y - 5) });
+                          }} type="button" title="Move up">↑</button>
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { rotation: sticker.rotation + 15 });
+                          }} type="button" title="Rotate right">↻</button>
+                          
+                          {/* Row 2: Move Left | Empty | Move Right */}
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { x: Math.max(0, sticker.x - 5) });
+                          }} type="button" title="Move left">←</button>
+                          <div className="grid-spacer"></div>
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { x: Math.min(canvasDimensions.width, sticker.x + 5) });
+                          }} type="button" title="Move right">→</button>
+                          
+                          {/* Row 3: Scale Down | Move Down | Scale Up */}
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { scale: Math.max(3, sticker.scale - 0.2) });
+                          }} type="button" title="Scale down">−</button>
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { y: Math.min(canvasDimensions.height, sticker.y + 5) });
+                          }} type="button" title="Move down">↓</button>
+                          <button onClick={() => {
+                            const sticker = stickers.find(s => s.id === selectedSticker);
+                            if (sticker) updateSticker(selectedSticker, { scale: Math.min(12, sticker.scale + 0.2) });
+                          }} type="button" title="Scale up">+</button>
                         </div>
 
                         <div className="control-group">
