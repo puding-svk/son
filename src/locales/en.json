@@ -214,6 +214,7 @@
       "text": "Text - Add custom text",
       "arrow": "Arrow - Draw arrow",
       "sign": "Traffic Signs - Add traffic sign",
+      "stickers": "Objects - Add objects",
       "vehicleA": "Vehicle A - Blue",
       "vehicleB": "Vehicle B - Light Yellow"
     },
@@ -236,6 +237,14 @@
       "stop": "Stop",
       "zakvjazdu": "No Entry",
       "zakvjazduvsmere": "Wrong Way"
+    },
+    "stickers": {
+      "title": "Objects",
+      "bush": "Bush",
+      "forest": "Forest",
+      "house": "House",
+      "treedecidious": "Deciduous Tree",
+      "treeevergreen": "Evergreen Tree"
     }
   },
   "signature": {

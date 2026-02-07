@@ -210,10 +210,11 @@
     "controlsPlaceholder": "Nástroje na kreslenie sa zobrazia tu",
     "clear": "Vymazať",
     "tools": {
-      "pen": "Ceruzka - Kresliť voľne rukou",
+      "pen": "Ceruzka - Kresliť voľnej rukou",
       "text": "Text - Pridať vlastný text",
       "arrow": "Šípka - Kresliť šípku",
       "sign": "Dopravné značky - Pridať dopravnú značku",
+      "stickers": "Objekty - Pridať objekty",
       "vehicleA": "Vozidlo A - Modrá",
       "vehicleB": "Vozidlo B - Žltá"
     },
@@ -236,6 +237,14 @@
       "stop": "Stop",
       "zakvjazdu": "Zákaz vjazdu",
       "zakvjazduvsmere": "Zákaz vjazdu v smere"
+    },
+    "stickers": {
+      "title": "Objekty",
+      "bush": "Krík",
+      "forest": "Les",
+      "house": "Dom",
+      "treedecidious": "Listnatý strom",
+      "treeevergreen": "Ihličnatý strom"
     }
   },
   "signature": {

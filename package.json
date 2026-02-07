@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "generate-signs": "node scripts/generateSigns.js",
-    "dev": "npm run generate-signs && vite",
-    "build": "npm run generate-signs && tsc -b && vite build",
+    "generate-stickers": "node scripts/generateOtherStickers.js",
+    "dev": "npm run generate-signs && npm run generate-stickers && vite",
+    "build": "npm run generate-signs && npm run generate-stickers && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
