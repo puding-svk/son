@@ -208,7 +208,6 @@
     "drawing": "Click to draw accident situation",
     "noImage": "No situation diagram yet",
     "controls": "Tools",
-    "controlsPlaceholder": "Drawing tools will appear here",
     "clear": "Clear",
     "tools": {
       "pen": "Pen - Draw freehand",
