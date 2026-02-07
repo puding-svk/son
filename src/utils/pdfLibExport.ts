@@ -1153,6 +1153,55 @@ export const exportToPDFWithTemplate = async (
       await embedImpactMarkerImage('vehicleB', vehicleBImage);
     }
 
+    // Helper function to embed situation drawing image
+    const embedSituationDrawingImage = async (imageData: string | undefined) => {
+      if (!imageData) {
+        return; // No image data to embed
+      }
+
+      try {
+        // Extract base64 data from data URL if necessary
+        let base64Data = imageData;
+        if (base64Data.startsWith('data:image/png;base64,')) {
+          base64Data = base64Data.substring('data:image/png;base64,'.length);
+        }
+        
+        // Convert base64 to Uint8Array
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // Embed the image in the PDF
+        const embeddedImage = await pdfDoc.embedPng(bytes);
+        
+        // Situation drawing dimensions and position
+        const situationWidth = 335.9;
+        const situationHeight = 157;
+        
+        // Position for situation drawing (customize as needed)
+        const xPosition = 129.5;
+        const yPosition = 80;
+        
+        firstPage.drawImage(embeddedImage, {
+          x: xPosition,
+          y: yPosition,
+          width: situationWidth,
+          height: situationHeight,
+        });
+
+        console.log(`Embedded situation drawing image at position (${xPosition}, ${yPosition})`);
+      } catch (error) {
+        console.warn('Failed to embed situation drawing image:', error);
+      }
+    };
+
+    // Embed situation drawing image
+    if (formData.situationImage) {
+      await embedSituationDrawingImage(formData.situationImage);
+    }
+
     // Helper function to embed signature image
     const embedSignatureImage = async (signatureLabel: 'driverA' | 'driverB', imageData: string | undefined) => {
       if (!imageData) {
