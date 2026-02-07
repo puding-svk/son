@@ -787,10 +787,6 @@
   border-color: #999;
 }
 
-.sticker-grid-controls .grid-spacer {
-  /* Empty center cell */
-}
-
 .sticker-controls .control-group button {
   padding: 0.5rem;
   border: 1px solid #ddd;

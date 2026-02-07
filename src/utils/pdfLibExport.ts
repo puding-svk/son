@@ -21,7 +21,7 @@ export const exportToPDFWithTemplate = async (
 ) => {
   try {
     // Fetch the PDF template
-    const templatePath = import.meta.env.BASE_URL + '_misc_files/sprava_o_nehode_temp8.pdf';
+    const templatePath = import.meta.env.BASE_URL + 'sprava_o_nehode_template.pdf';
     const templateResponse = await fetch(templatePath);
     
     if (!templateResponse.ok) {
