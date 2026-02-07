@@ -835,7 +835,9 @@
 /* Arrow icon styling */
 .arrow-icon {
   font-size: 1.6em;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transform: rotate(45deg);
 }
 
