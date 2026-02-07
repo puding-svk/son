@@ -992,7 +992,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     const minCanvasScale = Math.min(canvasDimensions.width, canvasDimensions.height);
     const minScale = Math.max(0.3, minCanvasScale / 200);
     const maxScale = Math.ceil(minCanvasScale / 20);
-    const initialScale = Math.max(minScale, 3);
+    const initialScale = Math.max(minScale, 3) * 4;
 
     const newSticker: Sticker = {
       id: `sticker-${Date.now()}`,
