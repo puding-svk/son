@@ -107,9 +107,8 @@ export interface AccidentReport {
 // LocalStorage and IndexedDB utilities
 const DB_NAME = 'AccidentReportDB';
 const TEMPLATE_STORE_NAME = 'vehicleTemplates';
-const IMPACT_MARKER_STORE_NAME = 'impactMarkerImages';
 const SIGNATURES_STORE_NAME = 'signatures';
-const DB_VERSION = 13;
+const DB_VERSION = 14;
 
 export const initializeDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -129,10 +128,6 @@ export const initializeDB = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(TEMPLATE_STORE_NAME)) {
         console.log('Creating TEMPLATE_STORE_NAME');
         db.createObjectStore(TEMPLATE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
-      }
-      if (!db.objectStoreNames.contains(IMPACT_MARKER_STORE_NAME)) {
-        console.log('Creating IMPACT_MARKER_STORE_NAME');
-        db.createObjectStore(IMPACT_MARKER_STORE_NAME);
       }
       if (!db.objectStoreNames.contains(SIGNATURES_STORE_NAME)) {
         console.log('Creating SIGNATURES_STORE_NAME');
@@ -544,102 +539,6 @@ export const reconstructFromQRParts = (parts: string[]): VehicleData | null => {
 // ===== Impact Marker Images Storage =====
 // Separate storage for large base64 image data to keep form data clean
 // Note: IMPACT_MARKER_STORE_NAME is defined above with other DB constants
-
-/**
- * Store impact marker image in IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- * @param imageData base64 PNG data URL
- */
-export const saveImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB', imageData: string): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      
-      const data = {
-        vehicleLabel,
-        imageData,
-        savedAt: new Date().toISOString(),
-      };
-      
-      // Use vehicleLabel as key to replace any existing image
-      const request = store.put(data, vehicleLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to save impact marker image:', error);
-    throw error;
-  }
-};
-
-/**
- * Retrieve impact marker image from IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- * @returns base64 PNG data URL or null if not found
- */
-export const getImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB'): Promise<string | null> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readonly');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.get(vehicleLabel);
-      
-      request.onsuccess = () => {
-        const result = request.result;
-        resolve(result ? result.imageData : null);
-      };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to retrieve impact marker image:', error);
-    return null;
-  }
-};
-
-/**
- * Delete impact marker image from IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- */
-export const deleteImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB'): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.delete(vehicleLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to delete impact marker image:', error);
-    throw error;
-  }
-};
-
-/**
- * Clear all impact marker images from IndexedDB
- */
-export const clearAllImpactMarkerImages = async (): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.clear();
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to clear impact marker images:', error);
-    throw error;
-  }
-};
 
 /**
  * Save signature image to IndexedDB

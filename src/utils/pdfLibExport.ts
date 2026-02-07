@@ -2,12 +2,86 @@ import { PDFDocument, PDFTextField, PDFCheckBox } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import skLocale from '../locales/sk.json';
 import enLocale from '../locales/en.json';
-import { getImpactMarkerImage, getSignatureImage } from './storage';
+import type { ImpactArrow } from './storage';
 
 // Map locales for easy access
 const locales = {
   sk: skLocale,
   en: enLocale,
+};
+
+/**
+ * Render impact markers canvas on-the-fly for PDF generation
+ * @param arrows Array of impact arrow data
+ * @param backgroundImageUrl Path to vehicle background image
+ * @returns base64 PNG data URL or null if rendering fails
+ */
+const renderImpactMarkerCanvas = async (arrows: ImpactArrow[], backgroundImageUrl: string): Promise<string | null> => {
+  try {
+    // Create canvas element (simulating browser environment)
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    // Set canvas size to match the component (600×450)
+    canvas.width = 600;
+    canvas.height = 450;
+
+    // Clear canvas with white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Load and draw background image
+    const img = new Image();
+    img.src = backgroundImageUrl;
+    
+    return new Promise((resolve) => {
+      img.onload = () => {
+        // Draw background image (scaled to 90% with centered positioning)
+        const imgScale = 0.9;
+        const imgWidth = canvas.width * imgScale;
+        const imgHeight = canvas.height * imgScale;
+        const offsetX = (canvas.width - imgWidth) / 2;
+        const offsetY = (canvas.height - imgHeight) / 2;
+        ctx.drawImage(img, offsetX, offsetY, imgWidth, imgHeight);
+
+        // Draw all arrows
+        const ARROW_SIZE = 20;
+        arrows.forEach((arrow) => {
+          ctx.save();
+          ctx.translate(arrow.x, arrow.y);
+          ctx.rotate((arrow.rotation * Math.PI) / 180);
+
+          // Draw arrow head (pointing up)
+          ctx.fillStyle = '#ff0000';
+          ctx.strokeStyle = '#cc0000';
+          ctx.lineWidth = 1;
+
+          ctx.beginPath();
+          ctx.moveTo(0, -ARROW_SIZE * 1.5);
+          ctx.lineTo(-ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
+          ctx.lineTo(ARROW_SIZE * 0.75, ARROW_SIZE * 0.5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.restore();
+        });
+
+        // Return canvas as base64 PNG
+        const imageData = canvas.toDataURL('image/png');
+        resolve(imageData);
+      };
+
+      img.onerror = () => {
+        console.warn(`Failed to load background image: ${backgroundImageUrl}`);
+        resolve(null);
+      };
+    });
+  } catch (error) {
+    console.error('Failed to render impact marker canvas:', error);
+    return null;
+  }
 };
 
 /**
@@ -1092,12 +1166,22 @@ export const exportToPDFWithTemplate = async (
     const firstPage = pages[0];
     
     // Helper function to embed impact marker image
-    const embedImpactMarkerImage = async (vehicleLabel: string, imageData: string | undefined) => {
-      if (!imageData) {
-        return; // No image data to embed
+    const embedImpactMarkerImage = async (vehicleLabel: string, arrows: ImpactArrow[] | undefined) => {
+      if (!arrows || arrows.length === 0) {
+        return; // No arrows to render
       }
 
       try {
+        // Render the impact marker canvas on-the-fly
+        const basePath = import.meta.env.BASE_URL || '/';
+        const backgroundImageUrl = basePath + 'impactMarker-background.png';
+        const imageData = await renderImpactMarkerCanvas(arrows, backgroundImageUrl);
+        
+        if (!imageData) {
+          console.warn(`Failed to render impact marker canvas for ${vehicleLabel}`);
+          return;
+        }
+
         // Extract base64 data from data URL if necessary
         let base64Data = imageData;
         if (base64Data.startsWith('data:image/png;base64,')) {
@@ -1141,16 +1225,13 @@ export const exportToPDFWithTemplate = async (
       }
     };
 
-    // Embed impact marker images for both vehicles
-    // Retrieve images from IndexedDB storage instead of form data
-    const vehicleAImage = await getImpactMarkerImage('vehicleA');
-    if (vehicleAImage) {
-      await embedImpactMarkerImage('vehicleA', vehicleAImage);
+    // Embed impact marker images for both vehicles by rendering from arrow data
+    if (formData.vehicleA?.impactMarkers) {
+      await embedImpactMarkerImage('vehicleA', formData.vehicleA.impactMarkers);
     }
 
-    const vehicleBImage = await getImpactMarkerImage('vehicleB');
-    if (vehicleBImage) {
-      await embedImpactMarkerImage('vehicleB', vehicleBImage);
+    if (formData.vehicleB?.impactMarkers) {
+      await embedImpactMarkerImage('vehicleB', formData.vehicleB.impactMarkers);
     }
 
     // Helper function to embed situation drawing image
@@ -1255,15 +1336,13 @@ export const exportToPDFWithTemplate = async (
     };
 
     // Embed signature images for both drivers
-    // Retrieve images from IndexedDB storage instead of form data
-    const driverASignature = await getSignatureImage('driverA');
-    if (driverASignature) {
-      await embedSignatureImage('driverA', driverASignature);
+    // Retrieve images from form data (localStorage)
+    if (formData.signatures?.driverA) {
+      await embedSignatureImage('driverA', formData.signatures.driverA);
     }
 
-    const driverBSignature = await getSignatureImage('driverB');
-    if (driverBSignature) {
-      await embedSignatureImage('driverB', driverBSignature);
+    if (formData.signatures?.driverB) {
+      await embedSignatureImage('driverB', formData.signatures.driverB);
     }
 
     // Update field appearances with custom font (if loaded) to properly render Slovak characters
