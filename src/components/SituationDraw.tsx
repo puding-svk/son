@@ -31,11 +31,7 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
 
   return (
     <>
-      <div className="situation-draw-container">
-        <div className="situation-draw-header">
-          <h3>{t('situation.title') || 'Accident Situation (Bird\'s Eye View)'}</h3>
-        </div>
-
+      <div className="situation-draw-content">
         <div className="situation-draw-display">
           {situationImage ? (
             <img

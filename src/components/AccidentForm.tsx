@@ -458,12 +458,15 @@ const AccidentForm: React.FC = () => {
         />
 
         {/* Situation Drawing Section */}
-        <SituationDraw
-          situationImage={formData.situationImage}
-          onSituationChange={(imageData) =>
-            setFormData({ ...formData, situationImage: imageData })
-          }
-        />
+        <section className="form-section section-neutral">
+          <h2>{t('situation.title') || 'Accident Situation (Bird\'s Eye View)'}</h2>
+          <SituationDraw
+            situationImage={formData.situationImage}
+            onSituationChange={(imageData) =>
+              setFormData({ ...formData, situationImage: imageData })
+            }
+          />
+        </section>
 
         {/* Signatures Section */}
         <section className="form-section section-neutral signatures-section">
