@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
+import { ReportModal } from './ReportModal';
 import { SignaturePad } from './SignaturePad';
 import { SituationDraw } from './SituationDraw';
 import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
@@ -195,6 +196,10 @@ const AccidentForm: React.FC = () => {
     isOpen: false,
     mode: 'generate',
   });
+  const [reportModal, setReportModal] = useState<{ isOpen: boolean; mode: 'save' | 'load' }>({
+    isOpen: false,
+    mode: 'save',
+  });
   const [savedMessage, setSavedMessage] = useState('');
   const [signaturePadOpen, setSignaturePadOpen] = useState<'A' | 'B' | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -295,10 +300,38 @@ const AccidentForm: React.FC = () => {
   };
 
   const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
       [sectionId]: !prev[sectionId],
     }));
+  };
+
+  const handleLoadReport = (report: AccidentReport) => {
+    // Ensure both vehicles have circumstances object
+    const vehicleA = {
+      ...report.vehicleA,
+      circumstances: report.vehicleA.circumstances || getDefaultCircumstances(),
+    };
+    const vehicleB = {
+      ...report.vehicleB,
+      circumstances: report.vehicleB.circumstances || getDefaultCircumstances(),
+    };
+
+    setFormData({
+      ...report,
+      vehicleA,
+      vehicleB,
+    });
+
+    // Save to localStorage
+    localStorage.setItem('accidentFormDraft', JSON.stringify({
+      ...report,
+      vehicleA,
+      vehicleB,
+    }));
+
+    setSavedMessage(t('message.reportSaved') || 'Report loaded successfully');
+    setTimeout(() => setSavedMessage(''), 3000);
   };
 
   const handleClearForm = () => {
@@ -655,6 +688,22 @@ const AccidentForm: React.FC = () => {
           {t('common.generatePDF') || 'Generate PDF'}
         </button>
         <button
+          className="btn-secondary"
+          type="button"
+          onClick={() => setReportModal({ isOpen: true, mode: 'save' })}
+          title={t('modal.saveReport') || 'Save Report'}
+        >
+          {t('modal.saveReport') || 'Save Report'}
+        </button>
+        <button
+          className="btn-secondary"
+          type="button"
+          onClick={() => setReportModal({ isOpen: true, mode: 'load' })}
+          title={t('modal.loadReport') || 'Load Report'}
+        >
+          {t('modal.loadReport') || 'Load Report'}
+        </button>
+        <button
           className="btn-secondary btn-danger"
           type="button"
           onClick={handleClearForm}
@@ -670,6 +719,14 @@ const AccidentForm: React.FC = () => {
         report={formData}
         onLoadData={handleLoadQR}
         onClose={() => setQrModal({ ...qrModal, isOpen: false })}
+      />
+
+      <ReportModal
+        isOpen={reportModal.isOpen}
+        mode={reportModal.mode}
+        formData={formData}
+        onLoadData={handleLoadReport}
+        onClose={() => setReportModal({ ...reportModal, isOpen: false })}
       />
 
       {signaturePadOpen && (

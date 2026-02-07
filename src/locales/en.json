@@ -150,7 +150,14 @@
     "overwrite": "Overwrite",
     "scanning": "Scanning",
     "cannotScan": "Cannot Scan? Split QR.",
-    "qrMinimumReached": "Minimum QR data size reached."
+    "qrMinimumReached": "Minimum QR data size reached.",
+    "saveReport": "Save Report",
+    "loadReport": "Load Report",
+    "reportName": "Report name:",
+    "reportNamePlaceholder": "Enter report name",
+    "existingReports": "Existing reports:",
+    "noReports": "No saved reports",
+    "loading": "Loading..."
   },
   "message": {
     "templateSaved": "Template saved successfully.",
@@ -161,7 +168,8 @@
     "newQRSession": "New QR series with {{parts}} parts.",
     "qrAutoSplit": "QR code was automatically split into {{parts}} parts due to data size.",
     "clearFormConfirm": "Are you sure you want to clear the form? This cannot be undone.",
-    "exportError": "Failed to export PDF"
+    "exportError": "Failed to export PDF",
+    "reportSaved": "Report saved successfully."
   },
   "error": {
     "invalidJSON": "Invalid JSON file",
@@ -173,11 +181,17 @@
     "deletingTemplate": "Error deleting template",
     "qrTooLarge": "QR code data is too large. Please reduce the amount of text in fields like visible damage or additional notes.",
     "qrGeneration": "Error generating QR code",
-    "failedReconstructParts": "Failed to reconstruct data from QR parts. Please scan all parts again."
+    "failedReconstructParts": "Failed to reconstruct data from QR parts. Please scan all parts again.",
+    "savingReport": "Error saving report",
+    "loadingReports": "Error loading reports",
+    "loadingReport": "Error loading report",
+    "deletingReport": "Error deleting report"
   },
   "confirm": {
     "deleteTemplate": "Are you sure you want to delete this template?",
-    "overwriteTemplate": "Overwrite existing template?"
+    "overwriteTemplate": "Overwrite existing template?",
+    "deleteReport": "Are you sure you want to delete this report?",
+    "overwriteReport": "Overwrite existing report?"
   },
   "common": {
     "yes": "Yes",
