@@ -788,17 +788,19 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         </button>
       </div>
 
+        </>
+      )}
+
       <VehicleModal
         isOpen={vehicleModal.isOpen}
         mode={vehicleModal.mode !== 'qr' ? vehicleModal.mode : 'save'}
         vehicleLabel={vehicleLabel}
         vehicleData={data}
         onLoadData={onChange}
+        onDataLoaded={() => setExpandedSections({ vehicleHeader: true })}
         onClose={() => setVehicleModal({ ...vehicleModal, isOpen: false })}
         initialMode={vehicleModal.mode === 'qr' ? 'qr' : undefined}
       />
-        </>
-      )}
     </div>
   );
 };
