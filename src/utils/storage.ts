@@ -100,6 +100,7 @@ export interface AccidentReport {
     driverA: string; // Base64 encoded image data or empty string
     driverB: string; // Base64 encoded image data or empty string
   };
+  situationImage: string; // Base64 encoded image data or empty string
   createdAt: string;
 }
 

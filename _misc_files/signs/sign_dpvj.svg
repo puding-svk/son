@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="20" height="20"/>
+  </defs>
+  <path d="M -119.999 -220 L -5.059 -20 L -234.94 -20 L -119.999 -220 Z" bx:shape="triangle -234.94 -220 229.881 200 0.5 0 1@92a86fd8" style="stroke-width: 2; fill: rgb(255, 0, 0); stroke: rgb(0, 0, 0); transform-origin: -119.997px -120.007px;" transform="matrix(-1, 0, 0, -1, 239.993027, 240.014008)"/>
+  <path d="M -120 -163.53 L -52.5 -46.076 L -187.5 -46.076 L -120 -163.53 Z" bx:shape="triangle -187.5 -163.53 135 117.454 0.5 0 1@b25f4c8a" style="stroke-width: 2; fill: rgb(255, 255, 255); transform-origin: -119.999px -104.795px;" transform="matrix(-1, 0, 0, -1, 239.997635, 209.590195)"/>
+</svg>

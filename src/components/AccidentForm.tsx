@@ -4,6 +4,7 @@ import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
+import { SituationDraw } from './SituationDraw';
 import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
 import { saveSignatureImage } from '../utils/storage';
 import type { AccidentReport } from '../utils/storage';
@@ -184,6 +185,7 @@ const initialState: FormState = {
     driverA: '',
     driverB: '',
   },
+  situationImage: '',
   createdAt: '',
 };
 
@@ -421,6 +423,14 @@ const AccidentForm: React.FC = () => {
           vehicleLabel="vehicleB"
           data={formData.vehicleB}
           onChange={(newData) => setFormData({ ...formData, vehicleB: newData })}
+        />
+
+        {/* Situation Drawing Section */}
+        <SituationDraw
+          situationImage={formData.situationImage}
+          onSituationChange={(imageData) =>
+            setFormData({ ...formData, situationImage: imageData })
+          }
         />
 
         {/* Signatures Section */}

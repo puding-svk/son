@@ -1,0 +1,1063 @@
+.situation-draw-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 0;
+}
+
+.situation-draw-modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 99vw;
+  height: 95vh;
+  max-width: 1200px;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.situation-draw-modal-content {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  padding: 0;
+  gap: 0;
+}
+
+/* Layout: controls on the left (horizontal) */
+.situation-draw-modal-left .situation-draw-modal-content {
+  flex-direction: row;
+  gap: 0;
+}
+
+.situation-draw-modal-left .situation-draw-canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: auto;
+}
+
+.situation-draw-modal-left .situation-draw-controls-panel {
+  width: 160px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  order: -1;
+}
+
+/* Layout: controls on the bottom (vertical) */
+.situation-draw-modal-bottom .situation-draw-modal-content {
+  flex-direction: column;
+  gap: 0;
+}
+
+.situation-draw-modal-bottom .situation-draw-canvas-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: auto;
+}
+
+.situation-draw-modal-bottom .situation-draw-controls-panel {
+  width: 100%;
+  height: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.situation-draw-modal-bottom .controls-scrollable-area {
+  flex-direction: row;
+}
+
+.situation-draw-canvas-wrapper {
+  background-color: #f9f9f9;
+  border-radius: 0;
+  padding: 3px;
+}
+
+.situation-draw-canvas {
+  border: none;
+  cursor: crosshair;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.situation-draw-controls-panel {
+  background-color: #f5f5f5;
+  padding: 0;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls-scrollable-area {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.situation-draw-modal-bottom .controls-scrollable-area {
+  flex-direction: row;
+}
+
+.situation-draw-controls-panel h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.controls-placeholder {
+  background-color: #ffffff;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.controls-placeholder p {
+  margin: 0;
+}
+
+.controls-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+.situation-draw-modal-left .controls-buttons {
+  justify-content: center;
+  flex-direction: row;
+  padding: 0.25rem;
+  gap: 0.75rem;
+}
+
+.situation-draw-modal-bottom .controls-buttons {
+  justify-content: center;
+  padding: 0.75rem;
+  gap: 0.75rem;
+}
+
+.situation-draw-modal-bottom .btn-icon {
+  flex: 1;
+  max-width: 100px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #ececec;
+  border-color: #ccc;
+}
+
+.btn-icon:active {
+  background-color: #ddd;
+}
+
+.btn-clear {
+  color: #d9534f;
+}
+
+.btn-cancel {
+  color: #999;
+}
+
+.btn-save {
+  color: #5cb85c;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #357abd;
+}
+
+.btn-primary:active {
+  background-color: #2563b8;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-secondary:active {
+  background-color: #d0d0d0;
+}
+
+/* Drawing tools section */
+.drawing-tools {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.situation-draw-modal-left .drawing-tools {
+  flex-direction: row;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.situation-draw-modal-bottom .drawing-tools {
+  flex-direction: row;
+  padding: 0.75rem;
+  gap: 0.5rem;
+  border-right: 1px solid #ddd;
+  border-bottom: none;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  width: auto;
+  min-width: max-content;
+  align-content: flex-start;
+}
+
+/* When it's the only child (no tool-controls-panel), expand to fill */
+.situation-draw-modal-bottom .controls-scrollable-area > .drawing-tools:last-child {
+  flex: 1;
+  border-right: none;
+  flex-direction: row;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+/* Hide drawing-tools when tool is selected */
+.situation-draw-modal-bottom .controls-scrollable-area:has(.tool-controls-panel) > .drawing-tools {
+  display: none;
+}
+
+/* Drawing tools layout */
+.drawing-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.tools-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  padding: 8px 0;
+  margin-bottom: 4px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tool-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tool-label {
+  font-size: 0.8rem;
+  color: #333;
+  flex: 1;
+  min-width: 120px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.btn-tool {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-tool:hover {
+  background-color: #ececec;
+  border-color: #999;
+}
+
+.btn-tool:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-tool:disabled:hover {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+}
+
+/* Hide disabled buttons when a tool is selected */
+.situation-draw-modal-bottom .controls-scrollable-area:has(.tool-controls-panel) .btn-tool:disabled {
+  display: none;
+}
+
+/* Hide active button when tool is selected */
+.situation-draw-modal-bottom .controls-scrollable-area:has(.tool-controls-panel) .btn-tool.active {
+  display: none;
+}
+
+/* Hide disabled buttons when a tool is selected on the left */
+.situation-draw-modal-left .drawing-tools:has(~ .tool-controls-panel) {
+  display: none;
+}
+
+.btn-tool.active {
+  background-color: #4a90e2;
+  border-color: #357abd;
+  color: #ffffff;
+  box-shadow: 0 0 6px rgba(74, 144, 226, 0.4);
+}
+
+/* Tool controls panel */
+.tool-controls-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-top: 1px solid #ddd;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  max-height: none;
+  pointer-events: auto;
+}
+
+.situation-draw-modal-bottom .tool-controls-panel {
+  max-height: none;
+  overflow: hidden;
+  flex-direction: row;
+  flex: 1;
+  border-top: none;
+  border-left: 1px solid #ddd;
+}
+
+.tool-controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5625rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  gap: 0.5rem;
+}
+
+.situation-draw-modal-bottom .tool-controls-header {
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.3125rem;
+  border-bottom: none;
+  border-right: 1px solid #ddd;
+  width: auto;
+  min-width: 50px;
+}
+
+.tool-controls-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.situation-draw-modal-bottom .tool-controls-title {
+  padding: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 0.8rem;
+}
+
+.btn-close-tool-controls {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  color: #4CAF50;
+}
+
+.situation-draw-modal-bottom .btn-close-tool-controls {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-close-tool-controls:hover {
+  background-color: #ececec;
+  border-color: #ccc;
+}
+
+.btn-close-tool-controls:active {
+  background-color: #ddd;
+}
+
+.btn-toggle-vehicle {
+  transform-origin: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicle-toggle-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: -2px;
+  position: relative;
+}
+
+.vehicle-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  z-index: 2;
+}
+
+.rotate-arrow {
+  font-size: 2.4rem;
+  font-weight: lighter;
+  color: #cdcdcd;
+  line-height: 1;
+  position: absolute;
+  bottom: 50%;
+  right: 50%;
+  transform: translate(50%, 50%) rotate(270deg);
+  z-index: 1;
+}
+
+.tool-controls-content {
+  padding: 0.75rem;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
+  pointer-events: auto;
+}
+
+.situation-draw-modal-bottom .tool-controls-content {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex-direction: row;
+}
+
+.tool-controls-placeholder {
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-controls-placeholder p {
+  margin: 0;
+}
+
+/* Mobile responsive: always vertical on small screens */
+@media (max-width: 768px) {
+  .situation-draw-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 700px;
+    border-radius: 0;
+  }
+
+  .situation-draw-modal-content {
+    flex-direction: column !important;
+    padding: 0;
+  }
+
+  .situation-draw-controls-panel {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .situation-draw-canvas-wrapper {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .controls-buttons {
+    flex-direction: row;
+  }
+
+  .controls-buttons button {
+    flex: 1;
+  }
+}
+
+/* Pen controls styling */
+.pen-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Horizontal layout when controls are at the bottom */
+.situation-draw-modal-bottom .pen-controls {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Horizontal layout for control groups at bottom */
+.situation-draw-modal-bottom .control-group {
+  flex: initial;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.situation-draw-modal-bottom .control-group label {
+  display: block;
+  font-size: 0.75rem;
+}
+
+/* Width slider */
+.width-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.situation-draw-modal-bottom .width-slider {
+  width: 80px;
+  height: 6px;
+}
+
+.width-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0066cc;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.width-slider::-webkit-slider-thumb:hover {
+  background: #0052a3;
+}
+
+.width-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0066cc;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.width-slider::-moz-range-thumb:hover {
+  background: #0052a3;
+}
+
+.width-preview {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 2px;
+  background-color: #000;
+  transition: all 0.1s;
+  border: 1px solid #ddd;
+}
+
+.situation-draw-modal-bottom .width-preview {
+  width: 80px;
+  min-height: auto;
+}
+
+/* Color picker */
+.color-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.color-swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.situation-draw-modal-bottom .color-swatches {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.3rem;
+}
+
+.color-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #fff;
+  padding: 0;
+  min-width: 24px;
+}
+
+.situation-draw-modal-bottom .color-swatch {
+  min-width: 27px;
+  min-height: 27px;
+}
+
+.situation-draw-modal-left .color-swatch {
+  min-width: 23px;
+  min-height: 23px;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  border-color: #666;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-swatch.active {
+  border-color: #0066cc;
+  box-shadow: 0 0 6px rgba(0, 102, 204, 0.6), inset 0 0 0 2px rgba(0, 102, 204, 0.3);
+}
+
+.custom-color-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+}
+
+.custom-color-input:hover {
+  border-color: #999;
+}
+
+/* Remove hover state on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .btn-tool:hover,
+  .color-swatch:hover,
+  button:hover {
+    transform: none;
+    border-color: #ddd;
+  }
+}
+
+/* Sticker controls */
+.sticker-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* 3x3 grid layout for sticker controls */
+.sticker-grid-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+}
+
+.sticker-grid-controls button {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticker-grid-controls button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.sticker-grid-controls .grid-spacer {
+  /* Empty center cell */
+}
+
+.sticker-controls .control-group button {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.sticker-controls .control-group button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.btn-delete {
+  width: 100%;
+  background-color: #ffcccc !important;
+  border-color: #ff6666 !important;
+  color: #cc0000;
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background-color: #ff9999 !important;
+  border-color: #ff0000 !important;
+}
+
+/* Text color picker button */
+.btn-color-picker {
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.btn-color-picker:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+/* Text color picker panel */
+.text-color-picker-panel {
+  padding: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: none;
+}
+
+.text-color-picker-panel .color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.text-color-picker-panel .color-swatch {
+  flex: 1 0 calc(25% - 0.25rem);
+  aspect-ratio: 1;
+  min-width: 20px;
+  max-width: 50px;
+}
+
+/* Arrow icon styling */
+.arrow-icon {
+  font-size: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+}
+
+/* Sign title icon */
+.sign-title-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Sign selector panel */
+.sign-selector-panel {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sign-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.situation-draw-modal-bottom .sign-selector-grid {
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+}
+
+.sign-selector-button {
+  aspect-ratio: 1;
+  padding: 0.5rem;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sign-selector-icon {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.sign-selector-button:hover {
+  background-color: #f5f5f5;
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+.sign-selector-button:active {
+  background-color: #e8f4ff;
+  border-color: #0052a3;
+}
+
+.sign-selector-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.sign-selector-empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Old styles for compatibility - can be removed if not needed */
+.sign-button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.situation-draw-modal-bottom .sign-button-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.sign-button {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sign-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.sign-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.sign-button:active {
+  background-color: #e8e8e8;
+}
+
+/* Stickers selector panel */
+.stickers-selector-panel {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.stickers-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.situation-draw-modal-bottom .stickers-selector-grid {
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+}
+
+.stickers-selector-button {
+  aspect-ratio: 1;
+  padding: 0.5rem;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stickers-selector-icon {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.stickers-selector-button:hover {
+  background-color: #f5f5f5;
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+.stickers-selector-button:active {
+  background-color: #e8e8e8;
+}
+
+.stickers-selector-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.stickers-selector-empty p {
+  margin: 0;
+}
+
+/* Print styles */
+@media print {
+  .situation-draw-modal-overlay {
+    display: none;
+  }
+}

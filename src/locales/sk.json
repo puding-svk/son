@@ -202,6 +202,50 @@
   "section": {
     "signatures": "Podpisy"
   },
+  "situation": {
+    "title": "Nákres nehody v čase stretu vozidiel",
+    "edit": "Upraviť nákres",
+    "drawing": "Kliknite pre kreslenie nehody",
+    "noImage": "Zatiaľ žiadny nákres",
+    "controls": "Nástroje",
+    "clear": "Vymazať",
+    "tools": {
+      "pen": "Ceruzka - Kresliť voľnou rukou",
+      "text": "Text - Pridať vlastný text",
+      "arrow": "Šípka - Pridať šípku",
+      "sign": "Dopravné značky - Pridať dopravnú značku",
+      "stickers": "Objekty - Pridať objekty",
+      "vehicleA": " Pridať Vozidlo A",
+      "vehicleB": "Pridať Vozidlo B"
+    },
+    "labels": {
+      "pen": "Ceruzka",
+      "customText": "Text",
+      "arrow": "Šípka",
+      "vehicleA": "Vozidlo A",
+      "vehicleB": "Vozidlo B",
+      "trafficSign": "Dopravné značky",
+      "objects": "Objekty"
+    },
+    "prompts": {
+      "enterText": "Zadajte text:"
+    },
+    "signs": {
+      "dpvj": "Daj prednosť",
+      "hlavna": "Hlavná cesta",
+      "jednosmerka": "Jednosmerná cesta",
+      "stop": "Stop",
+      "zakvjazdu": "Zákaz vjazdu",
+      "zakvjazduvsmere": "Zákaz vjazdu v smere"
+    },
+    "stickers": {
+      "bush": "Krík",
+      "forest": "Les",
+      "house": "Dom",
+      "treedecidious": "Listnatý strom",
+      "treeevergreen": "Ihličnatý strom"
+    }
+  },
   "signature": {
     "driverA": "Vodič A",
     "driverB": "Vodič B",
