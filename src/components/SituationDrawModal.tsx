@@ -1462,15 +1462,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 >
                   🏠
                 </button>
-                <button
-                  className="btn-tool btn-placeholder"
-                  type="button"
-                  title="Tool F"
-                  aria-label="Tool F"
-                  disabled
-                >
-                  F
-                </button>
               </div>
               {/* Tool controls panel */}
               {(selectedTool || selectedSticker || showSignSelector || showStickersSelector) && (
