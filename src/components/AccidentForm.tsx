@@ -204,6 +204,34 @@ const AccidentForm: React.FC = () => {
     signatures: false,
   });
 
+  // Auto-load form data from localStorage on component mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('accidentFormDraft');
+    if (savedDraft) {
+      try {
+        const loadedData = JSON.parse(savedDraft) as FormState;
+        // Ensure both vehicles have circumstances object
+        const vehicleA = {
+          ...loadedData.vehicleA,
+          circumstances: loadedData.vehicleA?.circumstances || getDefaultCircumstances(),
+        };
+        const vehicleB = {
+          ...loadedData.vehicleB,
+          circumstances: loadedData.vehicleB?.circumstances || getDefaultCircumstances(),
+        };
+        setFormData({
+          ...loadedData,
+          vehicleA,
+          vehicleB,
+        });
+        console.log('Form data loaded from localStorage');
+      } catch (error) {
+        console.error('Failed to load form data from localStorage:', error);
+        // If parsing fails, keep the initial state
+      }
+    }
+  }, []); // Empty dependency array - run only on mount
+
   // Handle offline/online status
   useEffect(() => {
     const handleOnline = () => {
@@ -271,6 +299,26 @@ const AccidentForm: React.FC = () => {
       ...prev,
       [sectionId]: !prev[sectionId],
     }));
+  };
+
+  const handleClearForm = () => {
+    const confirmed = window.confirm(
+      t('message.clearFormConfirm') || 'Are you sure you want to clear the form? This cannot be undone.'
+    );
+    if (confirmed) {
+      // Reset form to initial state
+      setFormData(initialState);
+      // Clear localStorage
+      localStorage.removeItem('accidentFormDraft');
+      // Collapse all sections
+      setExpandedSections({
+        section1: false,
+        section2: false,
+        situation: false,
+        signatures: false,
+      });
+      console.log('Form data cleared');
+    }
   };
 
   const handleSignatureSave = (signatureData: string) => {
@@ -605,6 +653,14 @@ const AccidentForm: React.FC = () => {
           }}
         >
           {t('common.generatePDF') || 'Generate PDF'}
+        </button>
+        <button
+          className="btn-secondary btn-danger"
+          type="button"
+          onClick={handleClearForm}
+          title={t('common.clearForm') || 'Clear Form'}
+        >
+          {t('common.clearForm') || 'Clear Form'}
         </button>
       </div>
 

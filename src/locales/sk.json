@@ -159,7 +159,9 @@
     "partScanned": "Časť {{part}} z {{total}} bola úspešne naskenovaná!",
     "allPartsScanned": "Všetky časti boli úspešne naskenované! Spracovávam...",
     "newQRSession": "Nová séria QR kódov s {{parts}} časťami.",
-    "qrAutoSplit": "QR kód bol automaticky rozdelený na {{parts}} časti kvôli veľkosti dát."
+    "qrAutoSplit": "QR kód bol automaticky rozdelený na {{parts}} časti kvôli veľkosti dát.",
+    "clearFormConfirm": "Ste si istí, že chcete vyčistiť formulár? Túto akciu nie je možné vrátiť späť.",
+    "exportError": "Nepodarilo sa exportovať PDF"
   },
   "error": {
     "invalidJSON": "Neplatný JSON súbor",
@@ -193,6 +195,7 @@
     "edit": "Upraviť",
     "close": "Zatvoriť",
     "generatePDF": "Vygenerovať PDF",
+    "clearForm": "Vyčistiť formulár",
     "required": "Povinné pole",
     "back": "Späť",
     "or": "alebo",

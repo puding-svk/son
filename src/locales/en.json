@@ -156,10 +156,12 @@
     "templateSaved": "Template saved successfully.",
     "qrGenerated": "Scan this QR code to load vehicle data.",
     "enterFileName": "Enter file name:",
-    "partScanned": "Part {{part}} of {{total}} scanned successfully!",
+    "partScanned": "Part {{part}} of {{total}} was successfully scanned!",
     "allPartsScanned": "All parts scanned successfully! Processing...",
-    "newQRSession": "New QR code session with {{parts}} parts.",
-    "qrAutoSplit": "QR code was automatically split into {{parts}} parts due to data size."
+    "newQRSession": "New QR series with {{parts}} parts.",
+    "qrAutoSplit": "QR code was automatically split into {{parts}} parts due to data size.",
+    "clearFormConfirm": "Are you sure you want to clear the form? This cannot be undone.",
+    "exportError": "Failed to export PDF"
   },
   "error": {
     "invalidJSON": "Invalid JSON file",
