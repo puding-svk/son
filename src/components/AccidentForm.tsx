@@ -517,14 +517,14 @@ const AccidentForm: React.FC = () => {
         <VehicleSection
           vehicleLabel="vehicleA"
           data={formData.vehicleA}
-          onChange={(newData) => setFormData({ ...formData, vehicleA: newData })}
+          onChange={(newData) => updateField('vehicleA', newData)}
         />
 
         {/* Vehicle B Section */}
         <VehicleSection
           vehicleLabel="vehicleB"
           data={formData.vehicleB}
-          onChange={(newData) => setFormData({ ...formData, vehicleB: newData })}
+          onChange={(newData) => updateField('vehicleB', newData)}
         />
 
         {/* Situation Drawing Section */}
