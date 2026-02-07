@@ -192,6 +192,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
+    "generatePDF": "Generate PDF",
     "required": "Required field",
     "back": "Back",
     "or": "or",

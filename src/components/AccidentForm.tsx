@@ -607,7 +607,7 @@ const AccidentForm: React.FC = () => {
             }
           }}
         >
-          {t('common.placeholder') || 'Export to PDF'}
+          {t('common.generatePDF') || 'Generate PDF'}
         </button>
       </div>
 
