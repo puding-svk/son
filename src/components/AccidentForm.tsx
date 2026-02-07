@@ -198,6 +198,9 @@ const AccidentForm: React.FC = () => {
   });
   const [savedMessage, setSavedMessage] = useState('');
   const [signaturePadOpen, setSignaturePadOpen] = useState<'A' | 'B' | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    section1: true,
+  });
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
@@ -238,6 +241,13 @@ const AccidentForm: React.FC = () => {
     i18n.changeLanguage(lang);
   };
 
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   const handleSignatureSave = async (signatureData: string) => {
     if (signaturePadOpen === 'A') {
       // Update form state so signature is visible in the preview
@@ -274,49 +284,60 @@ const AccidentForm: React.FC = () => {
       <form className="form-content">
         {/* Section 1: Accident Date and Location */}
         <section className="form-section section-blue">
-          <h2>{t('section1.title')}</h2>
-          <div className="form-group">
-            <label>{t('section1.dateOfAccident')}</label>
-            <input
-              type="date"
-              value={formData.section1.dateOfAccident}
-              onChange={(e) => updateField('section1.dateOfAccident', e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>{t('section1.timeOfAccident')}</label>
-            <input
-              type="time"
-              value={formData.section1.timeOfAccident}
-              onChange={(e) => updateField('section1.timeOfAccident', e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>{t('section1.state')}</label>
-            <input
-              type="text"
-              value={formData.section1.state}
-              onChange={(e) => updateField('section1.state', e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>{t('section1.city')}</label>
-            <input
-              type="text"
-              maxLength={40}
-              value={formData.section1.city}
-              onChange={(e) => updateField('section1.city', e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>{t('section1.location')}</label>
-            <input
-              type="text"
-              maxLength={100}
-              value={formData.section1.location}
-              onChange={(e) => updateField('section1.location', e.target.value)}
-            />
-          </div>
+          <h2
+            onClick={() => toggleSection('section1')}
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+          >
+            <span>{expandedSections.section1 ? '▼' : '▶'}</span>
+            {' '}
+            {t('section1.title')}
+          </h2>
+          {expandedSections.section1 && (
+            <>
+              <div className="form-group">
+                <label>{t('section1.dateOfAccident')}</label>
+                <input
+                  type="date"
+                  value={formData.section1.dateOfAccident}
+                  onChange={(e) => updateField('section1.dateOfAccident', e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>{t('section1.timeOfAccident')}</label>
+                <input
+                  type="time"
+                  value={formData.section1.timeOfAccident}
+                  onChange={(e) => updateField('section1.timeOfAccident', e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>{t('section1.state')}</label>
+                <input
+                  type="text"
+                  value={formData.section1.state}
+                  onChange={(e) => updateField('section1.state', e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>{t('section1.city')}</label>
+                <input
+                  type="text"
+                  maxLength={40}
+                  value={formData.section1.city}
+                  onChange={(e) => updateField('section1.city', e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>{t('section1.location')}</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={formData.section1.location}
+                  onChange={(e) => updateField('section1.location', e.target.value)}
+                />
+              </div>
+            </>
+          )}
         </section>
 
         {/* Section 2: Accident Information */}
