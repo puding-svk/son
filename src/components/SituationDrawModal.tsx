@@ -12,7 +12,7 @@ type ControlsPosition = 'left' | 'bottom';
 
 interface Sticker {
   id: string;
-  type: 'vehicleA' | 'vehicleB' | 'text';
+  type: 'vehicleA' | 'vehicleB' | 'text' | 'arrow';
   vehicleCategory?: 'car' | 'truck' | 'motorcycle';
   x: number;
   y: number;
@@ -178,6 +178,34 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(sticker.text, 0, 0);
+      } else if (sticker.type === 'arrow') {
+        // Draw arrow
+        ctx.fillStyle = sticker.color;
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.lineWidth = 2;
+        
+        // Scale arrow dimensions - multiply base sizes by scale
+        const baseLength = 30;
+        const baseWidth = 6;
+        const baseHeadSize = 10;
+        
+        const arrowLength = baseLength * (sticker.scale / 2);
+        const arrowWidth = baseWidth * (sticker.scale / 2);
+        const headSize = baseHeadSize * (sticker.scale / 2);
+        
+        // Draw arrow shaft
+        ctx.beginPath();
+        ctx.moveTo(-arrowLength / 2, -arrowWidth / 2);
+        ctx.lineTo(arrowLength / 2 - headSize, -arrowWidth / 2);
+        ctx.lineTo(arrowLength / 2 - headSize, -headSize);
+        // Arrow head
+        ctx.lineTo(arrowLength / 2, 0);
+        ctx.lineTo(arrowLength / 2 - headSize, headSize);
+        ctx.lineTo(arrowLength / 2 - headSize, arrowWidth / 2);
+        ctx.lineTo(-arrowLength / 2, arrowWidth / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
       } else {
         // Draw car SVG using canvas paths
         // This is the car from SVGTestSection converted to canvas drawing
@@ -477,6 +505,11 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (sticker.selectionRadius !== undefined) {
       return sticker.selectionRadius;
     }
+    // For arrows, use smaller selection radius
+    if (sticker.type === 'arrow') {
+      const arrowLength = 30 * (sticker.scale * 2 / 3);
+      return arrowLength / 2 + 10;
+    }
     const stickerSize = 40 * sticker.scale;
     return stickerSize / 2 + 10; // Selection circle is 10px outside the sticker
   };
@@ -774,6 +807,34 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     setSelectedSticker(newTextSticker.id);
     setDrawingTool(null);
     setSelectedTool(null);
+  };
+
+  const addArrowSticker = () => {
+    if (!isCanvasSizeLocked) {
+      setIsCanvasSizeLocked(true);
+    }
+
+    const minCanvasScale = Math.min(canvasDimensions.width, canvasDimensions.height);
+    const minScale = Math.max(0.3, minCanvasScale / 200);
+    const maxScale = Math.ceil(minCanvasScale / 20);
+    // For arrows, use much smaller initial scale
+    const initialScale = Math.max(minScale, 3);
+
+    const newArrowSticker: Sticker = {
+      id: `arrow-${Date.now()}`,
+      type: 'arrow',
+      x: canvasDimensions.width / 2,
+      y: canvasDimensions.height / 2,
+      rotation: 0,
+      scale: initialScale,
+      minScale,
+      maxScale,
+      color: textColor,
+      color2: textColor,
+    };
+
+    setStickers([...stickers, newArrowSticker]);
+    setSelectedSticker(newArrowSticker.id);
   };
 
   const deleteSticker = (id: string) => {
@@ -1193,13 +1254,13 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   T
                 </button>
                 <button
-                  className="btn-tool btn-placeholder"
+                  className="btn-tool"
+                  onClick={() => addArrowSticker()}
                   type="button"
-                  title="Tool D"
-                  aria-label="Tool D"
-                  disabled
+                  title="Arrow - Draw arrow"
+                  aria-label="Arrow tool"
                 >
-                  D
+                  <span className="arrow-icon">⇧</span>
                 </button>
                 <button
                   className="btn-tool btn-placeholder"
@@ -1228,7 +1289,8 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                     <span className="tool-controls-title">
                       {selectedTool === 'pen' && '✏️ Pen'}
                       {selectedSticker && (
-                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? 'T Custom Text' : (
+                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? 'T Custom Text' : 
+                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> Arrow</>) : (
                           stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? '🚗 Vehicle A' : '🚗 Vehicle B'
                         )
                       )}
@@ -1313,7 +1375,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
                     {selectedSticker && (
                       <div className="sticker-controls">
-                        {showTextColorPicker && selectedSticker && stickers.find(s => s.id === selectedSticker)?.type === 'text' ? (
+                        {showTextColorPicker && selectedSticker && (stickers.find(s => s.id === selectedSticker)?.type === 'text' || stickers.find(s => s.id === selectedSticker)?.type === 'arrow') ? (
                           <div className="text-color-picker-panel">
                             <div className="color-swatches">
                               {[
@@ -1374,10 +1436,10 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                                     <div className="rotate-arrow">⟳</div>
                                   </div>
                                 </button>
-                              ) : selectedSticker && stickers.find(s => s.id === selectedSticker)?.type === 'text' ? (
+                              ) : selectedSticker && (stickers.find(s => s.id === selectedSticker)?.type === 'text' || stickers.find(s => s.id === selectedSticker)?.type === 'arrow') ? (
                                 <button onClick={() => {
                                   setShowTextColorPicker(!showTextColorPicker);
-                                }} type="button" title="Change text color" className="btn-color-picker">
+                                }} type="button" title="Change color" className="btn-color-picker">
                                   🎨
                                 </button>
                               ) : (
@@ -1391,7 +1453,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                               {/* Row 3: Scale Down | Move Down | Scale Up */}
                               <button onClick={() => {
                                 const sticker = stickers.find(s => s.id === selectedSticker);
-                                if (sticker) updateSticker(selectedSticker, { scale: Math.max(sticker.minScale, sticker.scale - 0.2) });
+                                if (sticker) updateSticker(selectedSticker, { scale: Math.max(sticker.minScale, sticker.scale - 0.4) });
                               }} type="button" title="Scale down">−</button>
                               <button onClick={() => {
                                 const sticker = stickers.find(s => s.id === selectedSticker);
@@ -1399,7 +1461,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                               }} type="button" title="Move down">↓</button>
                               <button onClick={() => {
                                 const sticker = stickers.find(s => s.id === selectedSticker);
-                                if (sticker) updateSticker(selectedSticker, { scale: Math.min(sticker.maxScale, sticker.scale + 0.2) });
+                                if (sticker) updateSticker(selectedSticker, { scale: Math.min(sticker.maxScale, sticker.scale + 0.4) });
                               }} type="button" title="Scale up">+</button>
                             </div>
 
