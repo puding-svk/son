@@ -1383,97 +1383,121 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
             <div className="controls-scrollable-area">
               {/* Drawing tools */}
               <div className="drawing-tools">
-                <button
-                  className={`btn-tool btn-pen ${drawingTool === 'pen' ? 'active' : ''}`}
-                  onClick={() => {
-                    if (drawingTool === 'pen') {
+                <div className="tools-title">
+                  {t('situation.controls')}
+                </div>
+                <div className="tool-row">
+                  <button
+                    className={`btn-tool btn-pen ${drawingTool === 'pen' ? 'active' : ''}`}
+                    onClick={() => {
+                      if (drawingTool === 'pen') {
+                        setDrawingTool(null);
+                        setSelectedTool(null);
+                      } else {
+                        setDrawingTool('pen');
+                        setSelectedTool('pen');
+                      }
+                    }}
+                    type="button"
+                    title={t('situation.tools.pen')}
+                    aria-label="Pen tool"
+                  >
+                    ✏️
+                  </button>
+                  <span className="tool-label">{t('situation.labels.pen')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool btn-sticker-a"
+                    onClick={() => addSticker('vehicleA', '#ADD8E6', '#0066cc')}
+                    type="button"
+                    title={t('situation.tools.vehicleA')}
+                    aria-label="Vehicle A sticker"
+                    disabled={stickers.some(s => s.type === 'vehicleA')}
+                  >
+                    A
+                  </button>
+                  <span className="tool-label">{t('situation.labels.vehicleA')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool btn-sticker-b"
+                    onClick={() => addSticker('vehicleB', '#FFFFE0', '#cc8800')}
+                    type="button"
+                    title={t('situation.tools.vehicleB')}
+                    aria-label="Vehicle B sticker"
+                    disabled={stickers.some(s => s.type === 'vehicleB')}
+                  >
+                    B
+                  </button>
+                  <span className="tool-label">{t('situation.labels.vehicleB')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool"
+                    onClick={() => {
+                      const userText = prompt(t('situation.prompts.enterText'));
+                      if (userText && userText.trim()) {
+                        addTextSticker(userText, canvasDimensions.width / 2, canvasDimensions.height / 2);
+                      }
                       setDrawingTool(null);
-                      setSelectedTool(null);
-                    } else {
-                      setDrawingTool('pen');
-                      setSelectedTool('pen');
-                    }
-                  }}
-                  type="button"
-                  title={t('situation.tools.pen')}
-                  aria-label="Pen tool"
-                >
-                  ✏️
-                </button>
-                <button
-                  className="btn-tool btn-sticker-a"
-                  onClick={() => addSticker('vehicleA', '#ADD8E6', '#0066cc')}
-                  type="button"
-                  title={t('situation.tools.vehicleA')}
-                  aria-label="Vehicle A sticker"
-                  disabled={stickers.some(s => s.type === 'vehicleA')}
-                >
-                  A
-                </button>
-                <button
-                  className="btn-tool btn-sticker-b"
-                  onClick={() => addSticker('vehicleB', '#FFFFE0', '#cc8800')}
-                  type="button"
-                  title={t('situation.tools.vehicleB')}
-                  aria-label="Vehicle B sticker"
-                  disabled={stickers.some(s => s.type === 'vehicleB')}
-                >
-                  B
-                </button>
-                <button
-                  className="btn-tool"
-                  onClick={() => {
-                    const userText = prompt(t('situation.prompts.enterText'));
-                    if (userText && userText.trim()) {
-                      addTextSticker(userText, canvasDimensions.width / 2, canvasDimensions.height / 2);
-                    }
-                    setDrawingTool(null);
-                  }}
-                  type="button"
-                  title={t('situation.tools.text')}
-                  aria-label="Text tool"
-                >
-                  T
-                </button>
-                <button
-                  className="btn-tool"
-                  onClick={() => addArrowSticker()}
-                  type="button"
-                  title={t('situation.tools.arrow')}
-                  aria-label="Arrow tool"
-                >
-                  <span className="arrow-icon">⇧</span>
-                </button>
-                <button
-                  className="btn-tool"
-                  onClick={() => setShowSignSelector(!showSignSelector)}
-                  type="button"
-                  title={t('situation.tools.sign')}
-                  aria-label="Traffic signs tool"
-                >
-                  🚸
-                </button>
-                <button
-                  className="btn-tool"
-                  onClick={() => setShowStickersSelector(!showStickersSelector)}
-                  type="button"
-                  title={t('situation.tools.stickers')}
-                  aria-label="Objects tool"
-                >
-                  🏠
-                </button>
+                    }}
+                    type="button"
+                    title={t('situation.tools.text')}
+                    aria-label="Text tool"
+                  >
+                    T
+                  </button>
+                  <span className="tool-label">{t('situation.labels.customText')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool"
+                    onClick={() => addArrowSticker()}
+                    type="button"
+                    title={t('situation.tools.arrow')}
+                    aria-label="Arrow tool"
+                  >
+                    <span className="arrow-icon">⇧</span>
+                  </button>
+                  <span className="tool-label">{t('situation.labels.arrow')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool"
+                    onClick={() => setShowSignSelector(!showSignSelector)}
+                    type="button"
+                    title={t('situation.tools.sign')}
+                    aria-label="Traffic signs tool"
+                  >
+                    🚸
+                  </button>
+                  <span className="tool-label">{t('situation.labels.trafficSign')}</span>
+                </div>
+                <div className="tool-row">
+                  <button
+                    className="btn-tool"
+                    onClick={() => setShowStickersSelector(!showStickersSelector)}
+                    type="button"
+                    title={t('situation.tools.stickers')}
+                    aria-label="Objects tool"
+                  >
+                    🏠
+                  </button>
+                  <span className="tool-label">{t('situation.labels.objects')}</span>
+                </div>
               </div>
               {/* Tool controls panel */}
               {(selectedTool || selectedSticker || showSignSelector || showStickersSelector) && (
                 <div className="tool-controls-panel">
                   <div className="tool-controls-header">
                     <span className="tool-controls-title">
-                      {selectedTool === 'pen' && t('situation.labels.pen')}
-                      {showSignSelector && `🚸 ${t('situation.signs.title')}`}
-                      {showStickersSelector && `🏠 ${t('situation.stickers.title')}`}
+                      {selectedTool === 'pen' && `✏️ ${t('situation.labels.pen')}`}
+                      {showSignSelector && `🚸 ${t('situation.labels.trafficSign')}`}
+                      {showStickersSelector && `🏠 ${t('situation.labels.objects')}`}
                       {selectedSticker && (
-                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? t('situation.labels.customText') : 
-                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> {t('situation.labels.arrow').split(' ').slice(1).join(' ')}</>) :
+                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? `T ${t('situation.labels.customText')}` : 
+                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> {t('situation.labels.arrow')}</>) :
                         stickers.find(s => s.id === selectedSticker)?.type === 'sign' ? (
                           (() => {
                             const signFile = stickers.find(s => s.id === selectedSticker)?.signType;
@@ -1497,7 +1521,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                           })()
                         ) :
                         (
-                          stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? t('situation.labels.vehicleA') : t('situation.labels.vehicleB')
+                          stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? `🚗 ${t('situation.labels.vehicleA')}` : `🚗 ${t('situation.labels.vehicleB')}`
                         )
                       )}
                     </span>

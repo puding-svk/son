@@ -219,18 +219,18 @@
       "vehicleB": "Vozidlo B - Žltá"
     },
     "labels": {
-      "pen": "✏️ Ceruzka",
-      "customText": "T Text",
-      "arrow": "⇧ Šípka",
-      "vehicleA": "🚗 Vozidlo A",
-      "vehicleB": "🚗 Vozidlo B",
-      "trafficSign": "🚸 Dopravná značka"
+      "pen": "Ceruzka",
+      "customText": "Text",
+      "arrow": "Šípka",
+      "vehicleA": "Vozidlo A",
+      "vehicleB": "Vozidlo B",
+      "trafficSign": "Dopravné značky",
+      "objects": "Objekty"
     },
     "prompts": {
       "enterText": "Zadajte text:"
     },
     "signs": {
-      "title": "Dopravné značky",
       "dpvj": "Daj prednosť",
       "hlavna": "Hlavná cesta",
       "jednosmerka": "Jednosmerná cesta",
@@ -239,7 +239,6 @@
       "zakvjazduvsmere": "Zákaz vjazdu v smere"
     },
     "stickers": {
-      "title": "Objekty",
       "bush": "Krík",
       "forest": "Les",
       "house": "Dom",

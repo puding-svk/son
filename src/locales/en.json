@@ -219,18 +219,18 @@
       "vehicleB": "Vehicle B - Light Yellow"
     },
     "labels": {
-      "pen": "✏️ Pen",
-      "customText": "T Text",
+      "pen": "Pen",
+      "customText": "Text",
       "arrow": "⇧ Arrow",
-      "vehicleA": "🚗 Vehicle A",
-      "vehicleB": "🚗 Vehicle B",
-      "trafficSign": "🚸 Traffic Sign"
+      "vehicleA": "Vehicle A",
+      "vehicleB": "Vehicle B",
+      "trafficSign": "Traffic Signs",
+      "objects": "Objects"
     },
     "prompts": {
       "enterText": "Enter text:"
     },
     "signs": {
-      "title": "Traffic Signs",
       "dpvj": "Give way",
       "hlavna": "Main Road",
       "jednosmerka": "One-Way Traffic",
@@ -239,7 +239,6 @@
       "zakvjazduvsmere": "Wrong Way"
     },
     "stickers": {
-      "title": "Objects",
       "bush": "Bush",
       "forest": "Forest",
       "house": "House",
