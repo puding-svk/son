@@ -107,8 +107,7 @@ export interface AccidentReport {
 // LocalStorage and IndexedDB utilities
 const DB_NAME = 'AccidentReportDB';
 const TEMPLATE_STORE_NAME = 'vehicleTemplates';
-const SIGNATURES_STORE_NAME = 'signatures';
-const DB_VERSION = 14;
+const DB_VERSION = 15;
 
 export const initializeDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -128,10 +127,6 @@ export const initializeDB = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(TEMPLATE_STORE_NAME)) {
         console.log('Creating TEMPLATE_STORE_NAME');
         db.createObjectStore(TEMPLATE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
-      }
-      if (!db.objectStoreNames.contains(SIGNATURES_STORE_NAME)) {
-        console.log('Creating SIGNATURES_STORE_NAME');
-        db.createObjectStore(SIGNATURES_STORE_NAME);
       }
     };
   });
@@ -538,100 +533,4 @@ export const reconstructFromQRParts = (parts: string[]): VehicleData | null => {
 
 // ===== Impact Marker Images Storage =====
 // Separate storage for large base64 image data to keep form data clean
-// Note: IMPACT_MARKER_STORE_NAME is defined above with other DB constants
-
-/**
- * Save signature image to IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- * @param imageData base64 PNG data URL
- */
-export const saveSignatureImage = async (signatureLabel: 'driverA' | 'driverB', imageData: string): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      
-      const data = {
-        signatureLabel,
-        imageData,
-        savedAt: new Date().toISOString(),
-      };
-      
-      // Use signatureLabel as key to replace any existing signature
-      const request = store.put(data, signatureLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to save signature image:', error);
-    throw error;
-  }
-};
-
-/**
- * Retrieve signature image from IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- * @returns base64 PNG data URL or null if not found
- */
-export const getSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<string | null> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readonly');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.get(signatureLabel);
-      
-      request.onsuccess = () => {
-        const result = request.result;
-        resolve(result ? result.imageData : null);
-      };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to retrieve signature image:', error);
-    return null;
-  }
-};
-
-/**
- * Delete signature image from IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- */
-export const deleteSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.delete(signatureLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to delete signature image:', error);
-    throw error;
-  }
-};
-
-/**
- * Clear all signature images from IndexedDB
- */
-export const clearAllSignatureImages = async (): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.clear();
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to clear signature images:', error);
-    throw error;
-  }
-};
+// All image data now stored in form state (localStorage) only, not in IndexedDB
