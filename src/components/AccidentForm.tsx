@@ -201,6 +201,8 @@ const AccidentForm: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     section1: true,
     section2: true,
+    situation: true,
+    signatures: true,
   });
 
   const updateField = (path: string, value: any) => {
@@ -459,19 +461,36 @@ const AccidentForm: React.FC = () => {
 
         {/* Situation Drawing Section */}
         <section className="form-section section-neutral">
-          <h2>{t('situation.title') || 'Accident Situation (Bird\'s Eye View)'}</h2>
-          <SituationDraw
-            situationImage={formData.situationImage}
-            onSituationChange={(imageData) =>
-              setFormData({ ...formData, situationImage: imageData })
-            }
-          />
+          <h2
+            onClick={() => toggleSection('situation')}
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+          >
+            <span>{expandedSections.situation ? '▼' : '▶'}</span>
+            {' '}
+            {t('situation.title') || 'Accident Situation (Bird\'s Eye View)'}
+          </h2>
+          {expandedSections.situation && (
+            <SituationDraw
+              situationImage={formData.situationImage}
+              onSituationChange={(imageData) =>
+                setFormData({ ...formData, situationImage: imageData })
+              }
+            />
+          )}
         </section>
 
         {/* Signatures Section */}
         <section className="form-section section-neutral signatures-section">
-          <h2>{t('section.signatures') || 'Signatures'}</h2>
-          <div className="signatures-container">
+          <h2
+            onClick={() => toggleSection('signatures')}
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+          >
+            <span>{expandedSections.signatures ? '▼' : '▶'}</span>
+            {' '}
+            {t('section.signatures') || 'Signatures'}
+          </h2>
+          {expandedSections.signatures && (
+            <div className="signatures-container">
             {/* Driver A Signature */}
             <div className="signature-block signature-blue">
               <div className="signature-label">
@@ -546,6 +565,7 @@ const AccidentForm: React.FC = () => {
               </div>
             </div>
           </div>
+          )}
         </section>
       </form>
 
