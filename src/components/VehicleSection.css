@@ -96,43 +96,43 @@
   min-width: 100px;
 }
 
-.btn-save {
+.vehicle-controls .btn-save {
   background-color: #28a745;
   color: white;
 }
 
-.btn-save:hover {
+.vehicle-controls .btn-save:hover {
   background-color: #218838;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
 }
 
-.btn-load {
+.vehicle-controls .btn-load {
   background-color: #0066cc;
   color: white;
 }
 
-.btn-load:hover {
+.vehicle-controls .btn-load:hover {
   background-color: #0052a3;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
 }
 
-.vehicle-section.section-yellow .btn-load {
+.vehicle-section.section-yellow .vehicle-controls .btn-load {
   background-color: #cc8800;
 }
 
-.vehicle-section.section-yellow .btn-load:hover {
+.vehicle-section.section-yellow .vehicle-controls .btn-load:hover {
   background-color: #b37700;
   box-shadow: 0 4px 8px rgba(204, 136, 0, 0.3);
 }
 
-.btn-qr {
+.vehicle-controls .btn-qr {
   background-color: #17a2b8;
   color: white;
 }
 
-.btn-qr:hover {
+.vehicle-controls .btn-qr:hover {
   background-color: #138496;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
