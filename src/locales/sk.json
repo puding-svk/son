@@ -208,7 +208,16 @@
     "noImage": "Zatiaľ žiadny nákres",
     "controls": "Nástroje",
     "controlsPlaceholder": "Nástroje na kreslenie sa zobrazia tu",
-    "clear": "Vymazať"
+    "clear": "Vymazať",
+    "signs": {
+      "title": "Dopravné značky",
+      "dpvj": "Daj prednosť",
+      "hlavna": "Hlavná cesta",
+      "jednosmerka": "Jednosmerná cesta",
+      "stop": "Stop",
+      "zakvjazdu": "Zákaz vjazdu",
+      "zakvjazduvsmere": "Zákaz vjazdu v smere"
+    }
   },
   "signature": {
     "driverA": "Vodič A",

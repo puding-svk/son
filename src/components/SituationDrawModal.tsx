@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SIGNS } from '../data/signs';
 import './SituationDrawModal.css';
 
 interface SituationDrawModalProps {
@@ -12,8 +13,9 @@ type ControlsPosition = 'left' | 'bottom';
 
 interface Sticker {
   id: string;
-  type: 'vehicleA' | 'vehicleB' | 'text' | 'arrow';
+  type: 'vehicleA' | 'vehicleB' | 'text' | 'arrow' | 'sign';
   vehicleCategory?: 'car' | 'truck' | 'motorcycle';
+  signType?: string;
   x: number;
   y: number;
   rotation: number;
@@ -50,7 +52,9 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+  const [showSignSelector, setShowSignSelector] = useState(false);
   const drawingLayerRef = useRef<HTMLCanvasElement | null>(null);
+  const signImagesRef = useRef<Record<string, HTMLImageElement | null>>({});
   const [isDraggingSticker, setIsDraggingSticker] = useState(false);
   const [isRotatingSticker, setIsRotatingSticker] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -90,6 +94,33 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     newHeight = Math.max(newHeight, 150);
 
     setCanvasDimensions({ width: newWidth, height: newHeight });
+  };
+
+  // Load SVG sign image from Base64 data
+  const getSignImage = (signFile: string): HTMLImageElement | null => {
+    if (signImagesRef.current[signFile]) {
+      return signImagesRef.current[signFile];
+    }
+
+    const sign = SIGNS.find(s => s.file === signFile);
+    if (!sign) {
+      console.warn(`Sign not found: ${signFile}`);
+      return null;
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      signImagesRef.current[signFile] = img;
+      // Trigger re-render
+      renderCanvas();
+    };
+    img.onerror = () => {
+      console.warn(`Failed to load sign image: ${signFile}`);
+      signImagesRef.current[signFile] = null;
+    };
+    // Use Base64 data directly
+    img.src = `data:image/svg+xml;base64,${sign.data}`;
+    return null;
   };
 
   // Initialize and trigger layout calculation on mount
@@ -206,6 +237,35 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
+      } else if (sticker.type === 'sign') {
+        // Draw sign from SVG
+        const signSize = 30 * (sticker.scale / 2);
+        let signImage = signImagesRef.current[sticker.signType || ''];
+        
+        if (!signImage && sticker.signType) {
+          // Try to load the image
+          signImage = getSignImage(sticker.signType);
+        }
+        
+        if (signImage) {
+          // Draw the loaded SVG image
+          ctx.drawImage(signImage, -signSize / 2, -signSize / 2, signSize, signSize);
+        } else {
+          // Fallback: draw a placeholder square with sign label
+          const signSize = 30 * (sticker.scale / 2);
+          ctx.fillStyle = '#ffcccc';
+          ctx.strokeStyle = '#cc0000';
+          ctx.lineWidth = 2;
+          ctx.fillRect(-signSize / 2, -signSize / 2, signSize, signSize);
+          ctx.strokeRect(-signSize / 2, -signSize / 2, signSize, signSize);
+          
+          // Draw sign label
+          ctx.fillStyle = '#000000';
+          ctx.font = `${8 * (sticker.scale / 2)}px Arial`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Sign', 0, 0);
+        }
       } else {
         // Draw car SVG using canvas paths
         // This is the car from SVGTestSection converted to canvas drawing
@@ -510,6 +570,11 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (sticker.type === 'arrow') {
       const arrowLength = 30 * (sticker.scale * 2 / 3);
       return arrowLength / 2 + 10;
+    }
+    // For signs, use scaled radius
+    if (sticker.type === 'sign') {
+      const signSize = 30 * (sticker.scale / 2);
+      return signSize / 2 + 10;
     }
     const stickerSize = 40 * sticker.scale;
     return stickerSize / 2 + 10; // Selection circle is 10px outside the sticker
@@ -839,6 +904,31 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     setSelectedSticker(newArrowSticker.id);
   };
 
+  const addSignSticker = (signType: string) => {
+    const minCanvasScale = Math.min(canvasDimensions.width, canvasDimensions.height);
+    const minScale = Math.max(0.3, minCanvasScale / 200);
+    const maxScale = Math.ceil(minCanvasScale / 20);
+    const initialScale = Math.max(minScale, 3);
+
+    const newSignSticker: Sticker = {
+      id: `sign-${Date.now()}`,
+      type: 'sign',
+      signType,
+      x: canvasDimensions.width / 2,
+      y: canvasDimensions.height / 2,
+      rotation: 0,
+      scale: initialScale,
+      minScale,
+      maxScale,
+      color: '#000000',
+      color2: '#000000',
+    };
+
+    setStickers([...stickers, newSignSticker]);
+    setSelectedSticker(newSignSticker.id);
+    setShowSignSelector(false);
+  };
+
   const deleteSticker = (id: string) => {
     setStickers(stickers.filter(s => s.id !== id));
     if (selectedSticker === id) {
@@ -897,6 +987,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       // Close any active tool when selecting a sticker
       setDrawingTool(null);
       setSelectedTool(null);
+      setShowSignSelector(false);
     } else {
       setSelectedSticker(null);
       setShowTextColorPicker(false);
@@ -1049,6 +1140,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (touchedSticker) {
       e.preventDefault();
       setSelectedSticker(touchedSticker.id);
+      setShowSignSelector(false);
       
       // If it's already the selected sticker, prepare to drag from inside
       if (touchedSticker.id === selectedSticker && isPointInsideSticker(x, y)) {
@@ -1267,13 +1359,13 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   <span className="arrow-icon">⇧</span>
                 </button>
                 <button
-                  className="btn-tool btn-placeholder"
+                  className="btn-tool"
+                  onClick={() => setShowSignSelector(!showSignSelector)}
                   type="button"
-                  title="Tool E"
-                  aria-label="Tool E"
-                  disabled
+                  title="Traffic Signs - Add traffic sign"
+                  aria-label="Traffic signs tool"
                 >
-                  E
+                  🚸
                 </button>
                 <button
                   className="btn-tool btn-placeholder"
@@ -1287,14 +1379,27 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
               </div>
 
               {/* Tool controls panel */}
-              {(selectedTool || selectedSticker) && (
+              {(selectedTool || selectedSticker || showSignSelector) && (
                 <div className="tool-controls-panel">
                   <div className="tool-controls-header">
                     <span className="tool-controls-title">
                       {selectedTool === 'pen' && '✏️ Pen'}
+                      {showSignSelector && `🚸 ${t('situation.signs.title')}`}
                       {selectedSticker && (
                         stickers.find(s => s.id === selectedSticker)?.type === 'text' ? 'T Custom Text' : 
-                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> Arrow</>) : (
+                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> Arrow</>) :
+                        stickers.find(s => s.id === selectedSticker)?.type === 'sign' ? (
+                          (() => {
+                            const signFile = stickers.find(s => s.id === selectedSticker)?.signType;
+                            const sign = SIGNS.find(s => s.file === signFile);
+                            return sign ? (
+                              <><img src={`data:image/svg+xml;base64,${sign.data}`} alt={sign.name} className="sign-title-icon" /> {t(`situation.signs.${sign.name.toLowerCase()}`) || sign.name}</>
+                            ) : (
+                              <>🚸 Traffic Sign</>
+                            );
+                          })()
+                        ) :
+                        (
                           stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? '🚗 Vehicle A' : '🚗 Vehicle B'
                         )
                       )}
@@ -1306,6 +1411,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                         setSelectedTool(null);
                         setSelectedSticker(null);
                         setShowTextColorPicker(false);
+                        setShowSignSelector(false);
                       }}
                       type="button"
                       title={t('common.close') || 'Close'}
@@ -1375,6 +1481,33 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                             />
                           </div>
                         </div>
+                      </div>
+                    )}
+
+                    {showSignSelector && (
+                      <div className="sign-selector-panel">
+                        {SIGNS.length > 0 ? (
+                          <div className="sign-selector-grid">
+                            {SIGNS.map((sign) => {
+                              const imgSrc = `data:image/svg+xml;base64,${sign.data}`;
+                              return (
+                                <button
+                                  key={sign.file}
+                                  className="sign-selector-button"
+                                  onClick={() => addSignSticker(sign.file)}
+                                  type="button"
+                                  title={sign.name}
+                                >
+                                  <img src={imgSrc} alt={sign.name} className="sign-selector-icon" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="sign-selector-empty">
+                            <p>No signs available</p>
+                          </div>
+                        )}
                       </div>
                     )}
 

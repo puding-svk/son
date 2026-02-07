@@ -208,7 +208,16 @@
     "noImage": "No situation diagram yet",
     "controls": "Tools",
     "controlsPlaceholder": "Drawing tools will appear here",
-    "clear": "Clear"
+    "clear": "Clear",
+    "signs": {
+      "title": "Traffic Signs",
+      "dpvj": "Give way",
+      "hlavna": "Main Road",
+      "jednosmerka": "One-Way Traffic",
+      "stop": "Stop",
+      "zakvjazdu": "No Entry",
+      "zakvjazduvsmere": "Wrong Way"
+    }
   },
   "signature": {
     "driverA": "Driver A",

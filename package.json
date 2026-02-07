@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "generate-signs": "node scripts/generateSigns.js",
+    "dev": "npm run generate-signs && vite",
+    "build": "npm run generate-signs && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

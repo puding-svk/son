@@ -845,6 +845,123 @@
   transform: rotate(45deg);
 }
 
+/* Sign title icon */
+.sign-title-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Sign selector panel */
+.sign-selector-panel {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sign-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.situation-draw-modal-bottom .sign-selector-grid {
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+}
+
+.sign-selector-button {
+  aspect-ratio: 1;
+  padding: 0.5rem;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sign-selector-icon {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.sign-selector-button:hover {
+  background-color: #f5f5f5;
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+.sign-selector-button:active {
+  background-color: #e8f4ff;
+  border-color: #0052a3;
+}
+
+.sign-selector-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #999;
+}
+
+.sign-selector-empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Old styles for compatibility - can be removed if not needed */
+.sign-button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.situation-draw-modal-bottom .sign-button-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.sign-button {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sign-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.sign-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.sign-button:active {
+  background-color: #e8e8e8;
+}
+
 /* Print styles */
 @media print {
   .situation-draw-modal-overlay {

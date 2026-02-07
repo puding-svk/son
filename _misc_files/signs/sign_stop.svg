@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="20" height="20"/>
+  </defs>
+  <path d="M 126.833 20.441 L 197.544 49.73 L 226.833 120.441 L 197.544 191.152 L 126.833 220.441 L 56.122 191.152 L 26.833 120.441 L 56.122 49.73 Z" bx:shape="n-gon 126.833 120.441 100 100 8 0 1@43c90b0a" style="stroke: rgb(0, 0, 0); fill: rgb(255, 0, 0); transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(0.923879, 0.382684, -0.382684, 0.923879, -6.832999, -0.440977)"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;Helvetica Bold&quot;, sans-serif; font-size: 54.7px; white-space: pre;" transform="matrix(1.081502, 0, 0, 1.903525, -26.407347, -79.312119)" x="61.407" y="123.602">STOP</text>
+</svg>
