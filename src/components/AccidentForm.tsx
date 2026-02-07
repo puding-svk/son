@@ -199,10 +199,10 @@ const AccidentForm: React.FC = () => {
   const [savedMessage, setSavedMessage] = useState('');
   const [signaturePadOpen, setSignaturePadOpen] = useState<'A' | 'B' | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    section1: true,
-    section2: true,
-    situation: true,
-    signatures: true,
+    section1: false,
+    section2: false,
+    situation: false,
+    signatures: false,
   });
 
   const updateField = (path: string, value: any) => {

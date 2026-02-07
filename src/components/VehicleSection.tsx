@@ -83,7 +83,7 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
   });
   const [impactMarkers, setImpactMarkers] = useState<ImpactArrow[]>([]);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    vehicleHeader: true,
+    vehicleHeader: false,
   });
   
   const vehicleRadioRef = useRef<HTMLInputElement>(null);
