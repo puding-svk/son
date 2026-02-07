@@ -1482,7 +1482,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                     title={t('situation.tools.stickers')}
                     aria-label="Objects tool"
                   >
-                    🏠
+                    🌳
                   </button>
                   <span className="tool-label">{t('situation.labels.objects')}</span>
                 </div>
@@ -1494,7 +1494,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                     <span className="tool-controls-title">
                       {selectedTool === 'pen' && `✏️ ${t('situation.labels.pen')}`}
                       {showSignSelector && `🚸 ${t('situation.labels.trafficSign')}`}
-                      {showStickersSelector && `🏠 ${t('situation.labels.objects')}`}
+                      {showStickersSelector && `🌳 ${t('situation.labels.objects')}`}
                       {selectedSticker && (
                         stickers.find(s => s.id === selectedSticker)?.type === 'text' ? `T ${t('situation.labels.customText')}` : 
                         stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> {t('situation.labels.arrow')}</>) :

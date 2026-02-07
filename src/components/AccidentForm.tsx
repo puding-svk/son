@@ -5,7 +5,6 @@ import VehicleSection from './VehicleSection';
 import QRModal from './QRModal';
 import { SignaturePad } from './SignaturePad';
 import { SituationDraw } from './SituationDraw';
-import SVGTestSection from './SVGTestSection';
 import { exportToPDFWithTemplate } from '../utils/pdfLibExport';
 import { saveSignatureImage } from '../utils/storage';
 import type { AccidentReport } from '../utils/storage';
@@ -514,9 +513,6 @@ const AccidentForm: React.FC = () => {
           </div>
         </section>
       </form>
-
-      {/* SVG Test Section */}
-      <SVGTestSection />
 
       {/* Form Controls */}
       <div className="form-controls">

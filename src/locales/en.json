@@ -203,20 +203,21 @@
     "signatures": "Signatures"
   },
   "situation": {
-    "title": "Accident Situation (Bird's Eye View)",
-    "edit": "Edit Situation",
+    "title": "Accident drawing at the time of collision",
+    "edit": "Edit Drawing",
+    "drawing": "Click to draw accident situation",
     "noImage": "No situation diagram yet",
     "controls": "Tools",
     "controlsPlaceholder": "Drawing tools will appear here",
     "clear": "Clear",
     "tools": {
-      "pen": "Pen",
+      "pen": "Pen - Draw freehand",
       "text": "Text - Add custom text",
-      "arrow": "Arrow - Draw arrow",
+      "arrow": "Arrow - Add arrow",
       "sign": "Traffic Signs - Add traffic sign",
       "stickers": "Objects - Add objects",
-      "vehicleA": "Vehicle A - Blue",
-      "vehicleB": "Vehicle B - Light Yellow"
+      "vehicleA": "Add Vehicle A",
+      "vehicleB": "Add Vehicle B"
     },
     "labels": {
       "pen": "Pen",

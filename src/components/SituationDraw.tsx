@@ -49,7 +49,7 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
               className="situation-draw-placeholder"
               onClick={handleCanvasClick}
             >
-              <p>{t('situation.placeholder') || 'Click to draw accident situation'}</p>
+              <p>{t('situation.drawing') || 'Click to draw accident situation'}</p>
             </div>
           )}
         </div>
