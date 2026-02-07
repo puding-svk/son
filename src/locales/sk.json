@@ -209,6 +209,25 @@
     "controls": "Nástroje",
     "controlsPlaceholder": "Nástroje na kreslenie sa zobrazia tu",
     "clear": "Vymazať",
+    "tools": {
+      "pen": "Ceruzka - Kresliť voľne rukou",
+      "text": "Text - Pridať vlastný text",
+      "arrow": "Šípka - Kresliť šípku",
+      "sign": "Dopravné značky - Pridať dopravnú značku",
+      "vehicleA": "Vozidlo A - Modrá",
+      "vehicleB": "Vozidlo B - Žltá"
+    },
+    "labels": {
+      "pen": "✏️ Ceruzka",
+      "customText": "T Text",
+      "arrow": "⇧ Šípka",
+      "vehicleA": "🚗 Vozidlo A",
+      "vehicleB": "🚗 Vozidlo B",
+      "trafficSign": "🚸 Dopravná značka"
+    },
+    "prompts": {
+      "enterText": "Zadajte text:"
+    },
     "signs": {
       "title": "Dopravné značky",
       "dpvj": "Daj prednosť",

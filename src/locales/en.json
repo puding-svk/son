@@ -209,6 +209,25 @@
     "controls": "Tools",
     "controlsPlaceholder": "Drawing tools will appear here",
     "clear": "Clear",
+    "tools": {
+      "pen": "Pen",
+      "text": "Text - Add custom text",
+      "arrow": "Arrow - Draw arrow",
+      "sign": "Traffic Signs - Add traffic sign",
+      "vehicleA": "Vehicle A - Blue",
+      "vehicleB": "Vehicle B - Light Yellow"
+    },
+    "labels": {
+      "pen": "✏️ Pen",
+      "customText": "T Text",
+      "arrow": "⇧ Arrow",
+      "vehicleA": "🚗 Vehicle A",
+      "vehicleB": "🚗 Vehicle B",
+      "trafficSign": "🚸 Traffic Sign"
+    },
+    "prompts": {
+      "enterText": "Enter text:"
+    },
     "signs": {
       "title": "Traffic Signs",
       "dpvj": "Give way",

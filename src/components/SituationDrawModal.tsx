@@ -1309,7 +1309,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                     }
                   }}
                   type="button"
-                  title={t('situation.pen') || 'Pen - Draw freehand'}
+                  title={t('situation.tools.pen')}
                   aria-label="Pen tool"
                 >
                   ✏️
@@ -1318,7 +1318,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   className="btn-tool btn-sticker-a"
                   onClick={() => addSticker('vehicleA', '#ADD8E6', '#0066cc')}
                   type="button"
-                  title="Vehicle A - Light Blue"
+                  title={t('situation.tools.vehicleA')}
                   aria-label="Vehicle A sticker"
                   disabled={stickers.some(s => s.type === 'vehicleA')}
                 >
@@ -1328,7 +1328,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   className="btn-tool btn-sticker-b"
                   onClick={() => addSticker('vehicleB', '#FFFFE0', '#cc8800')}
                   type="button"
-                  title="Vehicle B - Light Yellow"
+                  title={t('situation.tools.vehicleB')}
                   aria-label="Vehicle B sticker"
                   disabled={stickers.some(s => s.type === 'vehicleB')}
                 >
@@ -1337,14 +1337,14 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 <button
                   className="btn-tool"
                   onClick={() => {
-                    const userText = prompt('Enter text:');
+                    const userText = prompt(t('situation.prompts.enterText'));
                     if (userText && userText.trim()) {
                       addTextSticker(userText, canvasDimensions.width / 2, canvasDimensions.height / 2);
                     }
                     setDrawingTool(null);
                   }}
                   type="button"
-                  title="Text - Add custom text"
+                  title={t('situation.tools.text')}
                   aria-label="Text tool"
                 >
                   T
@@ -1353,7 +1353,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   className="btn-tool"
                   onClick={() => addArrowSticker()}
                   type="button"
-                  title="Arrow - Draw arrow"
+                  title={t('situation.tools.arrow')}
                   aria-label="Arrow tool"
                 >
                   <span className="arrow-icon">⇧</span>
@@ -1362,7 +1362,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                   className="btn-tool"
                   onClick={() => setShowSignSelector(!showSignSelector)}
                   type="button"
-                  title="Traffic Signs - Add traffic sign"
+                  title={t('situation.tools.sign')}
                   aria-label="Traffic signs tool"
                 >
                   🚸
@@ -1383,11 +1383,11 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                 <div className="tool-controls-panel">
                   <div className="tool-controls-header">
                     <span className="tool-controls-title">
-                      {selectedTool === 'pen' && '✏️ Pen'}
+                      {selectedTool === 'pen' && t('situation.labels.pen')}
                       {showSignSelector && `🚸 ${t('situation.signs.title')}`}
                       {selectedSticker && (
-                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? 'T Custom Text' : 
-                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> Arrow</>) :
+                        stickers.find(s => s.id === selectedSticker)?.type === 'text' ? t('situation.labels.customText') : 
+                        stickers.find(s => s.id === selectedSticker)?.type === 'arrow' ? (<><span className="arrow-icon">⇧</span> {t('situation.labels.arrow').split(' ').slice(1).join(' ')}</>) :
                         stickers.find(s => s.id === selectedSticker)?.type === 'sign' ? (
                           (() => {
                             const signFile = stickers.find(s => s.id === selectedSticker)?.signType;
@@ -1395,12 +1395,12 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                             return sign ? (
                               <><img src={`data:image/svg+xml;base64,${sign.data}`} alt={sign.name} className="sign-title-icon" /> {t(`situation.signs.${sign.name.toLowerCase()}`) || sign.name}</>
                             ) : (
-                              <>🚸 Traffic Sign</>
+                              <>{t('situation.labels.trafficSign')}</>
                             );
                           })()
                         ) :
                         (
-                          stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? '🚗 Vehicle A' : '🚗 Vehicle B'
+                          stickers.find(s => s.id === selectedSticker)?.type === 'vehicleA' ? t('situation.labels.vehicleA') : t('situation.labels.vehicleB')
                         )
                       )}
                     </span>
