@@ -4,6 +4,7 @@ const ASSETS_TO_CACHE = [
   '/son/fonts/NimbusSanL-Bol.otf',
   '/son/impactMarker-background.png',
   '/son/applogo.svg',
+  '/son/offline.html',
 ];
 
 // Install event: cache assets
@@ -15,7 +16,7 @@ self.addEventListener('install', (event) => {
         // Don't fail installation if caching fails
         return Promise.resolve();
       });
-    })
+    }).then(() => self.skipWaiting())
   );
 });
 
@@ -51,6 +52,7 @@ self.addEventListener('fetch', (event) => {
     url.pathname.includes('applogo.svg');
   
   if (shouldCacheOffline) {
+    // Cache-first strategy for assets
     event.respondWith(
       caches.match(event.request).then((response) => {
         // Return cached response if available
@@ -70,7 +72,7 @@ self.addEventListener('fetch', (event) => {
           return response;
         }).catch(() => {
           // If both cache and network fail, return a generic error response
-          console.error('Failed to fetch:', event.request.url);
+          console.error('Failed to fetch asset:', event.request.url);
           return new Response('Offline - Resource not available', {
             status: 503,
             statusText: 'Service Unavailable',
@@ -80,6 +82,56 @@ self.addEventListener('fetch', (event) => {
           });
         });
       })
+    );
+  } else {
+    // Network-first strategy for HTML and other resources
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // If successful, return and optionally cache
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // If network fails, try cache
+          return caches.match(event.request).then((response) => {
+            if (response) {
+              return response;
+            }
+            
+            // For HTML requests, serve offline page
+            if (event.request.mode === 'navigate' || 
+                event.request.headers.get('accept')?.includes('text/html')) {
+              return caches.match('/son/offline.html').catch(() => {
+                return new Response(
+                  '<html><body><h1>Offline</h1><p>Please check your connection</p></body></html>',
+                  {
+                    status: 503,
+                    statusText: 'Service Unavailable',
+                    headers: new Headers({
+                      'Content-Type': 'text/html',
+                    }),
+                  }
+                );
+              });
+            }
+            
+            // For other requests, return generic offline message
+            console.warn('Offline - Resource not available:', event.request.url);
+            return new Response('Offline - Resource not available', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain',
+              }),
+            });
+          });
+        })
     );
   }
 });

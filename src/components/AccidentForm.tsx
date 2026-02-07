@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { i18n } from '../i18n/config';
 import VehicleSection from './VehicleSection';
@@ -204,6 +204,29 @@ const AccidentForm: React.FC = () => {
     situation: false,
     signatures: false,
   });
+
+  // Handle offline/online status
+  useEffect(() => {
+    const handleOnline = () => {
+      console.log('App is now online');
+    };
+    const handleOffline = () => {
+      console.log('App is now offline');
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // Log initial status
+    if (!navigator.onLine) {
+      console.log('App started in offline mode');
+    }
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
