@@ -200,6 +200,7 @@ const AccidentForm: React.FC = () => {
   const [signaturePadOpen, setSignaturePadOpen] = useState<'A' | 'B' | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     section1: true,
+    section2: true,
   });
 
   const updateField = (path: string, value: any) => {
@@ -342,94 +343,104 @@ const AccidentForm: React.FC = () => {
 
         {/* Section 2: Accident Information */}
         <section className="form-section section-neutral">
-          <h2>{t('section2.title')}</h2>
-          
-          <div className="form-group">
-            <label className="question-label">{t('section2.injuries')}</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="injuries"
-                  value="yes"
-                  checked={formData.section2.injuries === 'yes'}
-                  onChange={(e) => updateField('section2.injuries', e.target.value)}
-                />
-                {t('common.yes')}
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="injuries"
-                  value="no"
-                  checked={formData.section2.injuries === 'no'}
-                  onChange={(e) => updateField('section2.injuries', e.target.value)}
-                />
-                {t('common.no')}
-              </label>
-            </div>
-          </div>
+          <h2
+            onClick={() => toggleSection('section2')}
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+          >
+            <span>{expandedSections.section2 ? '▼' : '▶'}</span>
+            {' '}
+            {t('section2.title')}
+          </h2>
+          {expandedSections.section2 && (
+            <>
+              <div className="form-group">
+                <label className="question-label">{t('section2.injuries')}</label>
+                <div className="radio-group">
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="injuries"
+                      value="yes"
+                      checked={formData.section2.injuries === 'yes'}
+                      onChange={(e) => updateField('section2.injuries', e.target.value)}
+                    />
+                    {t('common.yes')}
+                  </label>
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="injuries"
+                      value="no"
+                      checked={formData.section2.injuries === 'no'}
+                      onChange={(e) => updateField('section2.injuries', e.target.value)}
+                    />
+                    {t('common.no')}
+                  </label>
+                </div>
+              </div>
 
-          <div className="form-group">
-            <label className="question-label">{t('section2.damageOtherVehicles')}</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="damageOtherVehicles"
-                  value="yes"
-                  checked={formData.section2.damageOtherVehicles === 'yes'}
-                  onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
-                />
-                {t('common.yes')}
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="damageOtherVehicles"
-                  value="no"
-                  checked={formData.section2.damageOtherVehicles === 'no'}
-                  onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
-                />
-                {t('common.no')}
-              </label>
-            </div>
-          </div>
+              <div className="form-group">
+                <label className="question-label">{t('section2.damageOtherVehicles')}</label>
+                <div className="radio-group">
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="damageOtherVehicles"
+                      value="yes"
+                      checked={formData.section2.damageOtherVehicles === 'yes'}
+                      onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
+                    />
+                    {t('common.yes')}
+                  </label>
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="damageOtherVehicles"
+                      value="no"
+                      checked={formData.section2.damageOtherVehicles === 'no'}
+                      onChange={(e) => updateField('section2.damageOtherVehicles', e.target.value)}
+                    />
+                    {t('common.no')}
+                  </label>
+                </div>
+              </div>
 
-          <div className="form-group">
-            <label className="question-label">{t('section2.damageOtherItems')}</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="damageOtherItems"
-                  value="yes"
-                  checked={formData.section2.damageOtherItems === 'yes'}
-                  onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
-                />
-                {t('common.yes')}
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="damageOtherItems"
-                  value="no"
-                  checked={formData.section2.damageOtherItems === 'no'}
-                  onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
-                />
-                {t('common.no')}
-              </label>
-            </div>
-          </div>
+              <div className="form-group">
+                <label className="question-label">{t('section2.damageOtherItems')}</label>
+                <div className="radio-group">
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="damageOtherItems"
+                      value="yes"
+                      checked={formData.section2.damageOtherItems === 'yes'}
+                      onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
+                    />
+                    {t('common.yes')}
+                  </label>
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="damageOtherItems"
+                      value="no"
+                      checked={formData.section2.damageOtherItems === 'no'}
+                      onChange={(e) => updateField('section2.damageOtherItems', e.target.value)}
+                    />
+                    {t('common.no')}
+                  </label>
+                </div>
+              </div>
 
-          <div className="form-group">
-            <label>{t('section2.witnesses')}</label>
-            <textarea
-              value={formData.section2.witnesses}
-              onChange={(e) => updateField('section2.witnesses', e.target.value)}
-              rows={3}
-            />
-          </div>
+              <div className="form-group">
+                <label>{t('section2.witnesses')}</label>
+                <textarea
+                  value={formData.section2.witnesses}
+                  onChange={(e) => updateField('section2.witnesses', e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </>
+          )}
         </section>
 
         {/* Vehicle A Section */}
