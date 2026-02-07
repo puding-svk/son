@@ -811,30 +811,34 @@
 /* Text color picker panel */
 .text-color-picker-panel {
   padding: 0.5rem;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
   width: 100%;
   box-sizing: border-box;
+  max-width: none;
 }
 
 .text-color-picker-panel .color-swatches {
-  display: contents;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  width: 100%;
 }
 
 .text-color-picker-panel .color-swatch {
-  width: 100%;
+  flex: 1 0 calc(25% - 0.25rem);
   aspect-ratio: 1;
   min-width: 20px;
-  min-height: 20px;
+  max-width: 50px;
 }
 
 /* Arrow icon styling */
 .arrow-icon {
-  font-size: 1em;
+  font-size: 1.5em;
   display: inline-flex;
   align-items: center;
   justify-content: center;

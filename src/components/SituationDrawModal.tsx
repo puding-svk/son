@@ -461,6 +461,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     // Unselect any selected sticker to hide selection circle before saving
     setSelectedSticker(null);
+    setShowTextColorPicker(false);
     
     // Defer image capture to next frame to ensure render with no selection
     setTimeout(() => {
@@ -726,6 +727,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     // Clear stickers and unlock canvas
     setStickers([]);
     setSelectedSticker(null);
+    setShowTextColorPicker(false);
     setIsCanvasSizeLocked(false);
     
     // Trigger redraw
@@ -841,6 +843,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     setStickers(stickers.filter(s => s.id !== id));
     if (selectedSticker === id) {
       setSelectedSticker(null);
+      setShowTextColorPicker(false);
     }
   };
 
@@ -896,6 +899,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       setSelectedTool(null);
     } else {
       setSelectedSticker(null);
+      setShowTextColorPicker(false);
     }
   };
 
@@ -1301,6 +1305,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
                         setDrawingTool(null);
                         setSelectedTool(null);
                         setSelectedSticker(null);
+                        setShowTextColorPicker(false);
                       }}
                       type="button"
                       title={t('common.close') || 'Close'}
