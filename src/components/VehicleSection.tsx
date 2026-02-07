@@ -82,6 +82,9 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
     mode: 'save',
   });
   const [impactMarkers, setImpactMarkers] = useState<ImpactArrow[]>([]);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    vehicleHeader: true,
+  });
   
   const vehicleRadioRef = useRef<HTMLInputElement>(null);
   const trailerRadioRef = useRef<HTMLInputElement>(null);
@@ -122,10 +125,24 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
     onChange(newData);
   };
 
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   return (
     <div className={`vehicle-section ${vehicleLabel === 'vehicleA' ? 'section-blue' : 'section-yellow'}`}>
       <div className="vehicle-section-header">
-        <h3>{vehicleLabel === 'vehicleA' ? t('vehicle.titleA') : t('vehicle.titleB')}</h3>
+        <h3
+          onClick={() => toggleSection('vehicleHeader')}
+          style={{ cursor: 'pointer', userSelect: 'none', flex: 1 }}
+        >
+          <span>{expandedSections.vehicleHeader ? '▼' : '▶'}</span>
+          {' '}
+          {vehicleLabel === 'vehicleA' ? t('vehicle.titleA') : t('vehicle.titleB')}
+        </h3>
         <button
           type="button"
           className="btn-load-top"
@@ -135,7 +152,9 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         </button>
       </div>
 
-      {/* SECTION 6: POLICYHOLDER / INSURED PERSON */}
+      {expandedSections.vehicleHeader && (
+        <>
+          {/* SECTION 6: POLICYHOLDER / INSURED PERSON */}
       <fieldset>
         <legend>{t('vehicle.section6')}</legend>
 
@@ -778,6 +797,8 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         onClose={() => setVehicleModal({ ...vehicleModal, isOpen: false })}
         initialMode={vehicleModal.mode === 'qr' ? 'qr' : undefined}
       />
+        </>
+      )}
     </div>
   );
 };
