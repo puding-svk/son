@@ -44,7 +44,7 @@ export const ImpactMarker: React.FC<ImpactMarkerProps> = ({
   useEffect(() => {
     const img = new Image();
     const basePath = import.meta.env.BASE_URL || '/';
-    img.src = basePath + 'impactMarker-background.png?t=' + Date.now();
+    img.src = basePath + 'impactMarker-background.png';
     img.onload = () => {
       imgRef.current = img;
       redrawCanvas();
