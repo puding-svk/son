@@ -309,7 +309,7 @@ const AccidentForm: React.FC = () => {
 
       <form className="form-content">
         {/* Section 1: Accident Date and Location */}
-        <section className="form-section section-blue">
+        <section className="form-section section-neutral">
           <h2
             onClick={() => toggleSection('section1')}
             style={{ cursor: 'pointer', userSelect: 'none' }}
