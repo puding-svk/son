@@ -16,9 +16,6 @@ const handleOrientationChange = () => {
   
   // Force reflow by accessing scrollHeight
   document.documentElement.scrollHeight;
-  
-  // Log orientation for debugging
-  console.log('Orientation changed:', window.innerWidth, 'x', window.innerHeight);
 };
 
 // Listen for orientation changes
@@ -29,8 +26,6 @@ window.addEventListener('resize', handleOrientationChange);
 if (screen.orientation) {
   try {
     screen.orientation.addEventListener('change', () => {
-      const orientation = screen.orientation.type;
-      console.log('Screen orientation changed to:', orientation);
       handleOrientationChange();
     });
   } catch (e) {
@@ -43,7 +38,6 @@ const unlockOrientation = async () => {
   if (screen.orientation && screen.orientation.unlock) {
     try {
       await screen.orientation.unlock();
-      console.log('Orientation unlocked');
     } catch (e) {
       console.warn('Could not unlock orientation:', e);
     }
@@ -65,10 +59,7 @@ window.addEventListener('resize', () => {
 // Register service worker for offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/son/service-worker.js').then(
-      (registration) => {
-        console.log('Service Worker registered successfully:', registration);
-      },
+    navigator.serviceWorker.register('/son/service-worker.js').catch(
       (error) => {
         console.warn('Service Worker registration failed:', error);
       }
