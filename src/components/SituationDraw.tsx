@@ -4,7 +4,7 @@ import { SituationDrawModal } from './SituationDrawModal';
 import './SituationDraw.css';
 
 interface SituationDrawProps {
-  situationImage: string; // base64 PNG data URL
+  situationImage: string; // base64 PNG data URL or JSON drawing data
   onSituationChange: (imageData: string) => void;
 }
 
@@ -14,16 +14,22 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [initialDrawingData, setInitialDrawingData] = useState<string>('');
 
   const handleEdit = () => {
+    // Parse drawing data if stored as JSON
+    if (situationImage && situationImage.startsWith('{')) {
+      try {
+        setInitialDrawingData(situationImage);
+      } catch {
+        setInitialDrawingData('');
+      }
+    }
     setIsModalOpen(true);
   };
 
-  const handleSave = (imageData: string) => {
-    onSituationChange(imageData);
-    // Ensure localStorage is updated immediately by dispatching an event
-    // that the parent component can listen to
-    window.dispatchEvent(new CustomEvent('situationImageSaved', { detail: imageData }));
+  const handleSave = (drawingData: string) => {
+    onSituationChange(drawingData);
     setIsModalOpen(false);
   };
 
@@ -32,13 +38,28 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
     handleEdit();
   };
 
+  // Get display image - if it's JSON data, extract finalImage, otherwise use the PNG directly
+  const getDisplayImage = () => {
+    if (situationImage && situationImage.startsWith('{')) {
+      try {
+        const data = JSON.parse(situationImage);
+        return data.finalImage || '';
+      } catch {
+        return situationImage;
+      }
+    }
+    return situationImage;
+  };
+
+  const displayImage = getDisplayImage();;
+
   return (
     <>
       <div className="situation-draw-content">
         <div className="situation-draw-display">
-          {situationImage ? (
+          {displayImage ? (
             <img
-              src={situationImage}
+              src={displayImage}
               alt="Accident situation"
               className="situation-draw-image"
               onClick={handleCanvasClick}
@@ -68,7 +89,8 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
         <SituationDrawModal
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          initialImage={situationImage}
+          initialImage={displayImage}
+          initialDrawingData={initialDrawingData}
         />
       )}
     </>

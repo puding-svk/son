@@ -111,6 +111,31 @@ export interface AccidentReport {
   createdAt: string;
 }
 
+export interface SituationDrawingData {
+  stickers: Array<{
+    id: string;
+    type: 'vehicleA' | 'vehicleB' | 'text' | 'arrow' | 'sign' | 'sticker';
+    vehicleCategory?: 'car' | 'truck' | 'motorcycle';
+    signType?: string;
+    stickerType?: string;
+    x: number;
+    y: number;
+    rotation: number;
+    scale: number;
+    minScale: number;
+    maxScale: number;
+    color: string;
+    color2: string;
+    isText?: boolean;
+    text?: string;
+    fontSize?: number;
+    selectionRadius?: number;
+  }>;
+  drawingLayerImage: string; // Base64 PNG of freehand drawing
+  finalImage: string; // Base64 PNG of complete drawing (for display/export)
+  canvasDimensions?: { width: number; height: number };
+}
+
 // LocalStorage and IndexedDB utilities
 const DB_NAME = 'AccidentReportDB';
 const TEMPLATE_STORE_NAME = 'vehicleTemplates';

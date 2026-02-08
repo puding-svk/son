@@ -1241,8 +1241,23 @@ export const exportToPDFWithTemplate = async (
       }
 
       try {
+        let finalImage = imageData;
+        
+        // If it's stored as JSON drawing data, extract the finalImage
+        if (imageData.startsWith('{')) {
+          try {
+            const drawingData = JSON.parse(imageData);
+            if (drawingData.finalImage) {
+              finalImage = drawingData.finalImage;
+            }
+          } catch {
+            // If JSON parsing fails, treat it as a regular image
+            console.log('Could not parse drawing data as JSON, treating as image');
+          }
+        }
+        
         // Extract base64 data from data URL if necessary
-        let base64Data = imageData;
+        let base64Data = finalImage;
         if (base64Data.startsWith('data:image/png;base64,')) {
           base64Data = base64Data.substring('data:image/png;base64,'.length);
         }
