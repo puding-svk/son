@@ -124,9 +124,8 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   border-top: 2px solid #ddd;
-  position: sticky;
-  bottom: 0;
-  z-index: 100;
+  position: static;
+  margin-top: 20px;
 }
 
 .btn-primary {

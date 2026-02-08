@@ -1,6 +1,6 @@
 {
   "name": "Správa o nehode",
-  "short_name": "Správa",
+  "short_name": "Správa o nehode",
   "description": "Aplikácia na zapisovanie správy o dopravnej nehode",
   "start_url": "/son/",
   "scope": "/son/",
