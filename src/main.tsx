@@ -21,16 +21,29 @@ const handleOrientationChange = () => {
   console.log('Orientation changed:', window.innerWidth, 'x', window.innerHeight);
 };
 
+// Listen for orientation changes
 window.addEventListener('orientationchange', handleOrientationChange);
 window.addEventListener('resize', handleOrientationChange);
 
-// Handle screen.orientation API (modern browsers)
+// Handle screen.orientation API (modern browsers and Android PWA)
 if (screen.orientation) {
-  screen.orientation.addEventListener('change', () => {
-    console.log('Screen orientation:', screen.orientation.type);
-    handleOrientationChange();
-  });
+  try {
+    screen.orientation.addEventListener('change', () => {
+      const orientation = screen.orientation.type;
+      console.log('Screen orientation changed to:', orientation);
+      handleOrientationChange();
+    });
+  } catch (e) {
+    console.warn('Could not set up screen orientation listener:', e);
+  }
 }
+
+// Request fullscreen orientation handling (Android PWA specific)
+window.addEventListener('resize', () => {
+  // Ensure layout updates on resize
+  document.documentElement.style.height = window.innerHeight + 'px';
+  document.documentElement.style.width = window.innerWidth + 'px';
+});
 
 // Register service worker for offline support
 if ('serviceWorker' in navigator) {

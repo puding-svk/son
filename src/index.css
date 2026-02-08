@@ -116,14 +116,30 @@ legend {
   }
 }
 
-/* Orientation handling */
+/* Orientation handling - force layout update */
 @media (orientation: landscape) {
+  html,
+  body,
+  #root {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+  }
+  
   body {
     min-height: 100vh;
   }
 }
 
 @media (orientation: portrait) {
+  html,
+  body,
+  #root {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+  }
+  
   body {
     min-height: 100vh;
   }
@@ -143,4 +159,21 @@ html,
 body,
 #root {
   transition: none !important;
+}
+
+/* Handle viewport changes for Android PWA */
+@media (max-aspect-ratio: 1/1) {
+  /* Portrait mode */
+  body {
+    width: 100%;
+    min-height: 100vh;
+  }
+}
+
+@media (min-aspect-ratio: 1/1) {
+  /* Landscape mode */
+  body {
+    width: 100%;
+    min-height: 100vh;
+  }
 }
