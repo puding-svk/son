@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  overflow: auto;
 }
 
 .signature-pad-modal {
@@ -20,6 +21,7 @@
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
+  height: auto;
 }
 
 .signature-pad-header {
@@ -66,11 +68,12 @@
 }
 
 .signature-pad-container {
-  flex: 1;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   position: relative;
   min-height: 300px;
+  max-height: 400px;
   overflow: hidden;
 }
 
@@ -145,17 +148,66 @@
   .signature-pad-modal {
     width: 95%;
     max-height: 95vh;
+    border-radius: 4px;
+  }
+
+  .signature-pad-header {
+    padding: 12px 12px;
+  }
+
+  .signature-pad-header h2 {
+    font-size: 16px;
+    margin: 0 0 4px 0;
+  }
+
+  .signature-pad-name {
+    font-size: 12px;
   }
 
   .signature-pad-container {
-    min-height: 250px;
+    min-height: 150px;
+    max-height: 250px;
   }
 
   .signature-pad-controls {
-    flex-direction: column;
+    flex-direction: row;
+    padding: 10px 12px;
+    gap: 6px;
   }
 
   .signature-pad-controls button {
-    width: 100%;
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 600px) {
+  .signature-pad-container {
+    min-height: 120px;
+    max-height: 150px;
+  }
+
+  .signature-pad-header {
+    padding: 10px;
+  }
+
+  .signature-pad-header h2 {
+    font-size: 14px;
+    margin: 0 0 2px 0;
+  }
+
+  .signature-pad-name {
+    font-size: 11px;
+  }
+
+  .signature-pad-controls {
+    padding: 8px 10px;
+    gap: 4px;
+  }
+
+  .signature-pad-controls button {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
