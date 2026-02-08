@@ -21,6 +21,9 @@ export const SituationDraw: React.FC<SituationDrawProps> = ({
 
   const handleSave = (imageData: string) => {
     onSituationChange(imageData);
+    // Ensure localStorage is updated immediately by dispatching an event
+    // that the parent component can listen to
+    window.dispatchEvent(new CustomEvent('situationImageSaved', { detail: imageData }));
     setIsModalOpen(false);
   };
 

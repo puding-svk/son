@@ -260,6 +260,34 @@ const AccidentForm: React.FC = () => {
     };
   }, []);
 
+  // Auto-save formData to localStorage whenever it changes (debounced)
+  useEffect(() => {
+    const saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem('accidentFormDraft', JSON.stringify(formData));
+      } catch (error) {
+        console.error('Failed to save form data to localStorage:', error);
+      }
+    }, 500); // Wait 500ms before saving to batch changes
+
+    return () => clearTimeout(saveTimer);
+  }, [formData]);
+
+  // Immediately save formData when situation image is saved
+  useEffect(() => {
+    const handleSituationImageSaved = () => {
+      try {
+        localStorage.setItem('accidentFormDraft', JSON.stringify(formData));
+        console.log('Form data saved to localStorage after situation image update');
+      } catch (error) {
+        console.error('Failed to save form data to localStorage:', error);
+      }
+    };
+
+    window.addEventListener('situationImageSaved', handleSituationImageSaved);
+    return () => window.removeEventListener('situationImageSaved', handleSituationImageSaved);
+  }, [formData]);
+
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
     const newData = JSON.parse(JSON.stringify(formData));
