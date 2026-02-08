@@ -105,3 +105,42 @@ legend {
   font-weight: 600;
   color: #333;
 }
+
+/* Mobile viewport optimization */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Orientation handling */
+@media (orientation: landscape) {
+  body {
+    min-height: 100vh;
+  }
+}
+
+@media (orientation: portrait) {
+  body {
+    min-height: 100vh;
+  }
+}
+
+/* Prevent zoom on input focus for iOS */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+  }
+}
+
+/* Ensure proper layout during orientation change */
+html,
+body,
+#root {
+  transition: none !important;
+}
