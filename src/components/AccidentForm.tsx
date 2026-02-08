@@ -229,12 +229,36 @@ const AccidentForm: React.FC = () => {
           vehicleA,
           vehicleB,
         });
+        console.log('Form data loaded from localStorage');
       } catch (error) {
         console.error('Failed to load form data from localStorage:', error);
         // If parsing fails, keep the initial state
       }
     }
   }, []); // Empty dependency array - run only on mount
+
+  // Handle offline/online status
+  useEffect(() => {
+    const handleOnline = () => {
+      console.log('App is now online');
+    };
+    const handleOffline = () => {
+      console.log('App is now offline');
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // Log initial status
+    if (!navigator.onLine) {
+      console.log('App started in offline mode');
+    }
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Auto-save formData to localStorage whenever it changes (debounced)
   useEffect(() => {
@@ -254,6 +278,7 @@ const AccidentForm: React.FC = () => {
     const handleSituationImageSaved = () => {
       try {
         localStorage.setItem('accidentFormDraft', JSON.stringify(formData));
+        console.log('Form data saved to localStorage after situation image update');
       } catch (error) {
         console.error('Failed to save form data to localStorage:', error);
       }
@@ -353,6 +378,7 @@ const AccidentForm: React.FC = () => {
         situation: false,
         signatures: false,
       });
+      console.log('Form data cleared');
     }
   };
 
