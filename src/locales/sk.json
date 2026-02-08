@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Správa o nehode",
+    "title": "Správa o nehode v0.1.4",
     "description": "Offline aplikácia na vyplnenie správy o dopravnej nehode"
   },
   "form": {
@@ -150,7 +150,14 @@
     "overwrite": "Prepísať",
     "scanning": "Skenujem",
     "cannotScan": "Nemôžete skenovať? Rozdeliť QR.",
-    "qrMinimumReached": "Dosiahnutá minimálna veľkosť QR dát."
+    "qrMinimumReached": "Dosiahnutá minimálna veľkosť QR dát.",
+    "saveReport": "Uložiť správu",
+    "loadReport": "Načítať správu",
+    "reportName": "Názov správy o nehode:",
+    "reportNamePlaceholder": "Zadajte názov správy o nehode",
+    "existingReports": "Existujúce správy o nehode:",
+    "noReports": "Žiadne uložené správy o nehode",
+    "loading": "Načítavam..."
   },
   "message": {
     "templateSaved": "Šablóna bola úspešne uložená.",
@@ -159,7 +166,10 @@
     "partScanned": "Časť {{part}} z {{total}} bola úspešne naskenovaná!",
     "allPartsScanned": "Všetky časti boli úspešne naskenované! Spracovávam...",
     "newQRSession": "Nová séria QR kódov s {{parts}} časťami.",
-    "qrAutoSplit": "QR kód bol automaticky rozdelený na {{parts}} časti kvôli veľkosti dát."
+    "qrAutoSplit": "QR kód bol automaticky rozdelený na {{parts}} časti kvôli veľkosti dát.",
+    "clearFormConfirm": "Ste si istí, že chcete vyčistiť formulár? Túto akciu nie je možné vrátiť späť.",
+    "exportError": "Nepodarilo sa exportovať PDF",
+    "reportSaved": "Správa o nehode bola úspešne uložená."
   },
   "error": {
     "invalidJSON": "Neplatný JSON súbor",
@@ -171,11 +181,17 @@
     "deletingTemplate": "Chyba pri mazaní šablóny",
     "qrTooLarge": "Údaje QR kódu sú príliš veľké. Prosím, znížte množstvo textu v poliach ako viditeľné poškodenie alebo dodatočné poznámky.",
     "qrGeneration": "Chyba pri generovaní QR kódu",
-    "failedReconstructParts": "Chyba pri obnovení údajov z časti QR kódu. Prosím, skenujte všetky časti znova."
+    "failedReconstructParts": "Chyba pri obnovení údajov z časti QR kódu. Prosím, skenujte všetky časti znova.",
+    "savingReport": "Chyba pri ukladaní správy o nehode",
+    "loadingReports": "Chyba pri načítavaní uložených správ",
+    "loadingReport": "Chyba pri načítavaní správy o nehode",
+    "deletingReport": "Chyba pri mazaní správy o nehode"
   },
   "confirm": {
     "deleteTemplate": "Ste si istí, že chcete vymazať túto šablónu?",
-    "overwriteTemplate": "Prepísať existujúcu šablónu?"
+    "overwriteTemplate": "Prepísať existujúcu šablónu?",
+    "deleteReport": "Ste si istí, že chcete vymazať túto správu?",
+    "overwriteReport": "Prepísať existujúcu správu o nehode?"
   },
   "common": {
     "yes": "Áno",
@@ -192,6 +208,8 @@
     "delete": "Vymazať",
     "edit": "Upraviť",
     "close": "Zatvoriť",
+    "generatePDF": "Vygenerovať PDF",
+    "clearForm": "Vyčistiť formulár",
     "required": "Povinné pole",
     "back": "Späť",
     "or": "alebo",

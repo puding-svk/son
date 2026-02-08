@@ -768,8 +768,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (!isCanvasSizeLocked && stickers.length === 0) {
       setIsCanvasSizeLocked(true);
     }
-
-    e.preventDefault();
     setIsDrawing(true);
 
     const touch = e.touches[0];
@@ -794,8 +792,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || drawingTool !== 'pen') return;
-
-    e.preventDefault();
 
     const touch = e.touches[0];
     const canvas = canvasRef.current;
@@ -1200,7 +1196,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
         const grabAngle = Math.atan2(y - sticker.y, x - sticker.x) * (180 / Math.PI) + 90;
         // Store the offset between current rotation and grab angle
         setRotationOffset(sticker.rotation - grabAngle);
-        e.preventDefault();
         setIsRotatingSticker(true);
       }
       return;
@@ -1210,7 +1205,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     if (isPointInsideSticker(x, y) && selectedSticker) {
       const sticker = stickers.find(s => s.id === selectedSticker);
       if (sticker) {
-        e.preventDefault();
         setIsDraggingSticker(true);
         setDragOffset({
           x: sticker.x - x,
@@ -1223,7 +1217,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     // Check if touching a different sticker to select it
     const touchedSticker = getStickerAtPoint(x, y);
     if (touchedSticker) {
-      e.preventDefault();
       setSelectedSticker(touchedSticker.id);
       setShowSignSelector(false);
       setShowStickersSelector(false);
@@ -1244,7 +1237,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const handleStickerTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     // Handle pinch scaling with 2 touches
     if (e.touches.length === 2 && isPinchScaling && selectedSticker) {
-      e.preventDefault();
       const touch1 = getTouchCanvasCoordinates(e.touches[0]);
       const touch2 = getTouchCanvasCoordinates(e.touches[1]);
       const distance = Math.hypot(touch2.x - touch1.x, touch2.y - touch1.y);
@@ -1267,7 +1259,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     // Handle rotation
     if (isRotatingSticker && selectedSticker) {
-      e.preventDefault();
       const sticker = stickers.find(s => s.id === selectedSticker);
       if (sticker) {
         const dx = x - sticker.x;
@@ -1282,7 +1273,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
     // Handle dragging
     if (isDraggingSticker && selectedSticker) {
-      e.preventDefault();
       const newX = Math.max(20, Math.min(canvasDimensions.width - 20, x + dragOffset.x));
       const newY = Math.max(20, Math.min(canvasDimensions.height - 20, y + dragOffset.y));
       updateSticker(selectedSticker, { x: newX, y: newY });

@@ -79,6 +79,13 @@ export interface VehicleTemplate {
   createdAt: string;
 }
 
+export interface SavedAccidentReport {
+  id?: number;
+  name: string;
+  data: AccidentReport;
+  createdAt: string;
+}
+
 // Storage and data utilities
 export interface AccidentReport {
   section1: {
@@ -107,9 +114,40 @@ export interface AccidentReport {
 // LocalStorage and IndexedDB utilities
 const DB_NAME = 'AccidentReportDB';
 const TEMPLATE_STORE_NAME = 'vehicleTemplates';
-const IMPACT_MARKER_STORE_NAME = 'impactMarkerImages';
-const SIGNATURES_STORE_NAME = 'signatures';
-const DB_VERSION = 13;
+export const SAVED_REPORTS_STORE_NAME = 'savedAccidentReports';
+const DB_VERSION = 16;
+
+// Helper function to delete and recreate the database
+const deleteAndRecreateDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+    deleteRequest.onsuccess = () => {
+      console.log('Database deleted successfully');
+      // Wait a bit before reopening
+      setTimeout(() => {
+        const openRequest = indexedDB.open(DB_NAME, DB_VERSION);
+        openRequest.onupgradeneeded = (event) => {
+          const db = (event.target as IDBOpenDBRequest).result;
+          if (!db.objectStoreNames.contains(TEMPLATE_STORE_NAME)) {
+            db.createObjectStore(TEMPLATE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains(SAVED_REPORTS_STORE_NAME)) {
+            db.createObjectStore(SAVED_REPORTS_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        openRequest.onsuccess = () => {
+          resolve(openRequest.result);
+        };
+        openRequest.onerror = () => {
+          reject(openRequest.error);
+        };
+      }, 100);
+    };
+    deleteRequest.onerror = () => {
+      reject(deleteRequest.error);
+    };
+  });
+};
 
 export const initializeDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -117,11 +155,29 @@ export const initializeDB = (): Promise<IDBDatabase> => {
 
     request.onerror = () => {
       console.error('initializeDB error:', request.error);
-      reject(request.error);
+      // Try to recover by deleting and recreating the database
+      console.log('Attempting database recovery...');
+      deleteAndRecreateDB()
+        .then(resolve)
+        .catch(reject);
     };
     request.onsuccess = () => {
       console.log('Database initialized successfully');
-      resolve(request.result);
+      const db = request.result;
+      
+      // Check if both stores exist, if not trigger recovery
+      const hasTemplateStore = db.objectStoreNames.contains(TEMPLATE_STORE_NAME);
+      const hasReportStore = db.objectStoreNames.contains(SAVED_REPORTS_STORE_NAME);
+      
+      if (!hasTemplateStore || !hasReportStore) {
+        console.log('Missing object stores, triggering recovery');
+        db.close();
+        deleteAndRecreateDB()
+          .then(resolve)
+          .catch(reject);
+      } else {
+        resolve(db);
+      }
     };
     request.onupgradeneeded = (event) => {
       console.log('Database upgrade needed');
@@ -130,13 +186,9 @@ export const initializeDB = (): Promise<IDBDatabase> => {
         console.log('Creating TEMPLATE_STORE_NAME');
         db.createObjectStore(TEMPLATE_STORE_NAME, { keyPath: 'id', autoIncrement: true });
       }
-      if (!db.objectStoreNames.contains(IMPACT_MARKER_STORE_NAME)) {
-        console.log('Creating IMPACT_MARKER_STORE_NAME');
-        db.createObjectStore(IMPACT_MARKER_STORE_NAME);
-      }
-      if (!db.objectStoreNames.contains(SIGNATURES_STORE_NAME)) {
-        console.log('Creating SIGNATURES_STORE_NAME');
-        db.createObjectStore(SIGNATURES_STORE_NAME);
+      if (!db.objectStoreNames.contains(SAVED_REPORTS_STORE_NAME)) {
+        console.log('Creating SAVED_REPORTS_STORE_NAME');
+        db.createObjectStore(SAVED_REPORTS_STORE_NAME, { keyPath: 'id', autoIncrement: true });
       }
     };
   });
@@ -543,196 +595,183 @@ export const reconstructFromQRParts = (parts: string[]): VehicleData | null => {
 
 // ===== Impact Marker Images Storage =====
 // Separate storage for large base64 image data to keep form data clean
-// Note: IMPACT_MARKER_STORE_NAME is defined above with other DB constants
+// All image data now stored in form state (localStorage) only, not in IndexedDB
 
-/**
- * Store impact marker image in IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- * @param imageData base64 PNG data URL
- */
-export const saveImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB', imageData: string): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
+// ===== Saved Accident Report utilities =====
+export const saveAccidentReport = async (report: SavedAccidentReport): Promise<number> => {
+  const db = await initializeDB();
+  return new Promise((resolve, reject) => {
+    try {
+      // Check if store exists
+      if (!db.objectStoreNames.contains(SAVED_REPORTS_STORE_NAME)) {
+        console.error('Store does not exist:', SAVED_REPORTS_STORE_NAME);
+        reject(new Error(`Store '${SAVED_REPORTS_STORE_NAME}' does not exist in database`));
+        return;
+      }
       
-      const data = {
-        vehicleLabel,
-        imageData,
-        savedAt: new Date().toISOString(),
+      const transaction = db.transaction([SAVED_REPORTS_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SAVED_REPORTS_STORE_NAME);
+      const reportToSave = { ...report, createdAt: new Date().toISOString() };
+      const request = store.add(reportToSave);
+
+      request.onerror = () => {
+        console.error('saveAccidentReport error:', request.error);
+        reject(request.error);
       };
-      
-      // Use vehicleLabel as key to replace any existing image
-      const request = store.put(data, vehicleLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to save impact marker image:', error);
-    throw error;
-  }
-};
-
-/**
- * Retrieve impact marker image from IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- * @returns base64 PNG data URL or null if not found
- */
-export const getImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB'): Promise<string | null> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readonly');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.get(vehicleLabel);
-      
       request.onsuccess = () => {
-        const result = request.result;
-        resolve(result ? result.imageData : null);
-      };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to retrieve impact marker image:', error);
-    return null;
-  }
-};
-
-/**
- * Delete impact marker image from IndexedDB
- * @param vehicleLabel 'vehicleA' or 'vehicleB'
- */
-export const deleteImpactMarkerImage = async (vehicleLabel: 'vehicleA' | 'vehicleB'): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.delete(vehicleLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to delete impact marker image:', error);
-    throw error;
-  }
-};
-
-/**
- * Clear all impact marker images from IndexedDB
- */
-export const clearAllImpactMarkerImages = async (): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([IMPACT_MARKER_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(IMPACT_MARKER_STORE_NAME);
-      const request = store.clear();
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to clear impact marker images:', error);
-    throw error;
-  }
-};
-
-/**
- * Save signature image to IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- * @param imageData base64 PNG data URL
- */
-export const saveSignatureImage = async (signatureLabel: 'driverA' | 'driverB', imageData: string): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      
-      const data = {
-        signatureLabel,
-        imageData,
-        savedAt: new Date().toISOString(),
+        console.log('saveAccidentReport success');
+        resolve(request.result as number);
       };
       
-      // Use signatureLabel as key to replace any existing signature
-      const request = store.put(data, signatureLabel);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to save signature image:', error);
-    throw error;
-  }
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    } catch (error) {
+      console.error('saveAccidentReport exception:', error);
+      reject(error);
+    }
+  });
 };
 
-/**
- * Retrieve signature image from IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- * @returns base64 PNG data URL or null if not found
- */
-export const getSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<string | null> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readonly');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.get(signatureLabel);
-      
+export const updateAccidentReport = async (id: number, report: SavedAccidentReport): Promise<void> => {
+  const db = await initializeDB();
+  return new Promise((resolve, reject) => {
+    try {
+      const transaction = db.transaction([SAVED_REPORTS_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SAVED_REPORTS_STORE_NAME);
+      const reportToSave = { ...report, id };
+      const request = store.put(reportToSave);
+
+      request.onerror = () => {
+        console.error('updateAccidentReport error:', request.error);
+        reject(request.error);
+      };
       request.onsuccess = () => {
-        const result = request.result;
-        resolve(result ? result.imageData : null);
+        console.log('updateAccidentReport success');
+        resolve();
       };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to retrieve signature image:', error);
-    return null;
-  }
+      
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    } catch (error) {
+      console.error('updateAccidentReport exception:', error);
+      reject(error);
+    }
+  });
 };
 
-/**
- * Delete signature image from IndexedDB
- * @param signatureLabel 'driverA' or 'driverB'
- */
-export const deleteSignatureImage = async (signatureLabel: 'driverA' | 'driverB'): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.delete(signatureLabel);
+export const getAccidentReport = async (id: number): Promise<SavedAccidentReport | undefined> => {
+  const db = await initializeDB();
+  return new Promise((resolve, reject) => {
+    try {
+      const transaction = db.transaction([SAVED_REPORTS_STORE_NAME], 'readonly');
+      const store = transaction.objectStore(SAVED_REPORTS_STORE_NAME);
+      const request = store.get(id);
+
+      request.onerror = () => {
+        console.error('getAccidentReport error:', request.error);
+        reject(request.error);
+      };
+      request.onsuccess = () => {
+        console.log('getAccidentReport success:', request.result);
+        resolve(request.result);
+      };
       
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to delete signature image:', error);
-    throw error;
-  }
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    } catch (error) {
+      console.error('getAccidentReport exception:', error);
+      reject(error);
+    }
+  });
 };
 
-/**
- * Clear all signature images from IndexedDB
- */
-export const clearAllSignatureImages = async (): Promise<void> => {
-  try {
-    const db = await initializeDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([SIGNATURES_STORE_NAME], 'readwrite');
-      const store = transaction.objectStore(SIGNATURES_STORE_NAME);
-      const request = store.clear();
+export const getAllAccidentReports = async (): Promise<SavedAccidentReport[]> => {
+  const db = await initializeDB();
+  return new Promise((resolve, reject) => {
+    try {
+      // Check if store exists
+      if (!db.objectStoreNames.contains(SAVED_REPORTS_STORE_NAME)) {
+        console.error('Store does not exist:', SAVED_REPORTS_STORE_NAME);
+        // Return empty array instead of rejecting
+        resolve([]);
+        return;
+      }
       
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (error) {
-    console.error('Failed to clear signature images:', error);
-    throw error;
-  }
+      const transaction = db.transaction([SAVED_REPORTS_STORE_NAME], 'readonly');
+      const store = transaction.objectStore(SAVED_REPORTS_STORE_NAME);
+      const request = store.getAll();
+
+      let resolved = false;
+
+      request.onerror = () => {
+        console.error('getAllAccidentReports error:', request.error);
+        if (!resolved) {
+          resolved = true;
+          reject(request.error);
+        }
+      };
+      request.onsuccess = () => {
+        console.log('getAllAccidentReports success:', request.result);
+        if (!resolved) {
+          resolved = true;
+          // Sort by creation date descending (newest first)
+          const sortedReports = request.result.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA; // Descending order (newest first)
+          });
+          resolve(sortedReports);
+        }
+      };
+      
+      transaction.oncomplete = () => {
+        console.log('getAllAccidentReports transaction complete');
+      };
+      
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        if (!resolved) {
+          resolved = true;
+          reject(transaction.error);
+        }
+      };
+    } catch (error) {
+      console.error('getAllAccidentReports exception:', error);
+      reject(error);
+    }
+  });
+};
+
+export const deleteAccidentReport = async (id: number): Promise<void> => {
+  const db = await initializeDB();
+  return new Promise((resolve, reject) => {
+    try {
+      const transaction = db.transaction([SAVED_REPORTS_STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(SAVED_REPORTS_STORE_NAME);
+      const request = store.delete(id);
+
+      request.onerror = () => {
+        console.error('deleteAccidentReport error:', request.error);
+        reject(request.error);
+      };
+      request.onsuccess = () => {
+        console.log('deleteAccidentReport success');
+        resolve();
+      };
+      
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    } catch (error) {
+      console.error('deleteAccidentReport exception:', error);
+      reject(error);
+    }
+  });
 };

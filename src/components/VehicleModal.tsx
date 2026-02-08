@@ -23,6 +23,7 @@ interface VehicleModalProps {
   vehicleLabel: 'vehicleA' | 'vehicleB';
   onClose: () => void;
   onLoadData: (data: VehicleData) => void;
+  onDataLoaded?: () => void;
   initialMode?: 'qr' | 'save';
 }
 
@@ -35,6 +36,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
   vehicleLabel,
   onClose,
   onLoadData,
+  onDataLoaded,
   initialMode,
 }) => {
   const { t } = useTranslation();
@@ -352,6 +354,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                 };
                 
                 onLoadData(safeData);
+                onDataLoaded?.();
                 handleStopCamera();
                 // Clear scanning session refs
                 scannedPartsRef.current = new Map();
@@ -443,6 +446,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
             additionalNotes: data.additionalNotes || '',
           };
           onLoadData(safeData);
+          onDataLoaded?.();
           handleStopCamera();
           onClose();
         } else {
@@ -784,6 +788,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
           additionalNotes: data.additionalNotes || '',
         };
         onLoadData(safeData);
+        onDataLoaded?.();
         onClose();
       } catch (error) {
         alert(t('error.invalidJSON') || 'Invalid JSON file');
@@ -1123,6 +1128,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                   additionalNotes: data.additionalNotes || '',
                 };
                 onLoadData(safeData);
+                onDataLoaded?.();
                 onClose();
               } catch (error) {
                 alert(t('error.invalidQR') || 'Invalid QR code data');
@@ -1275,6 +1281,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
           additionalNotes: template.data.additionalNotes || '',
         };
         onLoadData(safeData);
+        onDataLoaded?.();
         onClose();
       }
     } catch (error) {

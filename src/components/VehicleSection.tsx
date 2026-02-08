@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VehicleModal } from './VehicleModal';
 import { ImpactMarker, type ImpactArrow } from './ImpactMarker';
-import { saveImpactMarkerImage } from '../utils/storage';
 import './VehicleSection.css';
 
 interface VehicleData {
@@ -82,6 +81,9 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
     mode: 'save',
   });
   const [impactMarkers, setImpactMarkers] = useState<ImpactArrow[]>([]);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    vehicleHeader: false,
+  });
   
   const vehicleRadioRef = useRef<HTMLInputElement>(null);
   const trailerRadioRef = useRef<HTMLInputElement>(null);
@@ -122,10 +124,24 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
     onChange(newData);
   };
 
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   return (
     <div className={`vehicle-section ${vehicleLabel === 'vehicleA' ? 'section-blue' : 'section-yellow'}`}>
       <div className="vehicle-section-header">
-        <h3>{vehicleLabel === 'vehicleA' ? t('vehicle.titleA') : t('vehicle.titleB')}</h3>
+        <h3
+          onClick={() => toggleSection('vehicleHeader')}
+          style={{ cursor: 'pointer', userSelect: 'none', flex: 1 }}
+        >
+          <span>{expandedSections.vehicleHeader ? '▼' : '▶'}</span>
+          {' '}
+          {vehicleLabel === 'vehicleA' ? t('vehicle.titleA') : t('vehicle.titleB')}
+        </h3>
         <button
           type="button"
           className="btn-load-top"
@@ -135,7 +151,9 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         </button>
       </div>
 
-      {/* SECTION 6: POLICYHOLDER / INSURED PERSON */}
+      {expandedSections.vehicleHeader && (
+        <>
+          {/* SECTION 6: POLICYHOLDER / INSURED PERSON */}
       <fieldset>
         <legend>{t('vehicle.section6')}</legend>
 
@@ -500,15 +518,9 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         <legend>{t('vehicle.section10')}</legend>
         <ImpactMarker
           arrows={impactMarkers}
-          onArrowsChange={(newArrows, imageData) => {
+          onArrowsChange={(newArrows) => {
             setImpactMarkers(newArrows);
             updateField('impactMarkers', newArrows);
-            // Save impact marker image to IndexedDB instead of form data
-            if (imageData) {
-              saveImpactMarkerImage(vehicleLabel, imageData).catch(error => 
-                console.error('Failed to save impact marker image:', error)
-              );
-            }
           }}
         />
       </fieldset>
@@ -769,12 +781,16 @@ const VehicleSection: React.FC<VehicleSectionProps> = ({ vehicleLabel, data, onC
         </button>
       </div>
 
+        </>
+      )}
+
       <VehicleModal
         isOpen={vehicleModal.isOpen}
         mode={vehicleModal.mode !== 'qr' ? vehicleModal.mode : 'save'}
         vehicleLabel={vehicleLabel}
         vehicleData={data}
         onLoadData={onChange}
+        onDataLoaded={() => setExpandedSections({ vehicleHeader: true })}
         onClose={() => setVehicleModal({ ...vehicleModal, isOpen: false })}
         initialMode={vehicleModal.mode === 'qr' ? 'qr' : undefined}
       />

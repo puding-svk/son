@@ -24,11 +24,15 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Set canvas size to match container
+    // Set canvas size with PDF aspect ratio (80x35 = 16:7)
     const rect = canvas.parentElement?.getBoundingClientRect();
     if (rect) {
-      canvas.width = rect.width;
-      canvas.height = rect.height;
+      // Use the full width of the container, but maintain the PDF's aspect ratio
+      const width = rect.width;
+      const height = (width * 35) / 80; // Maintain 80:35 ratio from PDF
+      
+      canvas.width = width;
+      canvas.height = height;
     }
 
     // Set up canvas context
@@ -207,20 +211,18 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     return croppedCanvas;
   };
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="signature-pad-overlay">
+    <div className="signature-pad-overlay" onClick={handleOverlayClick}>
       <div className="signature-pad-modal">
         <div className="signature-pad-header">
           <h2>{t(`signature.pad.title${driverLabel}`)}</h2>
           <p className="signature-pad-name">{driverName}</p>
-          <button
-            className="signature-pad-close"
-            onClick={onClose}
-            type="button"
-            aria-label={t('common.close') || 'Close signature pad'}
-          >
-            ✕
-          </button>
         </div>
 
         <div className="signature-pad-container">
