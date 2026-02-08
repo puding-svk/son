@@ -127,6 +127,10 @@
 
 .situation-draw-modal-bottom .controls-scrollable-area {
   flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: visible;
+  overflow-x: auto;
+  align-content: flex-start;
 }
 
 .situation-draw-controls-panel h3 {
@@ -312,6 +316,16 @@
   padding: 8px 0;
 }
 
+/* Bottom layout: horizontal tool arrangement */
+.situation-draw-modal-bottom .drawing-tools {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
 .tools-title {
   font-weight: 600;
   font-size: 0.95rem;
@@ -319,12 +333,26 @@
   padding: 8px 0;
   margin-bottom: 4px;
   border-bottom: 2px solid #ddd;
+  width: 100%;
+  order: -1;
+}
+
+.situation-draw-modal-bottom .tools-title {
+  display: none;
 }
 
 .tool-row {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* Bottom layout: tools on single line with wrap */
+.situation-draw-modal-bottom .tool-row {
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  width: auto;
 }
 
 .tool-label {
@@ -335,6 +363,10 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
+}
+
+.situation-draw-modal-bottom .tool-label {
+  display: none;
 }
 
 .btn-tool {
