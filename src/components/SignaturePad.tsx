@@ -211,8 +211,14 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
     return croppedCanvas;
   };
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="signature-pad-overlay">
+    <div className="signature-pad-overlay" onClick={handleOverlayClick}>
       <div className="signature-pad-modal">
         <div className="signature-pad-header">
           <h2>{t(`signature.pad.title${driverLabel}`)}</h2>
