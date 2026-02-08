@@ -124,10 +124,12 @@ legend {
     width: 100vw;
     height: 100vh;
     max-width: 100%;
+    max-height: 100vh;
   }
   
   body {
     min-height: 100vh;
+    min-width: 100vw;
   }
 }
 
@@ -138,42 +140,36 @@ legend {
     width: 100vw;
     height: 100vh;
     max-width: 100%;
+    max-height: 100vh;
   }
   
   body {
     min-height: 100vh;
+    min-width: 100vw;
   }
 }
 
-/* Prevent zoom on input focus for iOS */
-@media (max-width: 768px) {
-  input,
-  select,
-  textarea {
-    font-size: 16px; /* Prevents auto-zoom on iOS */
-  }
-}
-
-/* Ensure proper layout during orientation change */
-html,
-body,
-#root {
-  transition: none !important;
-}
-
-/* Handle viewport changes for Android PWA */
+/* Handle viewport changes for Android PWA with aspect ratio */
 @media (max-aspect-ratio: 1/1) {
   /* Portrait mode */
-  body {
+  html,
+  body,
+  #root {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
   }
 }
 
 @media (min-aspect-ratio: 1/1) {
   /* Landscape mode */
-  body {
+  html,
+  body,
+  #root {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
   }
 }

@@ -5,7 +5,8 @@
   "start_url": "/son/",
   "scope": "/son/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait-primary portrait-secondary landscape-primary landscape-secondary",
+  "prefer_related_applications": false,
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "icons": [

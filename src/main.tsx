@@ -38,7 +38,24 @@ if (screen.orientation) {
   }
 }
 
-// Request fullscreen orientation handling (Android PWA specific)
+// Try to unlock orientation on Android
+const unlockOrientation = async () => {
+  if (screen.orientation && screen.orientation.unlock) {
+    try {
+      await screen.orientation.unlock();
+      console.log('Orientation unlocked');
+    } catch (e) {
+      console.warn('Could not unlock orientation:', e);
+    }
+  }
+};
+
+// Request orientation unlock on load and user interaction
+window.addEventListener('load', unlockOrientation);
+document.addEventListener('click', unlockOrientation);
+document.addEventListener('touchstart', unlockOrientation);
+
+// Update viewport dimensions on resize
 window.addEventListener('resize', () => {
   // Ensure layout updates on resize
   document.documentElement.style.height = window.innerHeight + 'px';
