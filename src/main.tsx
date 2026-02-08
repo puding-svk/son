@@ -10,9 +10,12 @@ createRoot(document.getElementById('root')!).render(
 )
 
 // Handle orientation changes
+let isInternalResize = false;
 const handleOrientationChange = () => {
   // Force layout recalculation by triggering a resize event
+  isInternalResize = true;
   window.dispatchEvent(new Event('resize'));
+  isInternalResize = false;
   
   // Force reflow by accessing scrollHeight
   document.documentElement.scrollHeight;
@@ -20,7 +23,11 @@ const handleOrientationChange = () => {
 
 // Listen for orientation changes
 window.addEventListener('orientationchange', handleOrientationChange);
-window.addEventListener('resize', handleOrientationChange);
+window.addEventListener('resize', () => {
+  if (!isInternalResize) {
+    handleOrientationChange();
+  }
+});
 
 // Handle screen.orientation API (modern browsers and Android PWA)
 if (screen.orientation) {
