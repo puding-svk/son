@@ -3,7 +3,7 @@ const ASSETS_TO_CACHE = [
   '/son/sprava_o_nehode_template.pdf',
   '/son/fonts/NimbusSanL-Bol.otf',
   '/son/impactMarker-background.png',
-  '/son/applogo.svg',
+  '/son/sonlogo.svg',
   '/son/offline.html',
 ];
 
@@ -49,7 +49,7 @@ self.addEventListener('fetch', (event) => {
     url.pathname.includes('sprava_o_nehode_template.pdf') || 
     url.pathname.includes('/fonts/') ||
     url.pathname.includes('impactMarker-background.png') ||
-    url.pathname.includes('applogo.svg');
+    url.pathname.includes('sonlogo.svg');
   
   if (shouldCacheOffline) {
     // Cache-first strategy for assets

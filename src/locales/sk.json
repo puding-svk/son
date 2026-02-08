@@ -153,11 +153,11 @@
     "qrMinimumReached": "Dosiahnutá minimálna veľkosť QR dát.",
     "saveReport": "Uložiť správu",
     "loadReport": "Načítať správu",
-    "reportName": "Názov správy:",
-    "reportNamePlaceholder": "Zadajte názov správy",
-    "existingReports": "Existujúce správy:",
-    "noReports": "Žiadne uložené správy",
-    "loading": "Načítavám..."
+    "reportName": "Názov správy o nehode:",
+    "reportNamePlaceholder": "Zadajte názov správy o nehode",
+    "existingReports": "Existujúce správy o nehode:",
+    "noReports": "Žiadne uložené správy o nehode",
+    "loading": "Načítavam..."
   },
   "message": {
     "templateSaved": "Šablóna bola úspešne uložená.",
@@ -169,7 +169,7 @@
     "qrAutoSplit": "QR kód bol automaticky rozdelený na {{parts}} časti kvôli veľkosti dát.",
     "clearFormConfirm": "Ste si istí, že chcete vyčistiť formulár? Túto akciu nie je možné vrátiť späť.",
     "exportError": "Nepodarilo sa exportovať PDF",
-    "reportSaved": "Správa bola úspešne uložená."
+    "reportSaved": "Správa o nehode bola úspešne uložená."
   },
   "error": {
     "invalidJSON": "Neplatný JSON súbor",
@@ -182,16 +182,16 @@
     "qrTooLarge": "Údaje QR kódu sú príliš veľké. Prosím, znížte množstvo textu v poliach ako viditeľné poškodenie alebo dodatočné poznámky.",
     "qrGeneration": "Chyba pri generovaní QR kódu",
     "failedReconstructParts": "Chyba pri obnovení údajov z časti QR kódu. Prosím, skenujte všetky časti znova.",
-    "savingReport": "Chyba pri ukladaní správy",
-    "loadingReports": "Chyba pri načítavaní správ",
-    "loadingReport": "Chyba pri načítavaní správy",
-    "deletingReport": "Chyba pri mazaní správy"
+    "savingReport": "Chyba pri ukladaní správy o nehode",
+    "loadingReports": "Chyba pri načítavaní uložených správ",
+    "loadingReport": "Chyba pri načítavaní správy o nehode",
+    "deletingReport": "Chyba pri mazaní správy o nehode"
   },
   "confirm": {
     "deleteTemplate": "Ste si istí, že chcete vymazať túto šablónu?",
     "overwriteTemplate": "Prepísať existujúcu šablónu?",
     "deleteReport": "Ste si istí, že chcete vymazať túto správu?",
-    "overwriteReport": "Prepísať existujúcu správu?"
+    "overwriteReport": "Prepísať existujúcu správu o nehode?"
   },
   "common": {
     "yes": "Áno",
