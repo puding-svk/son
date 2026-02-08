@@ -107,6 +107,7 @@
   display: block;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  touch-action: none;
 }
 
 .situation-draw-controls-panel {
