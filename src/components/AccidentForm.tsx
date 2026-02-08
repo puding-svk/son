@@ -601,11 +601,9 @@ const AccidentForm: React.FC = () => {
           {expandedSections.situation && (
             <SituationDraw
               situationImage={formData.situationImage}
-              onSituationChange={(drawingData) => {
-                setFormData({ ...formData, situationImage: drawingData });
-                // Dispatch event for immediate localStorage save
-                window.dispatchEvent(new CustomEvent('situationImageSaved', { detail: drawingData }));
-              }}
+              onSituationChange={(imageData) =>
+                setFormData({ ...formData, situationImage: imageData })
+              }
             />
           )}
         </section>

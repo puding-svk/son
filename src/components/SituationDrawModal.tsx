@@ -6,9 +6,8 @@ import './SituationDrawModal.css';
 
 interface SituationDrawModalProps {
   onClose: () => void;
-  onSave: (drawingData: string) => void;
+  onSave: (imageData: string) => void;
   initialImage?: string;
-  initialDrawingData?: string;
 }
 
 type ControlsPosition = 'left' | 'bottom';
@@ -37,7 +36,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   onClose,
   onSave,
   initialImage,
-  initialDrawingData,
 }) => {
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -61,7 +59,6 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
   const drawingLayerRef = useRef<HTMLCanvasElement | null>(null);
   const signImagesRef = useRef<Record<string, HTMLImageElement | null>>({});
   const stickersImagesRef = useRef<Record<string, HTMLImageElement | null>>({});
-  const initialDataLoadedRef = useRef(false); // Track if initial data has been loaded
   const [isDraggingSticker, setIsDraggingSticker] = useState(false);
   const [isRotatingSticker, setIsRotatingSticker] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -166,7 +163,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
-  // Initialize canvas (setup only, no data loading)
+  // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -195,54 +192,21 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
       layerCtx.strokeStyle = '#cccccc';
       layerCtx.lineWidth = 2;
       layerCtx.strokeRect(0, 0, canvasDimensions.width, canvasDimensions.height);
-    }
-  }, [canvasDimensions]);
 
-  // Load initial drawing data (only once on mount)
-  useEffect(() => {
-    if (initialDataLoadedRef.current) return; // Only load once
-    if (!drawingLayerRef.current) return;
-
-    const layerCtx = drawingLayerRef.current.getContext('2d');
-    if (!layerCtx) return;
-
-    // If there's drawing data, load it
-    if (initialDrawingData) {
-      initialDataLoadedRef.current = true;
-      try {
-        const drawingData = JSON.parse(initialDrawingData);
-        // Restore stickers
-        if (drawingData.stickers && Array.isArray(drawingData.stickers)) {
-          setStickers(drawingData.stickers);
-        }
-        // Restore drawing layer
-        if (drawingData.drawingLayerImage) {
-          const img = new Image();
-          img.onload = () => {
-            layerCtx.drawImage(img, 0, 0);
-            renderCanvas();
-          };
-          img.src = drawingData.drawingLayerImage;
-        } else {
+      // If there's an initial image, load it
+      if (initialImage) {
+        const img = new Image();
+        img.onload = () => {
+          layerCtx.drawImage(img, 0, 0);
+          // Trigger redraw
           renderCanvas();
-        }
-      } catch (error) {
-        console.error('Failed to load drawing data:', error);
+        };
+        img.src = initialImage;
+      } else {
         renderCanvas();
       }
-    } else if (initialImage) {
-      // Fallback: load as legacy PNG image
-      initialDataLoadedRef.current = true;
-      const img = new Image();
-      img.onload = () => {
-        layerCtx.drawImage(img, 0, 0);
-        renderCanvas();
-      };
-      img.src = initialImage;
-    } else {
-      renderCanvas();
     }
-  }, [initialImage, initialDrawingData]);
+  }, [canvasDimensions, initialImage]);
 
   // Function to composite all layers and render to main canvas
   const renderCanvas = () => {
@@ -612,8 +576,7 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
 
   const handleSave = () => {
     const canvas = canvasRef.current;
-    const drawingLayer = drawingLayerRef.current;
-    if (!canvas || !drawingLayer) return;
+    if (!canvas) return;
 
     // Unselect any selected sticker to hide selection circle before saving
     setSelectedSticker(null);
@@ -621,22 +584,8 @@ export const SituationDrawModal: React.FC<SituationDrawModalProps> = ({
     
     // Defer image capture to next frame to ensure render with no selection
     setTimeout(() => {
-      // Get the drawing layer (freehand strokes) as base64
-      const drawingLayerImage = drawingLayer.toDataURL('image/png');
-      
-      // Get the final composite image
-      const finalImageData = canvas.toDataURL('image/png');
-      
-      // Create drawing data structure with stickers and drawing layer
-      const drawingData = {
-        stickers,
-        drawingLayerImage,
-        finalImage: finalImageData,
-        canvasDimensions,
-      };
-      
-      // Pass to parent
-      onSave(JSON.stringify(drawingData));
+      const imageData = canvas.toDataURL('image/png');
+      onSave(imageData);
     }, 0);
   };
 
