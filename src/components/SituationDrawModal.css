@@ -350,9 +350,10 @@
 /* Bottom layout: tools on single line with wrap */
 .situation-draw-modal-bottom .tool-row {
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
   width: auto;
+  align-items: center;
 }
 
 .tool-label {
@@ -366,7 +367,12 @@
 }
 
 .situation-draw-modal-bottom .tool-label {
-  display: none;
+  min-width: unset;
+  font-size: 0.65rem;
+  text-align: center;
+  max-width: 40px;
+  flex: 0;
+  word-break: break-word;
 }
 
 .btn-tool {
